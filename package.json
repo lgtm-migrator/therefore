@@ -1,0 +1,61 @@
+{
+  "name": "@zefiros/therefore",
+  "description": "",
+  "version": "0.0.1",
+  "license": "MIT",
+  "main": "./dist/main.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "bin": {
+    "therefore": "./bin/run"
+  },
+  "npm-defaults": {
+    "type": "library",
+    "template": {
+      "ignore": {
+        "files": true
+      }
+    }
+  },
+  "engines": {
+    "node": ">=12"
+  },
+  "files": ["bin", "dist", "package.json"],
+  "scripts": {
+    "build": "webpack --version && webpack",
+    "test": "concurrently \"yarn check:types\" \"jest test --maxWorkers=1\"",
+    "fix": "yarn lint --fix",
+    "lint": "yarn eslint \"{src,test,typing}/**/*.{ts,js}\" --ignore-pattern **/node_modules/* --resolve-plugins-relative-to .",
+    "format": "prettier \"{src/*,test/*,typing/*,templates/*,examples/*,}*/*.{ts,js,json}\" --write",
+    "release": "semantic-release",
+    "release:dry": "yarn release --dry-run",
+    "check:types": "yarn tsc -p tsconfig.json",
+    "check:project": "yarn npm-defaults lint",
+    "package": "rm -rf dist && yarn build",
+    "check:cost": "npx cost-of-modules --yarn --no-install --include-dev",
+    "coverage": "jest test --maxWorkers=1 --collectCoverage=true"
+  },
+  "dependencies": {
+    "@types/json-schema": "^7.0.5",
+    "camelcase": "^6.0.0",
+    "code-block-writer": "^10.1.0",
+    "decamelize": "^4.0.0",
+    "execa": "^4.0.3",
+    "fast-glob": "^3.2.4",
+    "tslib": "^2.0.1",
+    "uuid": "^8.3.0",
+    "yargs": "^15.4.1"
+  },
+  "peerDependencies": {
+    "ajv": "^6.12.4"
+  },
+  "devDependencies": {
+    "@types/uuid": "^8.3.0",
+    "@types/webpack-env": "^1.15.2",
+    "@types/yargs": "^15.0.5",
+    "@zefiros/npm-defaults": "0.2.0-beta.57",
+    "@zerollup/ts-transform-paths": "^1.7.18",
+    "ts-node": "^8.10.2",
+    "typescript": "^4.0.2"
+  }
+}
