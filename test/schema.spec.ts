@@ -74,15 +74,15 @@ describe('annotate', () => {
         `)
     })
 
-    test('readOnly', () => {
+    test('readonly', () => {
         expect(annotate($string({ [schema.readonly]: true }))).toMatchInlineSnapshot(`
             Object {
-              "readOnly": true,
+              "readonly": true,
             }
         `)
         expect(annotate($string({ [schema.readonly]: false }))).toMatchInlineSnapshot(`
             Object {
-              "readOnly": false,
+              "readonly": false,
             }
         `)
     })
@@ -321,26 +321,26 @@ describe('toTypeDefinition', () => {
         const foo = $dict($string)
         expect(walkGraph($ref({ foo }), jsonSchemaVisitor, { references: {}, definitions: {} })).toMatchInlineSnapshot(`
             Object {
-              "$ref": "#/definitions/Foo",
+              "$ref": "#/definitions/{{0002-000}}",
             }
         `)
         // test the stable uuid referencing
         expect(walkGraph($union([$ref({ foo }), $dict($ref({ foo }))]), jsonSchemaVisitor, { references: {}, definitions: {} }))
             .toMatchInlineSnapshot(`
-                    Object {
-                      "oneOf": Array [
-                        Object {
-                          "$ref": "#/definitions/Foo",
-                        },
-                        Object {
-                          "additionalProperties": Object {
-                            "$ref": "#/definitions/Foo",
-                          },
-                          "type": "object",
-                        },
-                      ],
-                    }
-            `)
+            Object {
+              "oneOf": Array [
+                Object {
+                  "$ref": "#/definitions/{{0002-000}}",
+                },
+                Object {
+                  "additionalProperties": Object {
+                    "$ref": "#/definitions/{{0002-000}}",
+                  },
+                  "type": "object",
+                },
+              ],
+            }
+        `)
         expect(
             walkGraph($union([$ref({ foo }), $dict($nullable($ref({ foo })))]), jsonSchemaVisitor, {
                 references: {},
@@ -350,7 +350,7 @@ describe('toTypeDefinition', () => {
             Object {
               "oneOf": Array [
                 Object {
-                  "$ref": "#/definitions/Foo",
+                  "$ref": "#/definitions/{{0002-000}}",
                 },
                 Object {
                   "additionalProperties": Object {
@@ -359,7 +359,7 @@ describe('toTypeDefinition', () => {
                         "type": "null",
                       },
                       Object {
-                        "$ref": "#/definitions/Foo",
+                        "$ref": "#/definitions/{{0002-000}}",
                       },
                     ],
                   },
@@ -625,7 +625,7 @@ describe('toJsonSchema', () => {
               "schema": Object {
                 "$schema": "http://json-schema.org/draft-07/schema#",
                 "definitions": Object {
-                  "Foo": Object {
+                  "{{0002-000}}": Object {
                     "additionalProperties": Object {
                       "type": "string",
                     },
@@ -634,7 +634,7 @@ describe('toJsonSchema', () => {
                 },
                 "oneOf": Array [
                   Object {
-                    "$ref": "#/definitions/Foo",
+                    "$ref": "#/definitions/{{0002-000}}",
                   },
                   Object {
                     "additionalProperties": Object {
@@ -643,7 +643,7 @@ describe('toJsonSchema', () => {
                           "type": "null",
                         },
                         Object {
-                          "$ref": "#/definitions/Foo",
+                          "$ref": "#/definitions/{{0002-000}}",
                         },
                       ],
                     },

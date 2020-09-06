@@ -15,14 +15,14 @@ describe('enum', () => {
 
         expect($enum([1, 2, 3, '4'])).toMatchInlineSnapshot(`
             Object {
+              "type": "enum",
+              "uuid": "0001-000",
               "values": Array [
                 1,
                 2,
                 3,
                 "4",
               ],
-              Symbol(type): "enum",
-              Symbol(uuid): "0001-000",
             }
         `)
     })
@@ -42,12 +42,12 @@ describe('enum', () => {
                 "foo",
                 "woo",
               ],
+              "type": "enum",
+              "uuid": "0001-000",
               "values": Array [
                 "bar",
                 "baz",
               ],
-              Symbol(type): "enum",
-              Symbol(uuid): "0001-000",
             }
         `)
     })

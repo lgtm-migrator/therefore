@@ -1,6 +1,14 @@
+jest.mock('uuid')
+
 import { $string } from '~/index'
 
+import { v4 as uuid } from 'uuid'
+
 describe('string', () => {
+    const mocked = uuid as jest.Mock
+
+    beforeEach(() => mocked.mockReturnValueOnce('0001-000'))
+
     test('function', () => {
         expect($string).toMatchInlineSnapshot(`[Function]`)
     })
@@ -13,7 +21,8 @@ describe('string', () => {
         ).toMatchInlineSnapshot(`
             Object {
               "minLength": 2,
-              Symbol(type): "string",
+              "type": "string",
+              "uuid": "0001-000",
             }
         `)
     })
@@ -26,7 +35,8 @@ describe('string', () => {
         ).toMatchInlineSnapshot(`
             Object {
               "maxLength": 2,
-              Symbol(type): "string",
+              "type": "string",
+              "uuid": "0001-000",
             }
         `)
     })
@@ -39,7 +49,8 @@ describe('string', () => {
         ).toMatchInlineSnapshot(`
             Object {
               "pattern": /foo/,
-              Symbol(type): "string",
+              "type": "string",
+              "uuid": "0001-000",
             }
         `)
     })
@@ -52,7 +63,8 @@ describe('string', () => {
         ).toMatchInlineSnapshot(`
             Object {
               "format": "date",
-              Symbol(type): "string",
+              "type": "string",
+              "uuid": "0001-000",
             }
         `)
     })
@@ -69,7 +81,8 @@ describe('string', () => {
               "maxLength": 2,
               "minLength": 2,
               "pattern": /foo/,
-              Symbol(type): "string",
+              "type": "string",
+              "uuid": "0001-000",
             }
         `)
     })

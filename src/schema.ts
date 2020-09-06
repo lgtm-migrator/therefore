@@ -5,10 +5,8 @@ import { filterUndefined } from './util'
 import { GraphVisitor, walkGraph } from './ast'
 import { ThereforeTypes } from './types/composite'
 
-import camelCase from 'camelcase'
-
 export interface JsonSchemaWalkerContext {
-    references: Record<string, string>
+    //references: Record<string, string>
     definitions: NonNullable<JsonSchema['definitions']>
 }
 
@@ -21,8 +19,8 @@ export function annotate<T extends Json>(doc: ThereforeCommon<T>): JsonAnnotatio
         title: doc[schema.title],
         description: doc[schema.description],
         default: doc[schema.default],
-        readOnly: doc[schema.readonly],
-        // writeOnly?: boolean
+        readonly: doc[schema.readonly],
+        // writeonly?: boolean
         examples: doc[schema.examples],
     })
 }
@@ -72,7 +70,7 @@ export const jsonSchemaVisitor: GraphVisitor<JsonSchema, JsonSchemaWalkerContext
         })
     },
     enum: (definition) => {
-        if (definition.values.length == 1) {
+        if (definition.values.length === 1) {
             return filterUndefined({
                 const: definition.values[0],
                 ...annotate(definition),
@@ -102,10 +100,10 @@ export const jsonSchemaVisitor: GraphVisitor<JsonSchema, JsonSchemaWalkerContext
         }
         const obj: JsonSchema = filterUndefined({
             type: toType('object', definition),
+            ...annotate(definition),
             properties,
             required,
             additionalProperties: false,
-            ...annotate(definition),
         })
         return obj
     },
@@ -132,17 +130,13 @@ export const jsonSchemaVisitor: GraphVisitor<JsonSchema, JsonSchemaWalkerContext
         }
     },
     $ref: (definition, context) => {
-        const { references, definitions } = context
-        const interfaceName = camelCase(definition.name, { pascalCase: true })
-        if (references[interfaceName] && references[interfaceName] !== definition.reference[schema.uuid]) {
-            throw new Error(`Reference ${interfaceName} was already registered with a different uuid`)
-        }
-        references[interfaceName] = definition.reference[schema.uuid]
-        definitions[interfaceName] = walkGraph(definition.reference, jsonSchemaVisitor, context)
+        const { definitions } = context
+        const uuid = definition.reference[schema.uuid]
+        definitions[`{{${uuid}}}`] ??= walkGraph(definition.reference, jsonSchemaVisitor, context)
         if (definition[schema.nullable]) {
-            return { oneOf: [{ type: 'null' }, { $ref: `#/definitions/${interfaceName}` }] }
+            return { oneOf: [{ type: 'null' }, { $ref: `#/definitions/{{${uuid}}}` }] }
         }
-        return { $ref: `#/definitions/${interfaceName}` }
+        return { $ref: `#/definitions/{{${uuid}}}` }
     },
     _: () => {
         throw new Error('should not be called')
@@ -150,11 +144,11 @@ export const jsonSchemaVisitor: GraphVisitor<JsonSchema, JsonSchemaWalkerContext
 }
 
 export function toJsonSchema(obj: ThereforeTypes): JsonSchemaValidator {
-    const references: Record<string, string> = {}
+    //const references: Record<string, string> = {}
     const definitions: NonNullable<JsonSchema['definitions']> = {}
     const definition: JsonSchema = {
         $schema: 'http://json-schema.org/draft-07/schema#',
-        ...walkGraph(obj, jsonSchemaVisitor, { references, definitions }),
+        ...walkGraph(obj, jsonSchemaVisitor, { definitions }),
     }
     if (Object.keys(definitions).length) {
         definition.definitions = definitions

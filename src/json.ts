@@ -123,9 +123,9 @@ export interface JsonAnnotations {
     /** 2019-09 draft */
     depricated?: boolean
     /** @deprecated */
-    readOnly?: boolean
+    readonly?: boolean
     /** @deprecated */
-    writeOnly?: boolean
+    writeonly?: boolean
     examples?: JsonSchemaType
 }
 

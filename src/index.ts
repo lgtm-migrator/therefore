@@ -3,17 +3,18 @@ import { execute } from './cli'
 import yargs from 'yargs'
 export * from './types'
 
+import path from 'path'
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-assignment
 const { bin } = require('../package.json')
 
-// eslint-disable-next-line @typescript-eslint/require-await
 export async function run(): Promise<void> {
     const argv = yargs
         .scriptName(Object.keys(bin)[0])
         .option('file', {
             alias: 'f',
-            demandOption: true,
-            default: ['src/**/*.ts'],
+            //demandOption: true,
+            //default: ['src/**/*.ts'],
             describe: 'globs to scan for schemas',
             type: 'array',
         })
@@ -21,7 +22,7 @@ export async function run(): Promise<void> {
             alias: 'd',
             describe: 'directories',
             type: 'array',
-            coerce: (ds: string[]) => ds.map((d) => `${d}/**/*.ts`),
+            coerce: (ds: readonly string[]) => ds.map((d) => path.join('.', d, `**/*.ts`).replace(/\\/g, '/')),
         })
         .option('exclude', {
             alias: 'e',
@@ -41,9 +42,13 @@ export async function run(): Promise<void> {
         .strict()
         .help().argv
 
-    const globs = Array.isArray(argv.file) ? argv.file : [argv.file]
+    argv.file ??= []
+    argv.dir ??= []
+
+    const files: string[] = Array.isArray(argv.file) ? (argv.file as string[]) : [argv.file]
+    const dirs: string[] = Array.isArray(argv.dir) ? (argv.dir as string[]) : [argv.dir]
     await execute({
-        globs,
+        globs: [...files, ...dirs],
         excludes: Array.isArray(argv.exclude) ? argv.exclude : [argv.exclude],
         format: argv.fmt,
         extension: argv.ext,

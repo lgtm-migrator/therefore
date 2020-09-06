@@ -1,6 +1,6 @@
 jest.mock('uuid')
 
-import { $object, $string, $array, $dict, $tuple, $ref, $union, $intersection } from '~/index'
+import { $object, $string, $array, $dict, $tuple, $ref, $union, $intersection, $boolean } from '~/index'
 import { schema } from '~/therefore'
 
 import { v4 as uuid } from 'uuid'
@@ -11,15 +11,23 @@ describe('object', () => {
     })
 
     test('expand', () => {
+        const mocked = uuid as jest.Mock
+        mocked
+            .mockReturnValueOnce('0001-000')
+            .mockReturnValueOnce('0002-000')
+            .mockReturnValueOnce('0003-000')
+            .mockReturnValueOnce('0004-000')
+
         expect($object({ foo: $string })).toMatchInlineSnapshot(`
             Object {
               "properties": Object {
                 "foo": Object {
-                  Symbol(type): "string",
+                  "type": "string",
+                  "uuid": "0003-000",
                 },
               },
-              Symbol(type): "object",
-              Symbol(uuid): undefined,
+              "type": "object",
+              "uuid": "0001-000",
             }
         `)
         expect($object({ foo: $object() })).toMatchInlineSnapshot(`
@@ -27,12 +35,12 @@ describe('object', () => {
               "properties": Object {
                 "foo": Object {
                   "properties": Object {},
-                  Symbol(type): "object",
-                  Symbol(uuid): undefined,
+                  "type": "object",
+                  "uuid": "0002-000",
                 },
               },
-              Symbol(type): "object",
-              Symbol(uuid): undefined,
+              "type": "object",
+              "uuid": "0003-000",
             }
         `)
     })
@@ -43,14 +51,14 @@ describe('object', () => {
 
         expect($object({}, { [schema.examples]: [{ foo: 'bar' }] })).toMatchInlineSnapshot(`
             Object {
-              "properties": Object {},
-              Symbol(type): "object",
-              Symbol(example): Array [
+              "example": Array [
                 Object {
                   "foo": "bar",
                 },
               ],
-              Symbol(uuid): "0001-000",
+              "properties": Object {},
+              "type": "object",
+              "uuid": "0004-000",
             }
         `)
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -64,17 +72,54 @@ describe('object', () => {
 
         expect($object({}, { [schema.default]: { foo: 'bar' } })).toMatchInlineSnapshot(`
             Object {
-              "properties": Object {},
-              Symbol(type): "object",
-              Symbol(default): Object {
+              "default": Object {
                 "foo": "bar",
               },
-              Symbol(uuid): "0001-000",
+              "properties": Object {},
+              "type": "object",
+              "uuid": "0001-000",
             }
         `)
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
         $object({}, { [schema.default]: 'foobar' })
+    })
+
+    test.skip('complex', () => {
+        const mocked = uuid as jest.Mock
+        mocked.mockReturnValueOnce('0001-000')
+
+        const $description = 'description'
+        expect(
+            $object({
+                [$description]:
+                    'Declares which extensions, apps, and web pages can connect to your extension via runtime.connect and runtime.sendMessage.',
+                ids: $array($string, {
+                    description:
+                        'The IDs of extensions or apps that are allowed to connect. If left empty or unspecified, no extensions or apps can connect.',
+                    minItems: 1,
+                    uniqueItems: true,
+                }),
+                matches: $string({
+                    description:
+                        'The URL patterns for web pages that are allowed to connect. This does not affect content scripts. If left empty or unspecified, no web pages can connect.',
+                }),
+                booleans: $boolean({
+                    default: false,
+                    description:
+                        "Indicates that the extension would like to make use of the TLS channel ID of the web page connecting to it. The web page must also opt to send the TLS channel ID to the extension via setting includeTlsChannelId to true in runtime.connect's connectInfo or runtime.sendMessage's options.",
+                }),
+            })
+        ).toMatchInlineSnapshot(`
+            Object {
+              "default": Object {
+                "foo": "bar",
+              },
+              "properties": Object {},
+              "type": "object",
+              "uuid": "0001-000",
+            }
+        `)
     })
 })
 
@@ -84,33 +129,38 @@ describe('array', () => {
     })
 
     test('expand', () => {
+        const mocked = uuid as jest.Mock
+        mocked.mockReturnValueOnce('0001-000')
+
         expect($array($string)).toMatchInlineSnapshot(`
             Object {
               "items": Object {
-                Symbol(type): "string",
+                "type": "string",
+                "uuid": "0001-000",
               },
-              Symbol(type): "array",
-              Symbol(uuid): undefined,
+              "type": "array",
+              "uuid": undefined,
             }
         `)
     })
 
     test('example', () => {
         const mocked = uuid as jest.Mock
-        mocked.mockReturnValueOnce('0001-000')
+        mocked.mockReturnValueOnce('0001-000').mockReturnValueOnce('0002-000')
 
         expect($array($string, { [schema.examples]: [['bar']] })).toMatchInlineSnapshot(`
             Object {
-              "items": Object {
-                Symbol(type): "string",
-              },
-              Symbol(type): "array",
-              Symbol(example): Array [
+              "example": Array [
                 Array [
                   "bar",
                 ],
               ],
-              Symbol(uuid): "0001-000",
+              "items": Object {
+                "type": "string",
+                "uuid": "0001-000",
+              },
+              "type": "array",
+              "uuid": "0002-000",
             }
         `)
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -120,18 +170,19 @@ describe('array', () => {
 
     test('default', () => {
         const mocked = uuid as jest.Mock
-        mocked.mockReturnValueOnce('0001-000')
+        mocked.mockReturnValueOnce('0001-000').mockReturnValueOnce('0002-000')
 
         expect($array($string, { [schema.default]: ['bar'] })).toMatchInlineSnapshot(`
             Object {
-              "items": Object {
-                Symbol(type): "string",
-              },
-              Symbol(type): "array",
-              Symbol(default): Array [
+              "default": Array [
                 "bar",
               ],
-              Symbol(uuid): "0001-000",
+              "items": Object {
+                "type": "string",
+                "uuid": "0001-000",
+              },
+              "type": "array",
+              "uuid": "0002-000",
             }
         `)
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -146,33 +197,38 @@ describe('dict', () => {
     })
 
     test('expand', () => {
+        const mocked = uuid as jest.Mock
+        mocked.mockReturnValueOnce('0001-000').mockReturnValueOnce('0002-000')
+
         expect($dict($string)).toMatchInlineSnapshot(`
             Object {
               "properties": Object {
-                Symbol(type): "string",
+                "type": "string",
+                "uuid": "0001-000",
               },
-              Symbol(type): "dict",
-              Symbol(uuid): undefined,
+              "type": "dict",
+              "uuid": "0002-000",
             }
         `)
     })
 
     test('example', () => {
         const mocked = uuid as jest.Mock
-        mocked.mockReturnValueOnce('0001-000')
+        mocked.mockReturnValueOnce('0001-000').mockReturnValueOnce('0002-000')
 
         expect($dict($string, { [schema.examples]: [{ foo: 'bar' }] })).toMatchInlineSnapshot(`
             Object {
-              "properties": Object {
-                Symbol(type): "string",
-              },
-              Symbol(type): "dict",
-              Symbol(example): Array [
+              "example": Array [
                 Object {
                   "foo": "bar",
                 },
               ],
-              Symbol(uuid): "0001-000",
+              "properties": Object {
+                "type": "string",
+                "uuid": "0001-000",
+              },
+              "type": "dict",
+              "uuid": "0002-000",
             }
         `)
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -182,18 +238,19 @@ describe('dict', () => {
 
     test('default', () => {
         const mocked = uuid as jest.Mock
-        mocked.mockReturnValueOnce('0001-000')
+        mocked.mockReturnValueOnce('0001-000').mockReturnValueOnce('0002-000')
 
         expect($dict($string, { [schema.default]: { foo: 'bar' } })).toMatchInlineSnapshot(`
             Object {
-              "properties": Object {
-                Symbol(type): "string",
-              },
-              Symbol(type): "dict",
-              Symbol(default): Object {
+              "default": Object {
                 "foo": "bar",
               },
-              Symbol(uuid): "0001-000",
+              "properties": Object {
+                "type": "string",
+                "uuid": "0001-000",
+              },
+              "type": "dict",
+              "uuid": "0002-000",
             }
         `)
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -208,37 +265,42 @@ describe('tuple', () => {
     })
 
     test('expand', () => {
+        const mocked = uuid as jest.Mock
+        mocked.mockReturnValueOnce('0001-000')
+
         expect($tuple([$string])).toMatchInlineSnapshot(`
             Object {
               "items": Array [
                 Object {
-                  Symbol(type): "string",
+                  "type": "string",
+                  "uuid": "0001-000",
                 },
               ],
-              Symbol(type): "tuple",
-              Symbol(uuid): undefined,
+              "type": "tuple",
+              "uuid": undefined,
             }
         `)
     })
 
     test('example', () => {
         const mocked = uuid as jest.Mock
-        mocked.mockReturnValueOnce('0001-000')
+        mocked.mockReturnValueOnce('0001-000').mockReturnValueOnce('0002-000')
 
         expect($tuple([$string], { [schema.examples]: [['bar']] })).toMatchInlineSnapshot(`
             Object {
-              "items": Array [
-                Object {
-                  Symbol(type): "string",
-                },
-              ],
-              Symbol(type): "tuple",
-              Symbol(example): Array [
+              "example": Array [
                 Array [
                   "bar",
                 ],
               ],
-              Symbol(uuid): "0001-000",
+              "items": Array [
+                Object {
+                  "type": "string",
+                  "uuid": "0001-000",
+                },
+              ],
+              "type": "tuple",
+              "uuid": "0002-000",
             }
         `)
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -248,20 +310,21 @@ describe('tuple', () => {
 
     test('default', () => {
         const mocked = uuid as jest.Mock
-        mocked.mockReturnValueOnce('0001-000')
+        mocked.mockReturnValueOnce('0001-000').mockReturnValueOnce('0002-000')
 
         expect($tuple([$string], { [schema.default]: ['bar'] })).toMatchInlineSnapshot(`
             Object {
-              "items": Array [
-                Object {
-                  Symbol(type): "string",
-                },
-              ],
-              Symbol(type): "tuple",
-              Symbol(default): Array [
+              "default": Array [
                 "bar",
               ],
-              Symbol(uuid): "0001-000",
+              "items": Array [
+                Object {
+                  "type": "string",
+                  "uuid": "0001-000",
+                },
+              ],
+              "type": "tuple",
+              "uuid": "0002-000",
             }
         `)
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -271,6 +334,9 @@ describe('tuple', () => {
 })
 
 describe('ref', () => {
+    const mocked = uuid as jest.Mock
+    mocked.mockReturnValueOnce('0001-000').mockReturnValueOnce('0002-000').mockReturnValueOnce('0003-000')
+
     const foo = $dict($string)
     test('function', () => {
         expect($ref).toMatchInlineSnapshot(`[Function]`)
@@ -282,12 +348,13 @@ describe('ref', () => {
               "name": "foo",
               "reference": Object {
                 "properties": Object {
-                  Symbol(type): "string",
+                  "type": "string",
+                  "uuid": "0001-000",
                 },
-                Symbol(type): "dict",
-                Symbol(uuid): undefined,
+                "type": "dict",
+                "uuid": "0002-000",
               },
-              Symbol(type): "$ref",
+              "type": "$ref",
             }
         `)
     })
@@ -299,55 +366,61 @@ describe('union', () => {
     })
 
     test('expand', () => {
+        const mocked = uuid as jest.Mock
+        mocked.mockReturnValueOnce('0001-000').mockReturnValueOnce('0002-000')
+
         expect($union([$string])).toMatchInlineSnapshot(`
             Object {
+              "type": "union",
               "union": Array [
                 Object {
-                  Symbol(type): "string",
+                  "type": "string",
+                  "uuid": "0001-000",
                 },
               ],
-              Symbol(type): "union",
-              Symbol(uuid): undefined,
+              "uuid": "0002-000",
             }
         `)
     })
 
     test('example', () => {
         const mocked = uuid as jest.Mock
-        mocked.mockReturnValueOnce('0001-000')
+        mocked.mockReturnValueOnce('0001-000').mockReturnValueOnce('0002-000')
 
         expect($union([$string], { [schema.examples]: ['bar'] })).toMatchInlineSnapshot(`
             Object {
-              "union": Array [
-                Object {
-                  Symbol(type): "string",
-                },
-              ],
-              Symbol(type): "union",
-              Symbol(example): Array [
+              "example": Array [
                 "bar",
               ],
-              Symbol(uuid): "0001-000",
+              "type": "union",
+              "union": Array [
+                Object {
+                  "type": "string",
+                  "uuid": "0001-000",
+                },
+              ],
+              "uuid": "0002-000",
             }
         `)
     })
 
     test('default', () => {
         const mocked = uuid as jest.Mock
-        mocked.mockReturnValueOnce('0001-000')
+        mocked.mockReturnValueOnce('0001-000').mockReturnValueOnce('0002-000')
 
         expect($union([$string], { [schema.default]: ['bar'] })).toMatchInlineSnapshot(`
             Object {
-              "union": Array [
-                Object {
-                  Symbol(type): "string",
-                },
-              ],
-              Symbol(type): "union",
-              Symbol(default): Array [
+              "default": Array [
                 "bar",
               ],
-              Symbol(uuid): "0001-000",
+              "type": "union",
+              "union": Array [
+                Object {
+                  "type": "string",
+                  "uuid": "0001-000",
+                },
+              ],
+              "uuid": "0002-000",
             }
         `)
     })
@@ -359,55 +432,61 @@ describe('intersection', () => {
     })
 
     test('expand', () => {
+        const mocked = uuid as jest.Mock
+        mocked.mockReturnValueOnce('0001-000').mockReturnValueOnce('0002-000')
+
         expect($intersection([$string])).toMatchInlineSnapshot(`
             Object {
               "intersection": Array [
                 Object {
-                  Symbol(type): "string",
+                  "type": "string",
+                  "uuid": "0001-000",
                 },
               ],
-              Symbol(type): "intersection",
-              Symbol(uuid): undefined,
+              "type": "intersection",
+              "uuid": "0002-000",
             }
         `)
     })
 
     test('example', () => {
         const mocked = uuid as jest.Mock
-        mocked.mockReturnValueOnce('0001-000')
+        mocked.mockReturnValueOnce('0001-000').mockReturnValueOnce('0002-000')
 
         expect($intersection([$string], { [schema.examples]: ['bar'] })).toMatchInlineSnapshot(`
             Object {
-              "intersection": Array [
-                Object {
-                  Symbol(type): "string",
-                },
-              ],
-              Symbol(type): "intersection",
-              Symbol(example): Array [
+              "example": Array [
                 "bar",
               ],
-              Symbol(uuid): "0001-000",
+              "intersection": Array [
+                Object {
+                  "type": "string",
+                  "uuid": "0001-000",
+                },
+              ],
+              "type": "intersection",
+              "uuid": "0002-000",
             }
         `)
     })
 
     test('default', () => {
         const mocked = uuid as jest.Mock
-        mocked.mockReturnValueOnce('0001-000')
+        mocked.mockReturnValueOnce('0001-000').mockReturnValueOnce('0002-000')
 
         expect($intersection([$string], { [schema.default]: ['bar'] })).toMatchInlineSnapshot(`
             Object {
-              "intersection": Array [
-                Object {
-                  Symbol(type): "string",
-                },
-              ],
-              Symbol(type): "intersection",
-              Symbol(default): Array [
+              "default": Array [
                 "bar",
               ],
-              Symbol(uuid): "0001-000",
+              "intersection": Array [
+                Object {
+                  "type": "string",
+                  "uuid": "0001-000",
+                },
+              ],
+              "type": "intersection",
+              "uuid": "0002-000",
             }
         `)
     })

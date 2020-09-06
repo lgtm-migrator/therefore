@@ -1,6 +1,14 @@
+jest.mock('uuid')
+
 import { $integer } from '~/index'
 
+import { v4 as uuid } from 'uuid'
+
 describe('integer', () => {
+    const mocked = uuid as jest.Mock
+
+    beforeEach(() => mocked.mockReturnValueOnce('0001-000'))
+
     test('function', () => {
         expect($integer).toMatchInlineSnapshot(`[Function]`)
     })
@@ -13,7 +21,8 @@ describe('integer', () => {
         ).toMatchInlineSnapshot(`
             Object {
               "multipleOf": 0.01,
-              Symbol(type): "integer",
+              "type": "integer",
+              "uuid": "0001-000",
             }
         `)
     })
@@ -26,7 +35,8 @@ describe('integer', () => {
         ).toMatchInlineSnapshot(`
             Object {
               "maximum": 100,
-              Symbol(type): "integer",
+              "type": "integer",
+              "uuid": "0001-000",
             }
         `)
     })
@@ -39,7 +49,8 @@ describe('integer', () => {
         ).toMatchInlineSnapshot(`
             Object {
               "exclusiveMaximum": 100,
-              Symbol(type): "integer",
+              "type": "integer",
+              "uuid": "0001-000",
             }
         `)
     })
@@ -52,7 +63,8 @@ describe('integer', () => {
         ).toMatchInlineSnapshot(`
             Object {
               "minimum": 100,
-              Symbol(type): "integer",
+              "type": "integer",
+              "uuid": "0001-000",
             }
         `)
     })
@@ -65,7 +77,8 @@ describe('integer', () => {
         ).toMatchInlineSnapshot(`
             Object {
               "exclusiveMinimum": 100,
-              Symbol(type): "integer",
+              "type": "integer",
+              "uuid": "0001-000",
             }
         `)
     })
@@ -86,7 +99,8 @@ describe('integer', () => {
               "maximum": 100,
               "minimum": 100,
               "multipleOf": 0.01,
-              Symbol(type): "integer",
+              "type": "integer",
+              "uuid": "0001-000",
             }
         `)
     })

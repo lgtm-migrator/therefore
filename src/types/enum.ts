@@ -1,4 +1,4 @@
-import { Json, schema, ThereforeCommon } from '../therefore'
+import { Json, schema, SchemaOptions, ThereforeCommon } from '../therefore'
 import { filterUndefined } from '../util'
 
 import { v4 as uuid } from 'uuid'
@@ -12,7 +12,7 @@ export interface EnumOptions {
 export type EnumType<T extends Json = Json> = EnumOptions & ThereforeCommon<T>
 export const $enum = <T extends Json, U extends Json>(
     values: ReadonlyArray<T> | Record<string, T>,
-    options: Partial<EnumType<U & T>> = {}
+    options: SchemaOptions<EnumType<U & T>, typeof schema.type> = {}
 ): Readonly<EnumType> => {
     const enumDefinition: EnumType = filterUndefined({
         [schema.type]: 'enum',

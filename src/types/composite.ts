@@ -6,7 +6,7 @@ import { $number } from './number'
 import { $string } from './string'
 import { $unknown } from './unknown'
 
-import { Json, schema, ThereforeCommon } from '../therefore'
+import { Json, schema, SchemaOptions, ThereforeCommon } from '../therefore'
 import { filterUndefined } from '../util'
 
 import { v4 as uuid } from 'uuid'
@@ -47,7 +47,7 @@ export interface ObjectOptions<Types = ThereforeTypes | ThereforeTypesExpandable
 }
 export type ObjectType = ObjectOptions<ThereforeTypes> & ThereforeCommon<{ [property: string]: Json }>
 
-export function $object(properties?: ObjectProperties, options: Partial<Omit<ObjectType, 'properties'>> = {}): ObjectType {
+export function $object(properties?: ObjectProperties, options: SchemaOptions<ObjectType, 'properties'> = {}): ObjectType {
     const expanded: ObjectProperties<ThereforeTypes> = Object.fromEntries(
         Object.entries(properties ?? []).map(([k, v]) => (isExpandable(v) ? [k, v()] : [k, v]))
     )
@@ -68,12 +68,14 @@ export interface ArrayOptions<Types = ThereforeTypes | ThereforeTypesExpandable>
     [schema.type]: 'array'
     [schema.uuid]: string
     items: Types
+    minItems?: number
+    maxItems?: number
 }
 export type ArrayType = ArrayOptions<ThereforeTypes> & ThereforeCommon<Json[]>
 
 export function $array(
     items: ThereforeTypes | ThereforeTypesExpandable,
-    options: Partial<Omit<ArrayType, 'items'>> = {}
+    options: SchemaOptions<ArrayType, 'items'> = {}
 ): ArrayType {
     const expanded: ThereforeTypes = isExpandable(items) ? items() : items
     const arrayDefinition: Omit<ArrayType, typeof schema.uuid> = filterUndefined({
@@ -97,7 +99,7 @@ export type DictType = DictOptions & ThereforeCommon<Record<string, Json>>
 
 export function $dict(
     items: ThereforeTypes | ThereforeTypesExpandable,
-    options: Partial<Omit<DictType, 'properties'>> = {}
+    options: SchemaOptions<DictType, 'properties'> = {}
 ): DictType {
     const expanded: ThereforeTypes = isExpandable(items) ? items() : items
     const dictDefinition: Omit<DictType, typeof schema.uuid> = filterUndefined({
@@ -122,7 +124,7 @@ export type TupleType = TupleOptions<ThereforeTypes> & ThereforeCommon<Json[]>
 
 export function $tuple(
     items: (ThereforeTypes | ThereforeTypesExpandable)[] | Record<string, ThereforeTypes | ThereforeTypesExpandable>,
-    options: Partial<Omit<TupleType, 'items' | 'names'>> = {}
+    options: SchemaOptions<TupleType, 'items' | 'names'> = {}
 ): TupleType {
     const expanded: ThereforeTypes[] = (Array.isArray(items) ? items : Object.values(items)).map((v) =>
         isExpandable(v) ? v() : v
@@ -142,19 +144,18 @@ export function $tuple(
 
 export interface RefOptions {
     [schema.type]: '$ref'
-    reference: ObjectType | DictType | EnumType
+    [schema.uuid]: string
+    reference: ThereforeTypes
     name: string
 }
 
-export type RefType = RefOptions & ThereforeCommon<null>
+export type RefType = RefOptions & ThereforeCommon<Json>
 
-export function $ref(
-    reference: Record<string, ObjectType | DictType | EnumType>,
-    options: Partial<RefType> = {}
-): Readonly<RefType> {
+export function $ref(reference: Record<string, ThereforeTypes>, options: SchemaOptions<RefType> = {}): Readonly<RefType> {
     const [name, ref] = Object.entries(reference)[0]
     const refDefinition: RefType = filterUndefined({
         [schema.type]: '$ref',
+        [schema.uuid]: uuid(),
         reference: ref,
         name,
         ...options,
@@ -175,7 +176,7 @@ export type UnionType = UnionOptions & ThereforeCommon<Json>
 
 export function $union(
     union: ReadonlyArray<ThereforeTypes | ThereforeTypesExpandable>,
-    options: Partial<Omit<UnionType, 'union'>> = {}
+    options: SchemaOptions<UnionType, 'union'> = {}
 ): Readonly<UnionType> {
     const expanded: ReadonlyArray<ThereforeTypes> = union.map((v) => (isExpandable(v) ? v() : v))
 
@@ -200,7 +201,7 @@ export type IntersectionType = IntersectionOptions & ThereforeCommon<Json>
 
 export function $intersection(
     intersection: ReadonlyArray<ThereforeTypes | ThereforeTypesExpandable>,
-    options: Partial<Omit<IntersectionType, 'intersection'>> = {}
+    options: SchemaOptions<IntersectionType, 'intersection'> = {}
 ): Readonly<IntersectionType> {
     const expanded: ReadonlyArray<ThereforeTypes> = intersection.map((v) => (isExpandable(v) ? v() : v))
 

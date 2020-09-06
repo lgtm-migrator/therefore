@@ -20,12 +20,17 @@
   "engines": {
     "node": ">=12"
   },
-  "files": ["bin", "dist", "package.json"],
+  "files": [
+    "bin",
+    "dist",
+    "package.json"
+  ],
   "scripts": {
     "build": "webpack --version && webpack",
     "test": "concurrently \"yarn check:types\" \"jest test --maxWorkers=1\"",
     "fix": "yarn lint --fix",
     "lint": "yarn eslint \"{src,test,typing}/**/*.{ts,js}\" --ignore-pattern **/node_modules/* --resolve-plugins-relative-to .",
+    "lint:full": "bash -c \"FULL_LINT=true yarn lint\"",
     "format": "prettier \"{src/*,test/*,typing/*,templates/*,examples/*,}*/*.{ts,js,json}\" --write",
     "release": "semantic-release",
     "release:dry": "yarn release --dry-run",
@@ -55,7 +60,7 @@
     "@types/yargs": "^15.0.5",
     "@zefiros/npm-defaults": "0.2.0-beta.57",
     "@zerollup/ts-transform-paths": "^1.7.18",
-    "ts-node": "^8.10.2",
+    "ts-node": "^9.0.0",
     "typescript": "^4.0.2"
   }
 }

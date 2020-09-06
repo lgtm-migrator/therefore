@@ -1,17 +1,17 @@
-const typeSymbol = Symbol('type')
-const titleSymbol = Symbol('title')
-const idSymbol = Symbol('id')
-const descriptionSymbol = Symbol('description')
+const typeSymbol = 'type' // Symbol('type')
+const titleSymbol = 'title' // Symbol('title')
+const idSymbol = 'id' // Symbol('id')
+const descriptionSymbol = 'description' // Symbol('description')
 
-const defaultSymbol = Symbol('default')
-const optionalSymbol = Symbol('optional')
-const nullableSymbol = Symbol('nullable')
-const examplesSymbol = Symbol('example')
+const defaultSymbol = 'default' // Symbol('default')
+const optionalSymbol = 'optional' // Symbol('optional')
+const nullableSymbol = 'nullable' // Symbol('nullable')
+const examplesSymbol = 'example' // Symbol('example')
 
-const readOnlySymbol = Symbol('readOnly')
-//const writeOnlySymbol = Symbol('readOnly')
+const readonlySymbol = 'readonly' // Symbol('readonly')
+//const writeonlySymbol = ('readonly') // Symbol('readonly')
 
-const uuidSymbol = Symbol('uuid')
+const uuidSymbol = 'uuid' // Symbol('uuid')
 
 export const schema: {
     uuid: typeof uuidSymbol
@@ -25,7 +25,7 @@ export const schema: {
     optional: typeof optionalSymbol
     nullable: typeof nullableSymbol
 
-    readonly: typeof readOnlySymbol
+    readonly: typeof readonlySymbol
 
     examples: typeof examplesSymbol
 } = {
@@ -40,7 +40,7 @@ export const schema: {
     optional: optionalSymbol,
     nullable: nullableSymbol,
 
-    readonly: readOnlySymbol,
+    readonly: readonlySymbol,
 
     examples: examplesSymbol,
 }
@@ -78,3 +78,6 @@ export interface ThereforeCommon<T extends Json = Json> {
 
     [schema.uuid]?: string
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type SchemaOptions<T, K extends keyof any = never> = Partial<Omit<T, typeof schema.type | typeof schema.uuid | K>>

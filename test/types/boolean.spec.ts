@@ -1,7 +1,15 @@
+jest.mock('uuid')
+
 import { $boolean } from '~/index'
 import { schema } from '~/therefore'
 
+import { v4 as uuid } from 'uuid'
+
 describe('boolean', () => {
+    const mocked = uuid as jest.Mock
+
+    beforeEach(() => mocked.mockReturnValueOnce('0001-000'))
+
     test('function', () => {
         expect($boolean).toMatchInlineSnapshot(`[Function]`)
     })
@@ -9,11 +17,12 @@ describe('boolean', () => {
     test('example', () => {
         expect($boolean({ [schema.examples]: [true, false] })).toMatchInlineSnapshot(`
             Object {
-              Symbol(type): "boolean",
-              Symbol(example): Array [
+              "example": Array [
                 true,
                 false,
               ],
+              "type": "boolean",
+              "uuid": "0001-000",
             }
         `)
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -24,8 +33,9 @@ describe('boolean', () => {
     test('default', () => {
         expect($boolean({ [schema.default]: true })).toMatchInlineSnapshot(`
             Object {
-              Symbol(type): "boolean",
-              Symbol(default): true,
+              "default": true,
+              "type": "boolean",
+              "uuid": "0001-000",
             }
         `)
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment

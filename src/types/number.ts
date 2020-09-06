@@ -1,8 +1,11 @@
 import { filterUndefined } from '../util'
-import { schema, ThereforeCommon } from '../therefore'
+import { schema, SchemaOptions, ThereforeCommon } from '../therefore'
+
+import { v4 as uuid } from 'uuid'
 
 export interface NumberOptions {
     [schema.type]: 'number'
+    [schema.uuid]: string
     multipleOf?: number
     maximum?: number
     exclusiveMaximum?: number
@@ -12,9 +15,10 @@ export interface NumberOptions {
 
 export type NumberType = NumberOptions & ThereforeCommon<number>
 
-export const $number = (options: Partial<NumberType> = {}): Readonly<NumberType> => {
+export const $number = (options: SchemaOptions<NumberType> = {}): Readonly<NumberType> => {
     const numberDefinition: NumberType = filterUndefined({
         [schema.type]: 'number',
+        [schema.uuid]: uuid(),
         multipleOf: undefined,
         maximum: undefined,
         exclusiveMaximum: undefined,

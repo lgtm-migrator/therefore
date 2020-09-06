@@ -9,6 +9,14 @@ import CodeBlockWriter from 'code-block-writer'
 export interface TypescriptWalkerContext {
     name: string
     references: TypescriptDefinition['references']
+    exportSymbol?: string
+}
+
+export function escapeProperty(prop: string): string {
+    if (prop.length && /[A-Za-z_$]/.test(prop.charAt(0)) && /^[\w$]+$/.test(prop)) {
+        return prop
+    }
+    return JSON.stringify(prop)
 }
 
 const createWriter = () =>
@@ -49,15 +57,25 @@ export function toLiteral(obj: unknown): string {
 export function toJSDoc<T extends Json>(key: string, obj: ThereforeCommon<T>): string | undefined {
     const docs: string[] = []
     const pad = () => (docs.length > 0 ? docs.push('') : undefined)
-    const decription = obj[schema.description]
-    if (decription) {
-        docs.push(`${decription}`)
+    const decription = obj[schema.description] ?? obj[schema.title]
+    if (decription !== undefined) {
+        docs.push(...decription.split('\n'))
     }
+    const properties: string[] = []
 
     const def = obj[schema.default]
-    if (def) {
+    if (def !== undefined) {
+        properties.push(`@default ${toLiteral(def)}`)
+    }
+    const readonly = obj[schema.readonly]
+    if (readonly !== undefined && readonly) {
+        properties.push(`@readonly`)
+    }
+
+    if (properties.length > 0) {
         pad()
-        docs.push(`@default ${toLiteral(def)}`)
+
+        docs.push(...properties)
     }
 
     const examples = obj[schema.examples]
@@ -71,44 +89,51 @@ export function toJSDoc<T extends Json>(key: string, obj: ThereforeCommon<T>): s
     return docs.length > 0 ? `/**\n * ${docs.join('\n * ')}\n */\n` : undefined
 }
 
-export function optional(n: ThereforeTypes): string {
+export function optional(n: Pick<ThereforeTypes, typeof schema.optional>): string {
     return n[schema.optional] ? '?' : ''
 }
 
-export function readOnly(n: ThereforeTypes): string {
+export function readonly(n: Pick<ThereforeTypes, typeof schema.readonly>): string {
     return n[schema.readonly] ? 'readonly ' : ''
 }
 
 export function toDeclaration(
     obj: ObjectType | DictType,
-    { name, references }: TypescriptWalkerContext
+    { name, references, exportSymbol }: TypescriptWalkerContext
 ): { declaration: string; meta?: string; referenceName: string } {
     const writer = createWriter()
 
-    writer
-        .write(`export const ${name} = `)
-        .block(() => {
-            writer.writeLine(`schema: {{schema}},`)
-            writer.writeLine(
-                `validate: typeof {{schema}} === 'function' ? {{schema}} : new AjvValidator().compile({{schema}}) as {(o: unknown | ${name}): o is ${name};  errors?: null | Array<import("ajv").ErrorObject>},`
-            )
-            writer.writeLine(`is: (o: unknown | ${name}): o is ${name} => ${name}.validate(o) === true,`)
-            writer
-                .write(`assert: (o: unknown | ${name}): o is ${name} => `)
-                .inlineBlock(() => {
-                    writer.write(`if (!${name}.validate(o))`).block(() => {
-                        writer.writeLine(`throw new AjvValidator.ValidationError(${name}.validate.errors ?? [])`)
+    const exportString = exportSymbol ?? ''
+    if (exportString) {
+        writer
+            .write(`export const ${name} = `)
+            .block(() => {
+                writer.writeLine(`schema: {{schema}},`)
+                writer.writeLine(
+                    `validate: typeof {{schema}} === 'function' ? {{schema}} : new AjvValidator().compile({{schema}}) as {(o: unknown | ${name}): o is ${name};  errors?: null | Array<import("ajv").ErrorObject>},`
+                )
+                writer.writeLine(`is: (o: unknown | ${name}): o is ${name} => ${name}.validate(o) === true,`)
+                writer
+                    .write(`assert: (o: unknown | ${name}): o is ${name} => `)
+                    .inlineBlock(() => {
+                        writer.write(`if (!${name}.validate(o))`).block(() => {
+                            writer.writeLine(`throw new AjvValidator.ValidationError(${name}.validate.errors ?? [])`)
+                        })
+                        writer.writeLine('return true')
                     })
-                    writer.writeLine('return true')
-                })
-                .write(',')
-            if (obj[schema.default]) {
-                writer.writeLine(`default: (): ${name} => (${toLiteral(obj[schema.default])}),`)
-            }
-        })
-        .write('\n')
+                    .write(',')
+                if (obj[schema.default]) {
+                    writer.writeLine(`default: (): ${name} => (${toLiteral(obj[schema.default])}),`)
+                }
+            })
+            .write('\n')
+    }
     return {
-        declaration: `export interface ${name} ${walkGraph(obj, typescriptVisitor, references)}\n`,
+        declaration: `${toJSDoc(name, obj) ?? ''}${exportString}interface ${name} ${walkGraph(
+            obj,
+            typescriptVisitor,
+            references
+        )}\n`,
         meta: writer.toString(),
         referenceName: name,
     }
@@ -123,17 +148,18 @@ export const typeDefinitionVisitor: GraphVisitor<
     enum: (obj, context) => {
         const { name } = context
         if (obj.names) {
+            const exportString = context.exportSymbol ?? ''
             const writer = createWriter()
             const names = obj.names
             let referenceName = name
             if (!obj.values.some((v) => typeof v === 'object')) {
-                writer.write(`export enum ${name} `).block(() => {
+                writer.write(`${exportString}enum ${name} `).block(() => {
                     for (let i = 0; i < names.length ?? 0; ++i) {
                         writer.writeLine(`${names[i]} = ${toLiteral(obj.values[i])},`)
                     }
                 })
             } else {
-                writer.write(`export const ${name} = `).block(() => {
+                writer.write(`${exportString}const ${name} = `).block(() => {
                     for (let i = 0; i < names.length ?? 0; ++i) {
                         writer.writeLine(`${names[i]}: ${toLiteral(obj.values[i])} as const,`)
                     }
@@ -145,8 +171,12 @@ export const typeDefinitionVisitor: GraphVisitor<
         }
         return typeDefinitionVisitor._(obj, context)
     },
-    _: (obj, { name, references }) => ({
-        declaration: `export type ${name} = ${walkGraph(obj, typescriptVisitor, references)}\n`,
+    _: (obj, { name, references, exportSymbol }) => ({
+        declaration: `${toJSDoc(name, obj) ?? ''}${exportSymbol ?? ''}type ${name} = ${walkGraph(
+            obj,
+            typescriptVisitor,
+            references
+        )}\n`,
         referenceName: name,
     }),
 }
@@ -165,7 +195,7 @@ export const typescriptVisitor: GraphVisitor<string, TypescriptWalkerContext['re
                 const child = walkGraph(value, typescriptVisitor, references)
                 const jsdoc = toJSDoc(key, value)
                 writer.writeLine(
-                    `${jsdoc ?? ''}${readOnly(value)}${key}${optional(value)}: ${
+                    `${jsdoc ?? ''}${readonly(value)}${escapeProperty(key)}${optional(value)}: ${
                         value[schema.nullable] ? `(${child} | null)` : child
                     }`
                 )
@@ -173,7 +203,20 @@ export const typescriptVisitor: GraphVisitor<string, TypescriptWalkerContext['re
         })
         return writer.toString()
     },
-    array: (obj, references) => `(${walkGraph(obj.items, typescriptVisitor, references)})[]`,
+    array: (obj, references) => {
+        const items = walkGraph(obj.items, typescriptVisitor, references)
+        let constraints = ''
+        const minItems = obj.minItems
+        const maxItems = obj.maxItems
+        if (minItems !== undefined && minItems > 0 && obj.maxItems === undefined) {
+            constraints = ` & [${`${items}, `.repeat(minItems)} ...(${items})[]]`
+        } else if (minItems !== undefined && minItems > 0 && maxItems !== undefined && maxItems >= minItems) {
+            constraints = ` & [${`${items}, `.repeat(minItems)}${`(${items})?, `.repeat(maxItems - minItems)}]`
+        } else if (maxItems !== undefined && maxItems >= 0) {
+            constraints = ` & [${`(${items})?, `.repeat(maxItems)}]`
+        }
+        return `(${items})[]${constraints}`
+    },
     tuple: (obj, references) => {
         const names = obj.names
         // for named tuples
@@ -195,8 +238,11 @@ export const typescriptVisitor: GraphVisitor<string, TypescriptWalkerContext['re
     $ref: (obj, references) => {
         const uuid = obj.reference[schema.uuid]
         if (!references.find((d) => d.uuid === uuid)) {
+            const referenceName = camelCase(obj.name, { pascalCase: true })
             references.push({
+                reference: obj.reference,
                 name: obj.name,
+                referenceName,
                 uuid: uuid,
             })
         }
@@ -205,12 +251,20 @@ export const typescriptVisitor: GraphVisitor<string, TypescriptWalkerContext['re
     _: (obj) => obj[schema.type],
 }
 
-export function toTypescriptDefinition(name: string, obj: ThereforeTypes & { [schema.uuid]: string }): TypescriptDefinition {
+export function toTypescriptDefinition(
+    name: string,
+    obj: ThereforeTypes & { [schema.uuid]: string },
+    exportSymbol = true
+): TypescriptDefinition {
     const references: TypescriptDefinition['references'] = []
 
     const interfaceName = camelCase(name, { pascalCase: true })
 
-    const declaration = walkGraph(obj, typeDefinitionVisitor, { name: interfaceName, references })
+    const declaration = walkGraph(obj, typeDefinitionVisitor, {
+        name: interfaceName,
+        references,
+        exportSymbol: exportSymbol ? 'export ' : '',
+    })
 
     return {
         references,
