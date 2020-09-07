@@ -6,7 +6,7 @@ const descriptionSymbol = 'description' // Symbol('description')
 const defaultSymbol = 'default' // Symbol('default')
 const optionalSymbol = 'optional' // Symbol('optional')
 const nullableSymbol = 'nullable' // Symbol('nullable')
-const examplesSymbol = 'example' // Symbol('example')
+const examplesSymbol = 'examples' // Symbol('example')
 
 const readonlySymbol = 'readonly' // Symbol('readonly')
 //const writeonlySymbol = ('readonly') // Symbol('readonly')
@@ -79,5 +79,25 @@ export interface ThereforeCommon<T extends Json = Json> {
     [schema.uuid]?: string
 }
 
+export const commonOptions = {
+    title: schema.title,
+    id: schema.id,
+    description: schema.description,
+
+    optional: schema.optional,
+    nullable: schema.nullable,
+
+    examples: schema.examples,
+    default: schema.default,
+
+    readonly: schema.readonly,
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type SchemaOptions<T, K extends keyof any = never> = Partial<Omit<T, typeof schema.type | typeof schema.uuid | K>>
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type OptionKeys<T, E extends keyof any = never> = Omit<
+    { [P in keyof T]-?: P },
+    typeof schema.type | typeof schema.uuid | E
+>

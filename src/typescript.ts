@@ -89,12 +89,12 @@ export function toJSDoc<T extends Json>(key: string, obj: ThereforeCommon<T>): s
     return docs.length > 0 ? `/**\n * ${docs.join('\n * ')}\n */\n` : undefined
 }
 
-export function optional(n: Pick<ThereforeTypes, typeof schema.optional>): string {
-    return n[schema.optional] ? '?' : ''
+export function optional(n: Pick<ThereforeTypes, typeof schema.optional> | unknown): string {
+    return (n as Record<typeof schema.optional, unknown>)[schema.optional] === true ? '?' : ''
 }
 
-export function readonly(n: Pick<ThereforeTypes, typeof schema.readonly>): string {
-    return n[schema.readonly] ? 'readonly ' : ''
+export function readonly(n: Pick<ThereforeTypes, typeof schema.readonly> | unknown): string {
+    return (n as Record<typeof schema.readonly, unknown>)[schema.readonly] === true ? 'readonly ' : ''
 }
 
 export function toDeclaration(

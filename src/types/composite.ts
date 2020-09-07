@@ -6,7 +6,7 @@ import { $number } from './number'
 import { $string } from './string'
 import { $unknown } from './unknown'
 
-import { Json, schema, SchemaOptions, ThereforeCommon } from '../therefore'
+import { commonOptions, Json, OptionKeys, schema, SchemaOptions, ThereforeCommon } from '../therefore'
 import { filterUndefined } from '../util'
 
 import { v4 as uuid } from 'uuid'
@@ -30,8 +30,12 @@ export type ThereforeTypes =
     | IntersectionType
     | ReturnType<ThereforeTypesExpandable>
 
-export function isExpandable(v: ThereforeTypesExpandable | ThereforeTypes | undefined): v is ThereforeTypesExpandable {
+export function isExpandable(v: ThereforeTypesExpandable | ThereforeTypes | undefined | unknown): v is ThereforeTypesExpandable {
     return v === $string || v === $number || v === $integer || v === $boolean || v === $null || v === $unknown
+}
+
+export function isShorthand(obj: unknown | ThereforeTypes | { [schema.type]: string }): obj is ThereforeTypes {
+    return (obj as Record<string, unknown>)[schema.type] !== undefined
 }
 
 // #region Objects
@@ -44,21 +48,48 @@ export interface ObjectOptions<Types = ThereforeTypes | ThereforeTypesExpandable
     [schema.type]: 'object'
     [schema.uuid]: string
     properties: ObjectProperties<Types>
+    /** @deprecated */
+    minProperties?: number
+    /** @deprecated */
+    maxProperties?: number
 }
+
 export type ObjectType = ObjectOptions<ThereforeTypes> & ThereforeCommon<{ [property: string]: Json }>
 
-export function $object(properties?: ObjectProperties, options: SchemaOptions<ObjectType, 'properties'> = {}): ObjectType {
-    const expanded: ObjectProperties<ThereforeTypes> = Object.fromEntries(
-        Object.entries(properties ?? []).map(([k, v]) => (isExpandable(v) ? [k, v()] : [k, v]))
+const objectProperties: OptionKeys<ObjectType, 'properties'> = {
+    ...commonOptions,
+    minProperties: 'minProperties',
+    maxProperties: 'maxProperties',
+}
+type ObjectPropertiesArg =
+    | {
+          [K in keyof SchemaOptions<ObjectType, 'properties'>]:
+              | SchemaOptions<ObjectType, 'properties'>[K]
+              | ThereforeTypes
+              | ThereforeTypesExpandable
+      }
+    | { [k: string]: ThereforeTypes | ThereforeTypesExpandable }
+
+function objectFunction(properties?: ObjectPropertiesArg, options: SchemaOptions<ObjectType, 'properties'> = {}): ObjectType {
+    const expanded = Object.entries(properties ?? []).map(([k, v]) => (isExpandable(v) ? ([k, v()] as const) : ([k, v] as const)))
+    const filteredProperties: ObjectProperties<ThereforeTypes> = Object.fromEntries(
+        expanded.filter(([_, v]) => isShorthand(v)) as [string, ThereforeTypes][]
+    )
+    const annotations: SchemaOptions<ObjectType, 'properties'> = Object.fromEntries(
+        expanded.filter(([k, v]) => (objectProperties as Record<string, unknown>)[k] !== undefined && !isShorthand(v))
     )
 
     const objectDefinition: Omit<ObjectType, typeof schema.uuid> = filterUndefined({
         [schema.type]: 'object',
+        ...annotations,
         ...options,
-        properties: expanded,
+        properties: filteredProperties,
     })
     return { ...objectDefinition, [schema.uuid]: uuid() }
 }
+type ObjectInterface = OptionKeys<ObjectType, 'properties'> & typeof objectFunction
+
+export const $object: ObjectInterface = Object.assign(objectFunction, objectProperties)
 
 // #endregion
 
@@ -151,17 +182,35 @@ export interface RefOptions {
 
 export type RefType = RefOptions & ThereforeCommon<Json>
 
-export function $ref(reference: Record<string, ThereforeTypes>, options: SchemaOptions<RefType> = {}): Readonly<RefType> {
-    const [name, ref] = Object.entries(reference)[0]
+const refProperties: OptionKeys<RefType, 'reference' | 'name'> = {
+    ...commonOptions,
+}
+
+function refFunction(
+    reference: SchemaOptions<RefType, 'reference' | 'name'> | Record<string, ThereforeTypes>,
+    options: SchemaOptions<RefType, 'reference' | 'name'> = {}
+): Readonly<RefType> {
+    const entries = Object.entries(reference)
+
+    const filteredReferences = entries.filter(([_, v]) => isShorthand(v)) as [string, ThereforeTypes][]
+    const annotations: SchemaOptions<RefType, 'reference' | 'name'> = Object.fromEntries(
+        entries.filter(([k, v]) => (objectProperties as Record<string, unknown>)[k] !== undefined && !isShorthand(v))
+    )
+
+    const [name, ref] = filteredReferences[0]
     const refDefinition: RefType = filterUndefined({
         [schema.type]: '$ref',
         [schema.uuid]: uuid(),
+        ...annotations,
+        ...options,
         reference: ref,
         name,
-        ...options,
     })
     return refDefinition
 }
+type RefInterface = OptionKeys<RefType, 'reference' | 'name'> & typeof refFunction
+
+export const $ref: RefInterface = Object.assign(refFunction, refProperties)
 
 // #endregion
 

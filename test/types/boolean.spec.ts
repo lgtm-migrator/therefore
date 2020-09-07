@@ -17,7 +17,7 @@ describe('boolean', () => {
     test('example', () => {
         expect($boolean({ [schema.examples]: [true, false] })).toMatchInlineSnapshot(`
             Object {
-              "example": Array [
+              "examples": Array [
                 true,
                 false,
               ],

@@ -51,7 +51,7 @@ describe('object', () => {
 
         expect($object({}, { [schema.examples]: [{ foo: 'bar' }] })).toMatchInlineSnapshot(`
             Object {
-              "example": Array [
+              "examples": Array [
                 Object {
                   "foo": "bar",
                 },
@@ -89,16 +89,15 @@ describe('object', () => {
         const mocked = uuid as jest.Mock
         mocked.mockReturnValueOnce('0001-000')
 
-        const $description = 'description'
         expect(
             $object({
-                [$description]:
+                [$object.description]:
                     'Declares which extensions, apps, and web pages can connect to your extension via runtime.connect and runtime.sendMessage.',
                 ids: $array($string, {
                     description:
                         'The IDs of extensions or apps that are allowed to connect. If left empty or unspecified, no extensions or apps can connect.',
                     minItems: 1,
-                    uniqueItems: true,
+                    //uniqueItems: true,
                 }),
                 matches: $string({
                     description:
@@ -150,7 +149,7 @@ describe('array', () => {
 
         expect($array($string, { [schema.examples]: [['bar']] })).toMatchInlineSnapshot(`
             Object {
-              "example": Array [
+              "examples": Array [
                 Array [
                   "bar",
                 ],
@@ -218,7 +217,7 @@ describe('dict', () => {
 
         expect($dict($string, { [schema.examples]: [{ foo: 'bar' }] })).toMatchInlineSnapshot(`
             Object {
-              "example": Array [
+              "examples": Array [
                 Object {
                   "foo": "bar",
                 },
@@ -288,7 +287,7 @@ describe('tuple', () => {
 
         expect($tuple([$string], { [schema.examples]: [['bar']] })).toMatchInlineSnapshot(`
             Object {
-              "example": Array [
+              "examples": Array [
                 Array [
                   "bar",
                 ],
@@ -389,7 +388,7 @@ describe('union', () => {
 
         expect($union([$string], { [schema.examples]: ['bar'] })).toMatchInlineSnapshot(`
             Object {
-              "example": Array [
+              "examples": Array [
                 "bar",
               ],
               "type": "union",
@@ -455,7 +454,7 @@ describe('intersection', () => {
 
         expect($intersection([$string], { [schema.examples]: ['bar'] })).toMatchInlineSnapshot(`
             Object {
-              "example": Array [
+              "examples": Array [
                 "bar",
               ],
               "intersection": Array [

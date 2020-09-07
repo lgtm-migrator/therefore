@@ -3,10 +3,11 @@ import { toTypescriptDefinition } from './typescript'
 import { toJsonSchema } from './schema'
 import { renderTemplate } from './template'
 import { isDefined } from './util'
-import type {
+import {
     ArrayType,
     DictType,
     IntersectionType,
+    isShorthand,
     ObjectType,
     RefType,
     ThereforeTypes,
@@ -59,11 +60,6 @@ export function isIntersection(obj: ThereforeTypes | { [schema.type]: string }):
     return obj[schema.type] === 'intersection'
 }
 
-export function isShorthand(obj: unknown | ThereforeTypes | { [schema.type]: string }): obj is ThereforeTypes {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
-    return (obj as any)[schema.type] !== undefined
-}
-
 export function isExportable(
     obj: unknown | ThereforeTypes
 ): obj is TupleType | DictType | ObjectType | EnumType | UnionType | IntersectionType {
@@ -93,7 +89,7 @@ export function requireReference(
 
     if (!found) {
         // this is a locally defined variable
-        const tsDefinition = toTypescriptDefinition(ref.name, ref.reference, false) // ?
+        const tsDefinition = toTypescriptDefinition(ref.name, ref.reference, false)
         current.symbols.push({
             name: ref.name,
             tsDefinition: tsDefinition,
@@ -101,7 +97,6 @@ export function requireReference(
 
         for (const ref of tsDefinition.references) {
             // recurse down to referencing references
-            ref // ?
             requireReference(definitions, current, ref)
         }
 
@@ -231,7 +226,7 @@ export async function compileSchemas(
                 return `import ${deps} from '${otherPath.startsWith('.') ? otherPath : `./${otherPath}`}'`
             })
 
-        const references = Object.fromEntries(required.map((r) => [r.uuid, r.reference] as [string, string])) // ?
+        const references = Object.fromEntries(required.map((r) => [r.uuid, r.reference] as [string, string]))
         schemaFiles.push(
             {
                 file: schemaFileName,
