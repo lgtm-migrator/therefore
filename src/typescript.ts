@@ -205,17 +205,16 @@ export const typescriptVisitor: GraphVisitor<string, TypescriptWalkerContext['re
     },
     array: (obj, references) => {
         const items = walkGraph(obj.items, typescriptVisitor, references)
-        let constraints = ''
         const minItems = obj.minItems
         const maxItems = obj.maxItems
         if (minItems !== undefined && minItems > 0 && obj.maxItems === undefined) {
-            constraints = ` & [${`${items}, `.repeat(minItems)} ...(${items})[]]`
+            return `[${`${items}, `.repeat(minItems)} ...(${items})[]]`
         } else if (minItems !== undefined && minItems > 0 && maxItems !== undefined && maxItems >= minItems) {
-            constraints = ` & [${`${items}, `.repeat(minItems)}${`(${items})?, `.repeat(maxItems - minItems)}]`
+            return ` [${`${items}, `.repeat(minItems)}${`(${items})?, `.repeat(maxItems - minItems)}]`
         } else if (maxItems !== undefined && maxItems >= 0) {
-            constraints = ` & [${`(${items})?, `.repeat(maxItems)}]`
+            return ` [${`(${items})?, `.repeat(maxItems)}]`
         }
-        return `(${items})[]${constraints}`
+        return `(${items})[]`
     },
     tuple: (obj, references) => {
         const names = obj.names
