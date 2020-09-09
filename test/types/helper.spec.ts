@@ -1,13 +1,13 @@
 jest.mock('uuid')
 
+import { mockUuid } from '../util'
+
 import { $nullable, $optional, $string } from '~/index'
 
 import { v4 as uuid } from 'uuid'
 
 describe('optional', () => {
-    const mocked = uuid as jest.Mock
-
-    beforeEach(() => mocked.mockReturnValue('0001-000'))
+    beforeEach(() => (uuid as jest.Mock).mockImplementation(mockUuid()))
 
     test('string', () => {
         expect($optional($string)).toMatchInlineSnapshot(`
@@ -21,16 +21,14 @@ describe('optional', () => {
             Object {
               "optional": true,
               "type": "string",
-              "uuid": "0001-000",
+              "uuid": "0002-000",
             }
         `)
     })
 })
 
 describe('$nullable', () => {
-    const mocked = uuid as jest.Mock
-
-    beforeEach(() => mocked.mockReturnValue('0001-000'))
+    beforeEach(() => (uuid as jest.Mock).mockImplementation(mockUuid()))
 
     test('string', () => {
         expect($nullable($string)).toMatchInlineSnapshot(`
@@ -44,7 +42,7 @@ describe('$nullable', () => {
             Object {
               "nullable": true,
               "type": "string",
-              "uuid": "0001-000",
+              "uuid": "0002-000",
             }
         `)
     })

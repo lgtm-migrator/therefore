@@ -1,5 +1,7 @@
 jest.mock('uuid')
 
+import { mockUuid } from './util'
+
 import {
     $array,
     $boolean,
@@ -26,6 +28,7 @@ import {
     toTypescriptDefinition,
     typeDefinitionVisitor,
     typescriptVisitor,
+    TypescriptWalkerContext,
 } from '~/typescript'
 import { schema } from '~/therefore'
 import { walkGraph } from '~/ast'
@@ -33,6 +36,8 @@ import { walkGraph } from '~/ast'
 import { v4 as uuid } from 'uuid'
 
 describe('literals', () => {
+    beforeEach(() => (uuid as jest.Mock).mockImplementation(mockUuid()))
+
     test('object', () => {
         expect(toLiteral({})).toMatchInlineSnapshot(`"{  }"`)
         expect(toLiteral({ foo: 'bar', baz: { boo: 1 }, boo: [123] })).toMatchInlineSnapshot(
@@ -159,50 +164,54 @@ describe('readonly', () => {
 })
 
 describe('typescriptVisitor', () => {
+    beforeEach(() => (uuid as jest.Mock).mockImplementation(mockUuid()))
+
     test('string', () => {
-        expect(walkGraph($string(), typescriptVisitor, [])).toMatchInlineSnapshot(`"string"`)
+        expect(walkGraph($string(), typescriptVisitor, {} as TypescriptWalkerContext)).toMatchInlineSnapshot(`"string"`)
     })
 
     test('number', () => {
-        expect(walkGraph($number(), typescriptVisitor, [])).toMatchInlineSnapshot(`"number"`)
+        expect(walkGraph($number(), typescriptVisitor, {} as TypescriptWalkerContext)).toMatchInlineSnapshot(`"number"`)
     })
 
     test('integer', () => {
-        expect(walkGraph($integer(), typescriptVisitor, [])).toMatchInlineSnapshot(`"number"`)
+        expect(walkGraph($integer(), typescriptVisitor, {} as TypescriptWalkerContext)).toMatchInlineSnapshot(`"number"`)
     })
 
     test('boolean', () => {
-        expect(walkGraph($boolean(), typescriptVisitor, [])).toMatchInlineSnapshot(`"boolean"`)
+        expect(walkGraph($boolean(), typescriptVisitor, {} as TypescriptWalkerContext)).toMatchInlineSnapshot(`"boolean"`)
     })
 
     test('null', () => {
-        expect(walkGraph($null(), typescriptVisitor, [])).toMatchInlineSnapshot(`"null"`)
+        expect(walkGraph($null(), typescriptVisitor, {} as TypescriptWalkerContext)).toMatchInlineSnapshot(`"null"`)
     })
 
     test('unknown', () => {
-        expect(walkGraph($unknown(), typescriptVisitor, [])).toMatchInlineSnapshot(`"unknown"`)
+        expect(walkGraph($unknown(), typescriptVisitor, {} as TypescriptWalkerContext)).toMatchInlineSnapshot(`"unknown"`)
     })
 
     test('enum', () => {
-        expect(walkGraph($enum(['foo', 'bar', { foo: 'bar' }]), typescriptVisitor, [])).toMatchInlineSnapshot(
-            `"'foo' | 'bar' | { foo: 'bar' }"`
-        )
+        expect(
+            walkGraph($enum(['foo', 'bar', { foo: 'bar' }]), typescriptVisitor, {} as TypescriptWalkerContext)
+        ).toMatchInlineSnapshot(`"'foo' | 'bar' | { foo: 'bar' }"`)
     })
 
     test('array', () => {
-        expect(walkGraph($array($string), typescriptVisitor, [])).toMatchInlineSnapshot(`"(string)[]"`)
-        expect(walkGraph($array($enum(['foo', 'bar', { foo: 'bar' }])), typescriptVisitor, [])).toMatchInlineSnapshot(
-            `"('foo' | 'bar' | { foo: 'bar' })[]"`
+        expect(walkGraph($array($string), typescriptVisitor, { locals: {}, references: [], name: '' })).toMatchInlineSnapshot(
+            `"(string)[]"`
         )
-        expect(walkGraph($array($union([$string, $integer])), typescriptVisitor, [])).toMatchInlineSnapshot(
-            `"(string | number)[]"`
-        )
+        expect(
+            walkGraph($array($enum(['foo', 'bar', { foo: 'bar' }])), typescriptVisitor, { locals: {}, references: [], name: '' })
+        ).toMatchInlineSnapshot(`"('foo' | 'bar' | { foo: 'bar' })[]"`)
+        expect(
+            walkGraph($array($union([$string, $integer])), typescriptVisitor, { locals: {}, references: [], name: '' })
+        ).toMatchInlineSnapshot(`"({{0007-000}})[]"`)
     })
 
     test('tuple', () => {
-        expect(walkGraph($tuple([$string, $string, $integer]), typescriptVisitor, [])).toMatchInlineSnapshot(
-            `"[string, string, number]"`
-        )
+        expect(
+            walkGraph($tuple([$string, $string, $integer]), typescriptVisitor, {} as TypescriptWalkerContext)
+        ).toMatchInlineSnapshot(`"[string, string, number]"`)
     })
 
     test('named tuple', () => {
@@ -213,7 +222,7 @@ describe('typescriptVisitor', () => {
                     boo: $integer,
                 }),
                 typescriptVisitor,
-                []
+                {} as TypescriptWalkerContext
             )
         ).toMatchInlineSnapshot(`"[foo: string, boo: number]"`)
         expect(
@@ -224,13 +233,13 @@ describe('typescriptVisitor', () => {
                     z: $number,
                 }),
                 typescriptVisitor,
-                []
+                {} as TypescriptWalkerContext
             )
         ).toMatchInlineSnapshot(`"[x: number, y: number, z: number]"`)
     })
 
     test('dict', () => {
-        expect(walkGraph($dict($string), typescriptVisitor, [])).toMatchInlineSnapshot(`
+        expect(walkGraph($dict($string), typescriptVisitor, {} as TypescriptWalkerContext)).toMatchInlineSnapshot(`
             "{
                 [k: string]: ( string ) | undefined
             }"
@@ -238,13 +247,22 @@ describe('typescriptVisitor', () => {
     })
 
     test('ref', () => {
-        const mocked = uuid as jest.Mock
-        mocked.mockReturnValueOnce('0001-000').mockReturnValueOnce('0002-000')
-
         const foo = $dict($string)
-        expect(walkGraph($ref({ foo }), typescriptVisitor, [])).toMatchInlineSnapshot(`"{{0002-000}}"`)
+        expect(
+            walkGraph($ref({ foo }), typescriptVisitor, {
+                references: [],
+                locals: {},
+                name: '',
+            } as TypescriptWalkerContext)
+        ).toMatchInlineSnapshot(`"{{0002-000}}"`)
         // test the stable uuid referencing
-        expect(walkGraph($union([$ref({ foo }), $dict($ref({ foo }))]), typescriptVisitor, [])).toMatchInlineSnapshot(`
+        expect(
+            walkGraph($union([$ref({ foo }), $dict($ref({ foo }))]), typescriptVisitor, {
+                references: [],
+                locals: {},
+                name: '',
+            } as TypescriptWalkerContext)
+        ).toMatchInlineSnapshot(`
             "{{0002-000}} | {
                 [k: string]: ( {{0002-000}} ) | undefined
             }"
@@ -252,31 +270,44 @@ describe('typescriptVisitor', () => {
     })
 
     test('union', () => {
-        expect(walkGraph($union([$string]), typescriptVisitor, [])).toMatchInlineSnapshot(`"string"`)
-        expect(walkGraph($union([$string, $string, $integer]), typescriptVisitor, [])).toMatchInlineSnapshot(
-            `"string | string | number"`
-        )
+        expect(walkGraph($union([$string]), typescriptVisitor, {} as TypescriptWalkerContext)).toMatchInlineSnapshot(`"string"`)
+        expect(
+            walkGraph($union([$string, $string, $integer]), typescriptVisitor, {} as TypescriptWalkerContext)
+        ).toMatchInlineSnapshot(`"string | string | number"`)
     })
 
     test('intersection', () => {
-        expect(walkGraph($intersection([$string]), typescriptVisitor, [])).toMatchInlineSnapshot(`"(string)"`)
-        expect(walkGraph($intersection([$string, $integer]), typescriptVisitor, [])).toMatchInlineSnapshot(`"(string & number)"`)
+        expect(walkGraph($intersection([$string]), typescriptVisitor, {} as TypescriptWalkerContext)).toMatchInlineSnapshot(
+            `"(string)"`
+        )
+        expect(
+            walkGraph($intersection([$string, $integer]), typescriptVisitor, {} as TypescriptWalkerContext)
+        ).toMatchInlineSnapshot(`"(string & number)"`)
     })
 
     test('union & intersection', () => {
         expect(
-            walkGraph($union([$string, $intersection([$string, $integer]), $integer]), typescriptVisitor, [])
+            walkGraph(
+                $union([$string, $intersection([$string, $integer]), $integer]),
+                typescriptVisitor,
+                {} as TypescriptWalkerContext
+            )
         ).toMatchInlineSnapshot(`"string | (string & number) | number"`)
     })
 
     test('object', () => {
-        expect(walkGraph($object({ foo: $string }), typescriptVisitor, [])).toMatchInlineSnapshot(`
+        expect(walkGraph($object({ foo: $string }), typescriptVisitor, {} as TypescriptWalkerContext)).toMatchInlineSnapshot(`
             "{
                 foo: string
             }"
         `)
-        expect(walkGraph($object({ foo: $string, bar: $nullable($integer), baz: $optional($integer) }), typescriptVisitor, []))
-            .toMatchInlineSnapshot(`
+        expect(
+            walkGraph(
+                $object({ foo: $string, bar: $nullable($integer), baz: $optional($integer) }),
+                typescriptVisitor,
+                {} as TypescriptWalkerContext
+            )
+        ).toMatchInlineSnapshot(`
             "{
                 foo: string
                 bar: (number | null)
@@ -284,7 +315,11 @@ describe('typescriptVisitor', () => {
             }"
         `)
         expect(
-            walkGraph($object({ foo: $string, bar: $string({ [schema.description]: 'fooscription' }) }), typescriptVisitor, [])
+            walkGraph(
+                $object({ foo: $string, bar: $string({ [schema.description]: 'fooscription' }) }),
+                typescriptVisitor,
+                {} as TypescriptWalkerContext
+            )
         ).toMatchInlineSnapshot(`
             "{
                 foo: string
@@ -298,7 +333,7 @@ describe('typescriptVisitor', () => {
             walkGraph(
                 $object({ foo: $string, bar: $string({ [schema.description]: 'fooscription', [schema.readonly]: true }) }),
                 typescriptVisitor,
-                []
+                {} as TypescriptWalkerContext
             )
         ).toMatchInlineSnapshot(`
             "{
@@ -315,8 +350,10 @@ describe('typescriptVisitor', () => {
 })
 
 describe('toTypeDefinition', () => {
+    beforeEach(() => (uuid as jest.Mock).mockImplementation(mockUuid()))
+
     test('string', () => {
-        expect(walkGraph($string(), typeDefinitionVisitor, { references: [], name: 'Foo' })).toMatchInlineSnapshot(`
+        expect(walkGraph($string(), typeDefinitionVisitor, { references: [], name: 'Foo', locals: {} })).toMatchInlineSnapshot(`
             Object {
               "declaration": "type Foo = string
             ",
@@ -326,7 +363,7 @@ describe('toTypeDefinition', () => {
     })
 
     test('number', () => {
-        expect(walkGraph($number(), typeDefinitionVisitor, { references: [], name: 'Foo' })).toMatchInlineSnapshot(`
+        expect(walkGraph($number(), typeDefinitionVisitor, { references: [], name: 'Foo', locals: {} })).toMatchInlineSnapshot(`
             Object {
               "declaration": "type Foo = number
             ",
@@ -336,7 +373,7 @@ describe('toTypeDefinition', () => {
     })
 
     test('integer', () => {
-        expect(walkGraph($integer(), typeDefinitionVisitor, { references: [], name: 'Foo' })).toMatchInlineSnapshot(`
+        expect(walkGraph($integer(), typeDefinitionVisitor, { references: [], name: 'Foo', locals: {} })).toMatchInlineSnapshot(`
             Object {
               "declaration": "type Foo = number
             ",
@@ -346,7 +383,7 @@ describe('toTypeDefinition', () => {
     })
 
     test('boolean', () => {
-        expect(walkGraph($boolean(), typeDefinitionVisitor, { references: [], name: 'Foo' })).toMatchInlineSnapshot(`
+        expect(walkGraph($boolean(), typeDefinitionVisitor, { references: [], name: 'Foo', locals: {} })).toMatchInlineSnapshot(`
             Object {
               "declaration": "type Foo = boolean
             ",
@@ -356,7 +393,7 @@ describe('toTypeDefinition', () => {
     })
 
     test('null', () => {
-        expect(walkGraph($null(), typeDefinitionVisitor, { references: [], name: 'Foo' })).toMatchInlineSnapshot(`
+        expect(walkGraph($null(), typeDefinitionVisitor, { references: [], name: 'Foo', locals: {} })).toMatchInlineSnapshot(`
             Object {
               "declaration": "type Foo = null
             ",
@@ -366,7 +403,7 @@ describe('toTypeDefinition', () => {
     })
 
     test('unknown', () => {
-        expect(walkGraph($unknown(), typeDefinitionVisitor, { references: [], name: 'Foo' })).toMatchInlineSnapshot(`
+        expect(walkGraph($unknown(), typeDefinitionVisitor, { references: [], name: 'Foo', locals: {} })).toMatchInlineSnapshot(`
             Object {
               "declaration": "type Foo = unknown
             ",
@@ -376,16 +413,22 @@ describe('toTypeDefinition', () => {
     })
 
     test('enum', () => {
-        expect(walkGraph($enum(['foo', 'bar', { foo: 'bar' }]), typeDefinitionVisitor, { references: [], name: 'Foo' }))
-            .toMatchInlineSnapshot(`
+        expect(
+            walkGraph($enum(['foo', 'bar', { foo: 'bar' }]), typeDefinitionVisitor, { references: [], name: 'Foo', locals: {} })
+        ).toMatchInlineSnapshot(`
             Object {
               "declaration": "type Foo = 'foo' | 'bar' | { foo: 'bar' }
             ",
               "referenceName": "Foo",
             }
         `)
-        expect(walkGraph($enum({ foo: 'bar', bar: 1, baz: true }), typeDefinitionVisitor, { references: [], name: 'Foo' }))
-            .toMatchInlineSnapshot(`
+        expect(
+            walkGraph($enum({ foo: 'bar', bar: 1, baz: true }), typeDefinitionVisitor, {
+                references: [],
+                name: 'Foo',
+                locals: {},
+            })
+        ).toMatchInlineSnapshot(`
             Object {
               "declaration": "enum Foo {
                 foo = 'bar',
@@ -397,8 +440,9 @@ describe('toTypeDefinition', () => {
               "referenceName": "Foo",
             }
         `)
-        expect(walkGraph($enum({ foo: 'bar', bar: [1, 2, 3] }), typeDefinitionVisitor, { references: [], name: 'Foo' }))
-            .toMatchInlineSnapshot(`
+        expect(
+            walkGraph($enum({ foo: 'bar', bar: [1, 2, 3] }), typeDefinitionVisitor, { references: [], name: 'Foo', locals: {} })
+        ).toMatchInlineSnapshot(`
             Object {
               "declaration": "const Foo = {
                 foo: 'bar' as const,
@@ -412,25 +456,31 @@ describe('toTypeDefinition', () => {
     })
 
     test('array', () => {
-        expect(walkGraph($array($string), typeDefinitionVisitor, { references: [], name: 'Foo' })).toMatchInlineSnapshot(`
+        expect(walkGraph($array($string), typeDefinitionVisitor, { references: [], name: 'Foo', locals: {} }))
+            .toMatchInlineSnapshot(`
             Object {
               "declaration": "type Foo = (string)[]
             ",
               "referenceName": "Foo",
             }
         `)
-        expect(walkGraph($array($enum(['foo', 'bar', { foo: 'bar' }])), typeDefinitionVisitor, { references: [], name: 'Foo' }))
-            .toMatchInlineSnapshot(`
+        expect(
+            walkGraph($array($enum(['foo', 'bar', { foo: 'bar' }])), typeDefinitionVisitor, {
+                references: [],
+                name: 'Foo',
+                locals: {},
+            })
+        ).toMatchInlineSnapshot(`
             Object {
               "declaration": "type Foo = ('foo' | 'bar' | { foo: 'bar' })[]
             ",
               "referenceName": "Foo",
             }
         `)
-        expect(walkGraph($array($union([$string, $integer])), typeDefinitionVisitor, { references: [], name: 'Foo' }))
+        expect(walkGraph($array($union([$string, $integer])), typeDefinitionVisitor, { references: [], name: 'Foo', locals: {} }))
             .toMatchInlineSnapshot(`
             Object {
-              "declaration": "type Foo = (string | number)[]
+              "declaration": "type Foo = ({{0007-000}})[]
             ",
               "referenceName": "Foo",
             }
@@ -438,8 +488,9 @@ describe('toTypeDefinition', () => {
     })
 
     test('tuple', () => {
-        expect(walkGraph($tuple([$string, $string, $integer]), typeDefinitionVisitor, { references: [], name: 'Foo' }))
-            .toMatchInlineSnapshot(`
+        expect(
+            walkGraph($tuple([$string, $string, $integer]), typeDefinitionVisitor, { references: [], name: 'Foo', locals: {} })
+        ).toMatchInlineSnapshot(`
             Object {
               "declaration": "type Foo = [string, string, number]
             ",
@@ -456,7 +507,7 @@ describe('toTypeDefinition', () => {
                     boo: $integer,
                 }),
                 typeDefinitionVisitor,
-                { references: [], name: 'Foo' }
+                { references: [], name: 'Foo', locals: {} }
             )
         ).toMatchInlineSnapshot(`
             Object {
@@ -473,7 +524,7 @@ describe('toTypeDefinition', () => {
                     z: $number,
                 }),
                 typeDefinitionVisitor,
-                { references: [], name: 'Foo' }
+                { references: [], name: 'Foo', locals: {} }
             )
         ).toMatchInlineSnapshot(`
             Object {
@@ -485,24 +536,23 @@ describe('toTypeDefinition', () => {
     })
 
     test('dict', () => {
-        expect(walkGraph($dict($string), typeDefinitionVisitor, { references: [], name: 'Foo' })).toMatchInlineSnapshot(`
+        expect(walkGraph($dict($string), typeDefinitionVisitor, { references: [], name: 'Foo', locals: {} }))
+            .toMatchInlineSnapshot(`
             Object {
               "declaration": "interface Foo {
                 [k: string]: ( string ) | undefined
             }
             ",
-              "meta": "",
+              "meta": undefined,
               "referenceName": "Foo",
             }
         `)
     })
 
     test('ref', () => {
-        const mocked = uuid as jest.Mock
-        mocked.mockReturnValueOnce('0001-000').mockReturnValueOnce('0002-000')
-
         const foo = $dict($string)
-        expect(walkGraph($ref({ foo }), typeDefinitionVisitor, { references: [], name: 'Foo' })).toMatchInlineSnapshot(`
+        expect(walkGraph($ref({ foo }), typeDefinitionVisitor, { references: [], name: 'Foo', locals: {} }))
+            .toMatchInlineSnapshot(`
             Object {
               "declaration": "type Foo = {{0002-000}}
             ",
@@ -510,8 +560,13 @@ describe('toTypeDefinition', () => {
             }
         `)
         // test the stable uuid referencing
-        expect(walkGraph($union([$ref({ foo }), $dict($ref({ foo }))]), typeDefinitionVisitor, { references: [], name: 'Foo' }))
-            .toMatchInlineSnapshot(`
+        expect(
+            walkGraph($union([$ref({ foo }), $dict($ref({ foo }))]), typeDefinitionVisitor, {
+                references: [],
+                name: 'Foo',
+                locals: {},
+            })
+        ).toMatchInlineSnapshot(`
             Object {
               "declaration": "type Foo = {{0002-000}} | {
                 [k: string]: ( {{0002-000}} ) | undefined
@@ -523,15 +578,17 @@ describe('toTypeDefinition', () => {
     })
 
     test('union', () => {
-        expect(walkGraph($union([$string]), typeDefinitionVisitor, { references: [], name: 'Foo' })).toMatchInlineSnapshot(`
+        expect(walkGraph($union([$string]), typeDefinitionVisitor, { references: [], name: 'Foo', locals: {} }))
+            .toMatchInlineSnapshot(`
             Object {
               "declaration": "type Foo = string
             ",
               "referenceName": "Foo",
             }
         `)
-        expect(walkGraph($union([$string, $string, $integer]), typeDefinitionVisitor, { references: [], name: 'Foo' }))
-            .toMatchInlineSnapshot(`
+        expect(
+            walkGraph($union([$string, $string, $integer]), typeDefinitionVisitor, { references: [], name: 'Foo', locals: {} })
+        ).toMatchInlineSnapshot(`
             Object {
               "declaration": "type Foo = string | string | number
             ",
@@ -541,7 +598,7 @@ describe('toTypeDefinition', () => {
     })
 
     test('intersection', () => {
-        expect(walkGraph($intersection([$string]), typeDefinitionVisitor, { references: [], name: 'Foo' }))
+        expect(walkGraph($intersection([$string]), typeDefinitionVisitor, { references: [], name: 'Foo', locals: {} }))
             .toMatchInlineSnapshot(`
             Object {
               "declaration": "type Foo = (string)
@@ -549,7 +606,7 @@ describe('toTypeDefinition', () => {
               "referenceName": "Foo",
             }
         `)
-        expect(walkGraph($intersection([$string, $integer]), typeDefinitionVisitor, { references: [], name: 'Foo' }))
+        expect(walkGraph($intersection([$string, $integer]), typeDefinitionVisitor, { references: [], name: 'Foo', locals: {} }))
             .toMatchInlineSnapshot(`
             Object {
               "declaration": "type Foo = (string & number)
@@ -564,6 +621,7 @@ describe('toTypeDefinition', () => {
             walkGraph($union([$string, $intersection([$string, $integer]), $integer]), typeDefinitionVisitor, {
                 references: [],
                 name: 'Foo',
+                locals: {},
             })
         ).toMatchInlineSnapshot(`
             Object {
@@ -575,14 +633,14 @@ describe('toTypeDefinition', () => {
     })
 
     test('object', () => {
-        expect(walkGraph($object({ foo: $string }), typeDefinitionVisitor, { references: [], name: 'Foo' }))
+        expect(walkGraph($object({ foo: $string }), typeDefinitionVisitor, { references: [], name: 'Foo', locals: {} }))
             .toMatchInlineSnapshot(`
             Object {
               "declaration": "interface Foo {
                 foo: string
             }
             ",
-              "meta": "",
+              "meta": undefined,
               "referenceName": "Foo",
             }
         `)
@@ -590,6 +648,7 @@ describe('toTypeDefinition', () => {
             walkGraph($object({ foo: $string, bar: $nullable($integer), baz: $optional($integer) }), typeDefinitionVisitor, {
                 references: [],
                 name: 'Foo',
+                locals: {},
             })
         ).toMatchInlineSnapshot(`
             Object {
@@ -599,7 +658,7 @@ describe('toTypeDefinition', () => {
                 baz?: number
             }
             ",
-              "meta": "",
+              "meta": undefined,
               "referenceName": "Foo",
             }
         `)
@@ -607,6 +666,7 @@ describe('toTypeDefinition', () => {
             walkGraph($object({ foo: $string, bar: $string({ [schema.description]: 'fooscription' }) }), typeDefinitionVisitor, {
                 references: [],
                 name: 'Foo',
+                locals: {},
             })
         ).toMatchInlineSnapshot(`
             Object {
@@ -618,7 +678,7 @@ describe('toTypeDefinition', () => {
                 bar: string
             }
             ",
-              "meta": "",
+              "meta": undefined,
               "referenceName": "Foo",
             }
         `)
@@ -635,6 +695,7 @@ describe('toTypeDefinition', () => {
                 {
                     references: [],
                     name: 'Foo',
+                    locals: {},
                 }
             )
         ).toMatchInlineSnapshot(`
@@ -650,7 +711,7 @@ describe('toTypeDefinition', () => {
                 bar: string
             }
             ",
-              "meta": "",
+              "meta": undefined,
               "referenceName": "Foo",
             }
         `)
@@ -658,6 +719,8 @@ describe('toTypeDefinition', () => {
 })
 
 describe('toTypescriptDefinition', () => {
+    beforeEach(() => (uuid as jest.Mock).mockImplementation(mockUuid()))
+
     // test('string', () => {
     //     expect(toTypescriptDefinition('foo', $string()).toMatchInlineSnapshot(`
     //         Object {
@@ -772,11 +835,12 @@ describe('toTypescriptDefinition', () => {
               "declaration": "export type Foo = (string)[]
             ",
               "interfaceName": "Foo",
+              "locals": Object {},
               "meta": undefined,
               "referenceName": "Foo",
               "references": Array [],
               "symbolName": "foo",
-              "uuid": undefined,
+              "uuid": "0002-000",
             }
         `)
         expect(toTypescriptDefinition('foo', $array($enum(['foo', 'bar', { foo: 'bar' }])))).toMatchInlineSnapshot(`
@@ -784,23 +848,57 @@ describe('toTypescriptDefinition', () => {
               "declaration": "export type Foo = ('foo' | 'bar' | { foo: 'bar' })[]
             ",
               "interfaceName": "Foo",
+              "locals": Object {},
               "meta": undefined,
               "referenceName": "Foo",
               "references": Array [],
               "symbolName": "foo",
-              "uuid": undefined,
+              "uuid": "0004-000",
             }
         `)
         expect(toTypescriptDefinition('foo', $array($union([$string, $integer])))).toMatchInlineSnapshot(`
             Object {
-              "declaration": "export type Foo = (string | number)[]
+              "declaration": "export type Foo = ({{0007-000}})[]
             ",
               "interfaceName": "Foo",
+              "locals": Object {
+                "0007-000": Object {
+                  "declaration": "type FooArray = string | number
+            ",
+                  "interfaceName": "FooArray",
+                  "locals": [Circular],
+                  "meta": undefined,
+                  "referenceName": "FooArray",
+                  "references": Array [],
+                  "symbolName": "FooArray",
+                  "uuid": "0007-000",
+                },
+              },
               "meta": undefined,
               "referenceName": "Foo",
-              "references": Array [],
+              "references": Array [
+                Object {
+                  "name": "undefined",
+                  "reference": Object {
+                    "type": "union",
+                    "union": Array [
+                      Object {
+                        "type": "string",
+                        "uuid": "0005-000",
+                      },
+                      Object {
+                        "type": "integer",
+                        "uuid": "0006-000",
+                      },
+                    ],
+                    "uuid": "0007-000",
+                  },
+                  "referenceName": "Undefined",
+                  "uuid": "0007-000",
+                },
+              ],
               "symbolName": "foo",
-              "uuid": undefined,
+              "uuid": "0008-000",
             }
         `)
     })
@@ -811,11 +909,12 @@ describe('toTypescriptDefinition', () => {
               "declaration": "export type Foo = [string, string, number]
             ",
               "interfaceName": "Foo",
+              "locals": Object {},
               "meta": undefined,
               "referenceName": "Foo",
               "references": Array [],
               "symbolName": "foo",
-              "uuid": undefined,
+              "uuid": "0004-000",
             }
         `)
     })
@@ -834,11 +933,12 @@ describe('toTypescriptDefinition', () => {
               "declaration": "export type Foo = [foo: string, boo: number]
             ",
               "interfaceName": "Foo",
+              "locals": Object {},
               "meta": undefined,
               "referenceName": "Foo",
               "references": Array [],
               "symbolName": "foo",
-              "uuid": undefined,
+              "uuid": "0003-000",
             }
         `)
         expect(
@@ -855,11 +955,12 @@ describe('toTypescriptDefinition', () => {
               "declaration": "export type Foo = [x: number, y: number, z: number]
             ",
               "interfaceName": "Foo",
+              "locals": Object {},
               "meta": undefined,
               "referenceName": "Foo",
               "references": Array [],
               "symbolName": "foo",
-              "uuid": undefined,
+              "uuid": "0007-000",
             }
         `)
     })
@@ -872,6 +973,7 @@ describe('toTypescriptDefinition', () => {
             }
             ",
               "interfaceName": "Foo",
+              "locals": Object {},
               "meta": "export const Foo = {
                 schema: {{schema}},
                 validate: typeof {{schema}} === 'function' ? {{schema}} : new AjvValidator().compile({{schema}}) as {(o: unknown | Foo): o is Foo;  errors?: null | Array<import(\\"ajv\\").ErrorObject>},
@@ -888,15 +990,12 @@ describe('toTypescriptDefinition', () => {
               "referenceName": "Foo",
               "references": Array [],
               "symbolName": "foo",
-              "uuid": undefined,
+              "uuid": "0002-000",
             }
         `)
     })
 
     test('ref', () => {
-        const mocked = uuid as jest.Mock
-        mocked.mockReturnValueOnce('0001-000').mockReturnValueOnce('0002-000')
-
         const foo = $dict($string)
         expect(toTypescriptDefinition('foo', $object({ bar: $ref({ foo }) }))).toMatchInlineSnapshot(`
             Object {
@@ -905,6 +1004,7 @@ describe('toTypescriptDefinition', () => {
             }
             ",
               "interfaceName": "Foo",
+              "locals": Object {},
               "meta": "export const Foo = {
                 schema: {{schema}},
                 validate: typeof {{schema}} === 'function' ? {{schema}} : new AjvValidator().compile({{schema}}) as {(o: unknown | Foo): o is Foo;  errors?: null | Array<import(\\"ajv\\").ErrorObject>},
@@ -935,7 +1035,7 @@ describe('toTypescriptDefinition', () => {
                 },
               ],
               "symbolName": "foo",
-              "uuid": undefined,
+              "uuid": "0004-000",
             }
         `)
         // expect(toTypescriptDefinition('foo', $ref({ foo }))).toMatchInlineSnapshot(`
@@ -1069,6 +1169,7 @@ describe('toTypescriptDefinition', () => {
             }
             ",
               "interfaceName": "Foo",
+              "locals": Object {},
               "meta": "export const Foo = {
                 schema: {{schema}},
                 validate: typeof {{schema}} === 'function' ? {{schema}} : new AjvValidator().compile({{schema}}) as {(o: unknown | Foo): o is Foo;  errors?: null | Array<import(\\"ajv\\").ErrorObject>},
@@ -1085,7 +1186,7 @@ describe('toTypescriptDefinition', () => {
               "referenceName": "Foo",
               "references": Array [],
               "symbolName": "foo",
-              "uuid": undefined,
+              "uuid": "0002-000",
             }
         `)
         expect(toTypescriptDefinition('foo', $object({ foo: $string, bar: $nullable($integer), baz: $optional($integer) })))
@@ -1098,6 +1199,7 @@ describe('toTypescriptDefinition', () => {
             }
             ",
               "interfaceName": "Foo",
+              "locals": Object {},
               "meta": "export const Foo = {
                 schema: {{schema}},
                 validate: typeof {{schema}} === 'function' ? {{schema}} : new AjvValidator().compile({{schema}}) as {(o: unknown | Foo): o is Foo;  errors?: null | Array<import(\\"ajv\\").ErrorObject>},
@@ -1114,7 +1216,7 @@ describe('toTypescriptDefinition', () => {
               "referenceName": "Foo",
               "references": Array [],
               "symbolName": "foo",
-              "uuid": undefined,
+              "uuid": "0006-000",
             }
         `)
         expect(toTypescriptDefinition('foo', $object({ foo: $string, bar: $string({ [schema.description]: 'fooscription' }) })))
@@ -1129,6 +1231,7 @@ describe('toTypescriptDefinition', () => {
             }
             ",
               "interfaceName": "Foo",
+              "locals": Object {},
               "meta": "export const Foo = {
                 schema: {{schema}},
                 validate: typeof {{schema}} === 'function' ? {{schema}} : new AjvValidator().compile({{schema}}) as {(o: unknown | Foo): o is Foo;  errors?: null | Array<import(\\"ajv\\").ErrorObject>},
@@ -1145,7 +1248,7 @@ describe('toTypescriptDefinition', () => {
               "referenceName": "Foo",
               "references": Array [],
               "symbolName": "foo",
-              "uuid": undefined,
+              "uuid": "0009-000",
             }
         `)
     })

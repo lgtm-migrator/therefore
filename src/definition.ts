@@ -31,6 +31,7 @@ export interface TypescriptDefinition {
     referenceName: string
     declaration: string
     meta?: string
+    locals?: Record<string, TypescriptDefinition | undefined>
 }
 
 export interface JsonSchemaValidator {

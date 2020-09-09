@@ -1,5 +1,7 @@
 jest.mock('uuid')
 
+import { mockUuid } from './util'
+
 import {
     $array,
     $boolean,
@@ -100,6 +102,8 @@ describe('annotate', () => {
 })
 
 describe('toTypeDefinition', () => {
+    beforeEach(() => (uuid as jest.Mock).mockImplementation(mockUuid()))
+
     test('string', () => {
         expect(walkGraph($string(), jsonSchemaVisitor, { references: {}, definitions: {} })).toMatchInlineSnapshot(`
             Object {
@@ -315,9 +319,6 @@ describe('toTypeDefinition', () => {
     })
 
     test('ref', () => {
-        const mocked = uuid as jest.Mock
-        mocked.mockReturnValueOnce('0001-000').mockReturnValueOnce('0002-000')
-
         const foo = $dict($string)
         expect(walkGraph($ref({ foo }), jsonSchemaVisitor, { references: {}, definitions: {} })).toMatchInlineSnapshot(`
             Object {
@@ -565,6 +566,8 @@ describe('toTypeDefinition', () => {
 })
 
 describe('toJsonSchema', () => {
+    beforeEach(() => (uuid as jest.Mock).mockImplementation(mockUuid()))
+
     test('simple', () => {
         expect(toJsonSchema($string())).toMatchInlineSnapshot(`
                       Object {
@@ -616,9 +619,6 @@ describe('toJsonSchema', () => {
     })
 
     test('ref', () => {
-        const mocked = uuid as jest.Mock
-        mocked.mockReturnValueOnce('0001-000').mockReturnValueOnce('0002-000')
-
         const foo = $dict($string)
         expect(toJsonSchema($union([$ref({ foo }), $dict($nullable($ref({ foo })))]))).toMatchInlineSnapshot(`
             Object {

@@ -1,7 +1,8 @@
 import { TypescriptDefinition } from './definition'
 import { Json, schema, ThereforeCommon } from './therefore'
-import { DictType, ObjectType, ThereforeTypes } from './types/composite'
+import { $ref, DictType, ObjectType, ThereforeTypes } from './types/composite'
 import { GraphVisitor, walkGraph } from './ast'
+import { isEnum, isIntersection, isObject, isUnion } from './cli'
 
 import camelCase from 'camelcase'
 import CodeBlockWriter from 'code-block-writer'
@@ -9,7 +10,9 @@ import CodeBlockWriter from 'code-block-writer'
 export interface TypescriptWalkerContext {
     name: string
     references: TypescriptDefinition['references']
+    locals: NonNullable<TypescriptDefinition['locals']>
     exportSymbol?: string
+    property?: string
 }
 
 export function escapeProperty(prop: string): string {
@@ -99,8 +102,9 @@ export function readonly(n: Pick<ThereforeTypes, typeof schema.readonly> | unkno
 
 export function toDeclaration(
     obj: ObjectType | DictType,
-    { name, references, exportSymbol }: TypescriptWalkerContext
+    context: TypescriptWalkerContext
 ): { declaration: string; meta?: string; referenceName: string } {
+    const { name, exportSymbol } = context
     const writer = createWriter()
 
     const exportString = exportSymbol ?? ''
@@ -132,9 +136,9 @@ export function toDeclaration(
         declaration: `${toJSDoc(name, obj) ?? ''}${exportString}interface ${name} ${walkGraph(
             obj,
             typescriptVisitor,
-            references
+            context
         )}\n`,
-        meta: writer.toString(),
+        meta: exportString ? writer.toString() : undefined,
         referenceName: name,
     }
 }
@@ -171,28 +175,28 @@ export const typeDefinitionVisitor: GraphVisitor<
         }
         return typeDefinitionVisitor._(obj, context)
     },
-    _: (obj, { name, references, exportSymbol }) => ({
-        declaration: `${toJSDoc(name, obj) ?? ''}${exportSymbol ?? ''}type ${name} = ${walkGraph(
-            obj,
-            typescriptVisitor,
-            references
-        )}\n`,
+    _: (obj, { name, references, locals, exportSymbol }) => ({
+        declaration: `${toJSDoc(name, obj) ?? ''}${exportSymbol ?? ''}type ${name} = ${walkGraph(obj, typescriptVisitor, {
+            name,
+            references,
+            locals,
+            exportSymbol,
+        })}\n`,
         referenceName: name,
     }),
 }
 
-export const typescriptVisitor: GraphVisitor<string, TypescriptWalkerContext['references']> = {
+export const typescriptVisitor: GraphVisitor<string, TypescriptWalkerContext> = {
     integer: () => 'number',
     unknown: () => 'unknown',
     enum: (obj) => obj.values.map((v) => toLiteral(v)).join(' | '),
-    union: (obj, references) => obj.union.map((v) => walkGraph(v, typescriptVisitor, references)).join(' | '),
-    intersection: (obj, references) =>
-        `(${obj.intersection.map((v) => walkGraph(v, typescriptVisitor, references)).join(' & ')})`,
-    object: (obj, references) => {
+    union: (obj, context) => obj.union.map((v) => walkGraph(v, typescriptVisitor, context)).join(' | '),
+    intersection: (obj, context) => `(${obj.intersection.map((v) => walkGraph(v, typescriptVisitor, context)).join(' & ')})`,
+    object: (obj, context) => {
         const writer = createWriter()
         writer.block(() => {
             for (const [key, value] of Object.entries(obj.properties)) {
-                const child = walkGraph(value, typescriptVisitor, references)
+                const child = walkGraph(value, typescriptVisitor, { ...context, property: key })
                 const jsdoc = toJSDoc(key, value)
                 writer.writeLine(
                     `${jsdoc ?? ''}${readonly(value)}${escapeProperty(key)}${optional(value)}: ${
@@ -203,8 +207,27 @@ export const typescriptVisitor: GraphVisitor<string, TypescriptWalkerContext['re
         })
         return writer.toString()
     },
-    array: (obj, references) => {
-        const items = walkGraph(obj.items, typescriptVisitor, references)
+    array: (obj, context) => {
+        // @todo a bit more heuristic here
+        const isSmall = (t: ThereforeTypes) =>
+            !isObject(t) && !isUnion(t) && !isIntersection(t) && ((isEnum(t) && t.values.length < 4) || !isEnum(t))
+
+        let localReference: string | undefined = undefined
+        if (!isSmall(obj.items)) {
+            const { locals } = context
+            if (locals[obj.items.uuid] === undefined) {
+                const local = toTypescriptDefinition(
+                    `${context.name}${camelCase(context.property ?? obj.type, { pascalCase: true })}`,
+                    obj.items,
+                    false,
+                    locals
+                )
+                locals[local.uuid] = local
+            }
+            localReference = walkGraph($ref({ [context.property!]: obj.items }), typescriptVisitor, context)
+        }
+
+        const items = localReference ?? walkGraph(obj.items, typescriptVisitor, context)
         const minItems = obj.minItems
         const maxItems = obj.maxItems
         if (minItems !== undefined && minItems > 0 && obj.maxItems === undefined) {
@@ -215,26 +238,27 @@ export const typescriptVisitor: GraphVisitor<string, TypescriptWalkerContext['re
             return ` [${`(${items})?, `.repeat(maxItems)}]`
         }
         return `(${items})[]`
+        //throw new Error('foo')
     },
-    tuple: (obj, references) => {
+    tuple: (obj, context) => {
         const names = obj.names
         // for named tuples
         if (names !== undefined) {
             return `[${obj.items
-                .map((value, i) => `${names[i]}${optional(value)}: ${walkGraph(value, typescriptVisitor, references)}`)
+                .map((value, i) => `${names[i]}${optional(value)}: ${walkGraph(value, typescriptVisitor, context)}`)
                 .join(', ')}]`
         }
-        return `[${obj.items.map((i) => walkGraph(i, typescriptVisitor, references)).join(', ')}]`
+        return `[${obj.items.map((i) => walkGraph(i, typescriptVisitor, context)).join(', ')}]`
     },
-    dict: (obj, references) => {
+    dict: (obj, context) => {
         const writer = createWriter()
         writer.inlineBlock(() => {
-            writer.writeLine(`[k: string]: ( ${walkGraph(obj.properties, typescriptVisitor, references)} ) | undefined`)
+            writer.writeLine(`[k: string]: ( ${walkGraph(obj.properties, typescriptVisitor, context)} ) | undefined`)
         })
 
         return writer.toString()
     },
-    $ref: (obj, references) => {
+    $ref: (obj, { references }) => {
         const uuid = obj.reference[schema.uuid]
         if (!references.find((d) => d.uuid === uuid)) {
             const referenceName = camelCase(obj.name, { pascalCase: true })
@@ -253,8 +277,11 @@ export const typescriptVisitor: GraphVisitor<string, TypescriptWalkerContext['re
 export function toTypescriptDefinition(
     name: string,
     obj: ThereforeTypes & { [schema.uuid]: string },
-    exportSymbol = true
+    exportSymbol = true,
+    locals: TypescriptDefinition['locals'] = {}
 ): TypescriptDefinition {
+    // allow propagation and deduplication
+    locals ??= {}
     const references: TypescriptDefinition['references'] = []
 
     const interfaceName = camelCase(name, { pascalCase: true })
@@ -262,6 +289,7 @@ export function toTypescriptDefinition(
     const declaration = walkGraph(obj, typeDefinitionVisitor, {
         name: interfaceName,
         references,
+        locals,
         exportSymbol: exportSymbol ? 'export ' : '',
     })
 
@@ -273,5 +301,6 @@ export function toTypescriptDefinition(
         declaration: declaration.declaration,
         referenceName: declaration.referenceName,
         meta: declaration.meta,
+        locals,
     }
 }

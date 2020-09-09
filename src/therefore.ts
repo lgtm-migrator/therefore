@@ -13,22 +13,7 @@ const readonlySymbol = 'readonly' // Symbol('readonly')
 
 const uuidSymbol = 'uuid' // Symbol('uuid')
 
-export const schema: {
-    uuid: typeof uuidSymbol
-
-    type: typeof typeSymbol
-    title: typeof titleSymbol
-    id: typeof idSymbol
-    description: typeof descriptionSymbol
-
-    default: typeof defaultSymbol
-    optional: typeof optionalSymbol
-    nullable: typeof nullableSymbol
-
-    readonly: typeof readonlySymbol
-
-    examples: typeof examplesSymbol
-} = {
+export const schema = {
     uuid: uuidSymbol,
 
     type: typeSymbol,
@@ -43,7 +28,7 @@ export const schema: {
     readonly: readonlySymbol,
 
     examples: examplesSymbol,
-}
+} as const
 
 export type Json = string | number | boolean | null | { [property: string]: Json } | ReadonlyArray<Json>
 export type TypeLiterals =

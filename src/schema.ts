@@ -29,32 +29,32 @@ export const jsonSchemaVisitor: GraphVisitor<JsonSchema, JsonSchemaWalkerContext
     string: (definition) => {
         return filterUndefined({
             type: toType('string', definition),
+            ...annotate(definition),
             minLength: definition.minLength,
             maxLength: definition.maxLength,
             pattern: typeof definition.pattern !== 'string' ? definition.pattern?.source : definition.pattern,
-            ...annotate(definition),
         })
     },
     number: (definition) => {
         return filterUndefined({
             type: toType('number', definition),
+            ...annotate(definition),
             multipleOf: definition.multipleOf,
             maximum: definition.maximum,
             exclusiveMaximum: definition.exclusiveMaximum,
             minimum: definition.minimum,
             exclusiveMinimum: definition.exclusiveMinimum,
-            ...annotate(definition),
         })
     },
     integer: (definition) => {
         return filterUndefined({
             type: toType('integer', definition),
+            ...annotate(definition),
             multipleOf: definition.multipleOf,
             maximum: definition.maximum,
             exclusiveMaximum: definition.exclusiveMaximum,
             minimum: definition.minimum,
             exclusiveMinimum: definition.exclusiveMinimum,
-            ...annotate(definition),
         })
     },
     boolean: (definition) => {
@@ -84,10 +84,10 @@ export const jsonSchemaVisitor: GraphVisitor<JsonSchema, JsonSchemaWalkerContext
     },
     unknown: () => ({}),
     union: (obj, context) => {
-        return { oneOf: obj.union.map((u) => walkGraph(u, jsonSchemaVisitor, context)) }
+        return { oneOf: obj.union.map((u) => walkGraph(u, jsonSchemaVisitor, context)), ...annotate(obj) }
     },
     intersection: (obj, context) => {
-        return { allOf: obj.intersection.map((u) => walkGraph(u, jsonSchemaVisitor, context)) }
+        return { allOf: obj.intersection.map((u) => walkGraph(u, jsonSchemaVisitor, context)), ...annotate(obj) }
     },
     object: (definition, context) => {
         const properties: NonNullable<JsonSchema['properties']> = {}
@@ -110,22 +110,26 @@ export const jsonSchemaVisitor: GraphVisitor<JsonSchema, JsonSchemaWalkerContext
     array: (definition, context) => {
         return filterUndefined({
             type: toType('array', definition),
-            items: walkGraph(definition.items, jsonSchemaVisitor, context),
             ...annotate(definition),
+            items: walkGraph(definition.items, jsonSchemaVisitor, context),
+            minItems: definition.minItems,
+            maxItems: definition.maxItems,
+            uniqueItems: definition.uniqueItems,
         })
     },
     tuple: (definition, context) => {
         return filterUndefined({
             type: toType('array', definition),
+            ...annotate(definition),
             items: definition.items.map((i) => walkGraph(i, jsonSchemaVisitor, context)),
             additionalItems: false,
-            ...annotate(definition),
         })
     },
     dict: (definition, context) => {
         const child = walkGraph(definition.properties, jsonSchemaVisitor, context)
         return {
             type: toType('object', definition),
+            ...annotate(definition),
             additionalProperties: child,
         }
     },
@@ -134,9 +138,9 @@ export const jsonSchemaVisitor: GraphVisitor<JsonSchema, JsonSchemaWalkerContext
         const uuid = definition.reference[schema.uuid]
         definitions[`{{${uuid}}}`] ??= walkGraph(definition.reference, jsonSchemaVisitor, context)
         if (definition[schema.nullable]) {
-            return { oneOf: [{ type: 'null' }, { $ref: `#/definitions/{{${uuid}}}` }] }
+            return { oneOf: [{ type: 'null' }, { $ref: `#/definitions/{{${uuid}}}` }], ...annotate(definition) }
         }
-        return { $ref: `#/definitions/{{${uuid}}}` }
+        return { $ref: `#/definitions/{{${uuid}}}`, ...annotate(definition) }
     },
     _: () => {
         throw new Error('should not be called')

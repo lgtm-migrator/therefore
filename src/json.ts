@@ -78,6 +78,7 @@ export interface JsonArrayInstance {
     maxItems?: number
     minItems?: number
     uniqueItems?: boolean
+    /** @deprecated */
     contains?: JsonSchema
 }
 

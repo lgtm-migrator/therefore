@@ -1,4 +1,4 @@
-import { FileDefinition, TypescriptReference } from './definition'
+import { FileDefinition, TypescriptDefinition, TypescriptReference } from './definition'
 import { toTypescriptDefinition } from './typescript'
 import { toJsonSchema } from './schema'
 import { renderTemplate } from './template'
@@ -73,7 +73,8 @@ export function getSchemaFilename(file: string, extension: string): string {
 export function requireReference(
     definitions: Record<string, FileDefinition>,
     current: FileDefinition,
-    ref: TypescriptReference
+    ref: TypescriptReference,
+    locals: NonNullable<TypescriptDefinition['locals']>
 ): { file: string; type: string; uuid: string; reference: string } {
     const found = Object.values(definitions)
         .map((d) =>
@@ -89,7 +90,7 @@ export function requireReference(
 
     if (!found) {
         // this is a locally defined variable
-        const tsDefinition = toTypescriptDefinition(ref.name, ref.reference, false)
+        const tsDefinition = toTypescriptDefinition(ref.name, ref.reference, false, locals)
         current.symbols.push({
             name: ref.name,
             tsDefinition: tsDefinition,
@@ -97,7 +98,7 @@ export function requireReference(
 
         for (const ref of tsDefinition.references) {
             // recurse down to referencing references
-            requireReference(definitions, current, ref)
+            requireReference(definitions, current, ref, locals)
         }
 
         //return undefined
@@ -135,6 +136,16 @@ export function scanModule(entry: string, definitions: { [k: string]: FileDefini
             const schema = toJsonSchema(symbol)
 
             const tsDefinition = toTypescriptDefinition(name, symbol)
+
+            for (const local of Object.values(tsDefinition.locals ?? {})) {
+                if (local) {
+                    definition.symbols.push({
+                        name: local.symbolName,
+                        tsDefinition: local,
+                    })
+                }
+            }
+
             definition.symbols.push({
                 name, // root: path.dirname(entry),
                 //schema,
@@ -195,18 +206,22 @@ export async function compileSchemas(
     const schemaFiles: { file: string; template: string; data: Record<string, string>; type: 'typescript' | 'jsonschema' }[] = []
     const definitions = scanFiles(entries, cwd)
 
-    // const localReferences: Record<string, string> = Object.fromEntries(
-    //     Object.values(definitions)
-    //         .map((d) => d.symbols.map((s) => s.tsDefinition.references.map((r) => [r.uuid, r.referenceName])))
-    //         .flat(2)
-    // ) as Record<string, string>
     const localReferences = {}
 
     for (const [file, definition] of Object.entries(definitions)) {
+        const locals: NonNullable<TypescriptDefinition['locals']> = {}
         const required = definition.symbols
-            .map((i) => i.tsDefinition.references.map((r) => requireReference(definitions, definition, r)))
+            .map((i) => i.tsDefinition.references.map((r) => requireReference(definitions, definition, r, locals)))
             .flat()
-        //.filter(isDefined)
+
+        for (const local of Object.values(locals ?? {})) {
+            if (local) {
+                definition.symbols.push({
+                    name: local.symbolName,
+                    tsDefinition: local,
+                })
+            }
+        }
 
         for (const r of required) {
             definition.dependencies[r.file] ??= []
@@ -285,17 +300,11 @@ export async function execute({
     const schemaFiles = await compileSchemas(entries, extension, process.cwd())
 
     for (const { file, template, data } of schemaFiles) {
-        //fs.writeFileSync(file)
         fs.mkdirSync(path.dirname(file), { recursive: true })
+
         const references = {}
         console.log(file, references)
         fs.writeFileSync(file, renderTemplate(template, data))
-
-        // for (const { file, schema } of definition.jsonFiles) {
-        //     fs.mkdirSync(path.dirname(file), { recursive: true })
-        //     console.log(file, references)
-        //     fs.writeFileSync(file, template(schema, references))
-        // }
     }
 
     if (schemaFiles.length > 0 && format) {

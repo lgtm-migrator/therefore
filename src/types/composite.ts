@@ -61,6 +61,7 @@ const objectProperties: OptionKeys<ObjectType, 'properties'> = {
     minProperties: 'minProperties',
     maxProperties: 'maxProperties',
 }
+
 type ObjectPropertiesArg =
     | {
           [K in keyof SchemaOptions<ObjectType, 'properties'>]:
@@ -101,6 +102,7 @@ export interface ArrayOptions<Types = ThereforeTypes | ThereforeTypesExpandable>
     items: Types
     minItems?: number
     maxItems?: number
+    uniqueItems?: boolean
 }
 export type ArrayType = ArrayOptions<ThereforeTypes> & ThereforeCommon<Json[]>
 
@@ -229,12 +231,13 @@ export function $union(
 ): Readonly<UnionType> {
     const expanded: ReadonlyArray<ThereforeTypes> = union.map((v) => (isExpandable(v) ? v() : v))
 
-    const unionDefinition: Omit<UnionType, typeof schema.uuid> = filterUndefined({
+    const unionDefinition: UnionType = filterUndefined({
         [schema.type]: 'union',
+        [schema.uuid]: uuid(),
         ...options,
         union: expanded,
     })
-    return { ...unionDefinition, [schema.uuid]: uuid() }
+    return unionDefinition
 }
 
 // #endregion
@@ -254,12 +257,13 @@ export function $intersection(
 ): Readonly<IntersectionType> {
     const expanded: ReadonlyArray<ThereforeTypes> = intersection.map((v) => (isExpandable(v) ? v() : v))
 
-    const intersectionDefinition: Omit<IntersectionType, typeof schema.uuid> = filterUndefined({
+    const intersectionDefinition: IntersectionType = filterUndefined({
         [schema.type]: 'intersection',
+        [schema.uuid]: uuid(),
         ...options,
         intersection: expanded,
     })
-    return { ...intersectionDefinition, [schema.uuid]: uuid() }
+    return intersectionDefinition
 }
 
 // #endregion

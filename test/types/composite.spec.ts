@@ -1,33 +1,30 @@
 jest.mock('uuid')
 
+import { mockUuid } from '../util'
+
 import { $object, $string, $array, $dict, $tuple, $ref, $union, $intersection, $boolean } from '~/index'
 import { schema } from '~/therefore'
 
 import { v4 as uuid } from 'uuid'
 
 describe('object', () => {
+    beforeEach(() => (uuid as jest.Mock).mockImplementation(mockUuid()))
+
     test('function', () => {
         expect($object).toMatchInlineSnapshot(`[Function]`)
     })
 
     test('expand', () => {
-        const mocked = uuid as jest.Mock
-        mocked
-            .mockReturnValueOnce('0001-000')
-            .mockReturnValueOnce('0002-000')
-            .mockReturnValueOnce('0003-000')
-            .mockReturnValueOnce('0004-000')
-
         expect($object({ foo: $string })).toMatchInlineSnapshot(`
             Object {
               "properties": Object {
                 "foo": Object {
                   "type": "string",
-                  "uuid": "0003-000",
+                  "uuid": "0001-000",
                 },
               },
               "type": "object",
-              "uuid": "0001-000",
+              "uuid": "0002-000",
             }
         `)
         expect($object({ foo: $object() })).toMatchInlineSnapshot(`
@@ -36,19 +33,16 @@ describe('object', () => {
                 "foo": Object {
                   "properties": Object {},
                   "type": "object",
-                  "uuid": "0002-000",
+                  "uuid": "0003-000",
                 },
               },
               "type": "object",
-              "uuid": "0003-000",
+              "uuid": "0004-000",
             }
         `)
     })
 
     test('example', () => {
-        const mocked = uuid as jest.Mock
-        mocked.mockReturnValueOnce('0001-000')
-
         expect($object({}, { [schema.examples]: [{ foo: 'bar' }] })).toMatchInlineSnapshot(`
             Object {
               "examples": Array [
@@ -58,7 +52,7 @@ describe('object', () => {
               ],
               "properties": Object {},
               "type": "object",
-              "uuid": "0004-000",
+              "uuid": "0001-000",
             }
         `)
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -67,9 +61,6 @@ describe('object', () => {
     })
 
     test('default', () => {
-        const mocked = uuid as jest.Mock
-        mocked.mockReturnValueOnce('0001-000')
-
         expect($object({}, { [schema.default]: { foo: 'bar' } })).toMatchInlineSnapshot(`
             Object {
               "default": Object {
@@ -86,9 +77,6 @@ describe('object', () => {
     })
 
     test.skip('complex', () => {
-        const mocked = uuid as jest.Mock
-        mocked.mockReturnValueOnce('0001-000')
-
         expect(
             $object({
                 [$object.description]:
@@ -123,14 +111,13 @@ describe('object', () => {
 })
 
 describe('array', () => {
+    beforeEach(() => (uuid as jest.Mock).mockImplementation(mockUuid()))
+
     test('function', () => {
         expect($array).toMatchInlineSnapshot(`[Function]`)
     })
 
     test('expand', () => {
-        const mocked = uuid as jest.Mock
-        mocked.mockReturnValueOnce('0001-000')
-
         expect($array($string)).toMatchInlineSnapshot(`
             Object {
               "items": Object {
@@ -138,15 +125,12 @@ describe('array', () => {
                 "uuid": "0001-000",
               },
               "type": "array",
-              "uuid": undefined,
+              "uuid": "0002-000",
             }
         `)
     })
 
     test('example', () => {
-        const mocked = uuid as jest.Mock
-        mocked.mockReturnValueOnce('0001-000').mockReturnValueOnce('0002-000')
-
         expect($array($string, { [schema.examples]: [['bar']] })).toMatchInlineSnapshot(`
             Object {
               "examples": Array [
@@ -168,9 +152,6 @@ describe('array', () => {
     })
 
     test('default', () => {
-        const mocked = uuid as jest.Mock
-        mocked.mockReturnValueOnce('0001-000').mockReturnValueOnce('0002-000')
-
         expect($array($string, { [schema.default]: ['bar'] })).toMatchInlineSnapshot(`
             Object {
               "default": Array [
@@ -191,14 +172,13 @@ describe('array', () => {
 })
 
 describe('dict', () => {
+    beforeEach(() => (uuid as jest.Mock).mockImplementation(mockUuid()))
+
     test('function', () => {
         expect($dict).toMatchInlineSnapshot(`[Function]`)
     })
 
     test('expand', () => {
-        const mocked = uuid as jest.Mock
-        mocked.mockReturnValueOnce('0001-000').mockReturnValueOnce('0002-000')
-
         expect($dict($string)).toMatchInlineSnapshot(`
             Object {
               "properties": Object {
@@ -212,9 +192,6 @@ describe('dict', () => {
     })
 
     test('example', () => {
-        const mocked = uuid as jest.Mock
-        mocked.mockReturnValueOnce('0001-000').mockReturnValueOnce('0002-000')
-
         expect($dict($string, { [schema.examples]: [{ foo: 'bar' }] })).toMatchInlineSnapshot(`
             Object {
               "examples": Array [
@@ -236,9 +213,6 @@ describe('dict', () => {
     })
 
     test('default', () => {
-        const mocked = uuid as jest.Mock
-        mocked.mockReturnValueOnce('0001-000').mockReturnValueOnce('0002-000')
-
         expect($dict($string, { [schema.default]: { foo: 'bar' } })).toMatchInlineSnapshot(`
             Object {
               "default": Object {
@@ -259,14 +233,13 @@ describe('dict', () => {
 })
 
 describe('tuple', () => {
+    beforeEach(() => (uuid as jest.Mock).mockImplementation(mockUuid()))
+
     test('function', () => {
         expect($tuple).toMatchInlineSnapshot(`[Function]`)
     })
 
     test('expand', () => {
-        const mocked = uuid as jest.Mock
-        mocked.mockReturnValueOnce('0001-000')
-
         expect($tuple([$string])).toMatchInlineSnapshot(`
             Object {
               "items": Array [
@@ -276,15 +249,12 @@ describe('tuple', () => {
                 },
               ],
               "type": "tuple",
-              "uuid": undefined,
+              "uuid": "0002-000",
             }
         `)
     })
 
     test('example', () => {
-        const mocked = uuid as jest.Mock
-        mocked.mockReturnValueOnce('0001-000').mockReturnValueOnce('0002-000')
-
         expect($tuple([$string], { [schema.examples]: [['bar']] })).toMatchInlineSnapshot(`
             Object {
               "examples": Array [
@@ -308,9 +278,6 @@ describe('tuple', () => {
     })
 
     test('default', () => {
-        const mocked = uuid as jest.Mock
-        mocked.mockReturnValueOnce('0001-000').mockReturnValueOnce('0002-000')
-
         expect($tuple([$string], { [schema.default]: ['bar'] })).toMatchInlineSnapshot(`
             Object {
               "default": Array [
@@ -333,8 +300,7 @@ describe('tuple', () => {
 })
 
 describe('ref', () => {
-    const mocked = uuid as jest.Mock
-    mocked.mockReturnValueOnce('0001-000').mockReturnValueOnce('0002-000').mockReturnValueOnce('0003-000')
+    beforeEach(() => (uuid as jest.Mock).mockImplementation(mockUuid()))
 
     const foo = $dict($string)
     test('function', () => {
@@ -348,26 +314,25 @@ describe('ref', () => {
               "reference": Object {
                 "properties": Object {
                   "type": "string",
-                  "uuid": "0001-000",
                 },
                 "type": "dict",
-                "uuid": "0002-000",
+                "uuid": undefined,
               },
               "type": "$ref",
+              "uuid": "0001-000",
             }
         `)
     })
 })
 
 describe('union', () => {
+    beforeEach(() => (uuid as jest.Mock).mockImplementation(mockUuid()))
+
     test('function', () => {
         expect($union).toMatchInlineSnapshot(`[Function]`)
     })
 
     test('expand', () => {
-        const mocked = uuid as jest.Mock
-        mocked.mockReturnValueOnce('0001-000').mockReturnValueOnce('0002-000')
-
         expect($union([$string])).toMatchInlineSnapshot(`
             Object {
               "type": "union",
@@ -383,9 +348,6 @@ describe('union', () => {
     })
 
     test('example', () => {
-        const mocked = uuid as jest.Mock
-        mocked.mockReturnValueOnce('0001-000').mockReturnValueOnce('0002-000')
-
         expect($union([$string], { [schema.examples]: ['bar'] })).toMatchInlineSnapshot(`
             Object {
               "examples": Array [
@@ -404,9 +366,6 @@ describe('union', () => {
     })
 
     test('default', () => {
-        const mocked = uuid as jest.Mock
-        mocked.mockReturnValueOnce('0001-000').mockReturnValueOnce('0002-000')
-
         expect($union([$string], { [schema.default]: ['bar'] })).toMatchInlineSnapshot(`
             Object {
               "default": Array [
@@ -426,14 +385,13 @@ describe('union', () => {
 })
 
 describe('intersection', () => {
+    beforeEach(() => (uuid as jest.Mock).mockImplementation(mockUuid()))
+
     test('function', () => {
         expect($intersection).toMatchInlineSnapshot(`[Function]`)
     })
 
     test('expand', () => {
-        const mocked = uuid as jest.Mock
-        mocked.mockReturnValueOnce('0001-000').mockReturnValueOnce('0002-000')
-
         expect($intersection([$string])).toMatchInlineSnapshot(`
             Object {
               "intersection": Array [
@@ -449,9 +407,6 @@ describe('intersection', () => {
     })
 
     test('example', () => {
-        const mocked = uuid as jest.Mock
-        mocked.mockReturnValueOnce('0001-000').mockReturnValueOnce('0002-000')
-
         expect($intersection([$string], { [schema.examples]: ['bar'] })).toMatchInlineSnapshot(`
             Object {
               "examples": Array [
@@ -470,9 +425,6 @@ describe('intersection', () => {
     })
 
     test('default', () => {
-        const mocked = uuid as jest.Mock
-        mocked.mockReturnValueOnce('0001-000').mockReturnValueOnce('0002-000')
-
         expect($intersection([$string], { [schema.default]: ['bar'] })).toMatchInlineSnapshot(`
             Object {
               "default": Array [

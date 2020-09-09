@@ -1,13 +1,13 @@
 jest.mock('uuid')
 
+import { mockUuid } from '../util'
+
 import { $unknown } from '~/index'
 
 import { v4 as uuid } from 'uuid'
 
 describe('unknown', () => {
-    const mocked = uuid as jest.Mock
-
-    beforeEach(() => mocked.mockReturnValueOnce('0001-000'))
+    beforeEach(() => (uuid as jest.Mock).mockImplementation(mockUuid()))
 
     test('function', () => {
         expect($unknown).toMatchInlineSnapshot(`[Function]`)
