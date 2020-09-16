@@ -1,5 +1,5 @@
-import { JsonSchema } from './json'
-import { RefType } from './types/composite'
+import type { JsonSchema } from './json'
+import type { RefType } from './types/composite'
 
 export interface FileSymbol {
     name: string

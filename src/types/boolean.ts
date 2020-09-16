@@ -1,5 +1,6 @@
 import { filterUndefined } from '../util'
-import { schema, SchemaOptions, ThereforeCommon } from '../therefore'
+import type { SchemaOptions, ThereforeCommon } from '../therefore'
+import { schema } from '../therefore'
 
 import { v4 as uuid } from 'uuid'
 

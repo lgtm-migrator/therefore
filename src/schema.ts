@@ -1,12 +1,15 @@
-import { JsonSchemaValidator } from './definition'
-import { JsonAnnotations, JsonSchema } from './json'
-import { Json, schema, ThereforeCommon } from './therefore'
+import type { JsonSchemaValidator } from './definition'
+import type { JsonAnnotations, JsonSchema } from './json'
+import type { Json, ThereforeCommon } from './therefore'
+import { schema } from './therefore'
 import { filterUndefined } from './util'
-import { GraphVisitor, walkGraph } from './ast'
-import { ThereforeTypes } from './types/composite'
+import type { GraphVisitor } from './ast'
+import { walkGraph } from './ast'
+import type { ThereforeTypes } from './types/composite'
 
 export interface JsonSchemaWalkerContext {
     //references: Record<string, string>
+    entry: ThereforeTypes
     definitions: NonNullable<JsonSchema['definitions']>
 }
 
@@ -134,9 +137,19 @@ export const jsonSchemaVisitor: GraphVisitor<JsonSchema, JsonSchemaWalkerContext
         }
     },
     $ref: (definition, context) => {
-        const { definitions } = context
-        const uuid = definition.reference[schema.uuid]
-        definitions[`{{${uuid}}}`] ??= walkGraph(definition.reference, jsonSchemaVisitor, context)
+        const { definitions, entry } = context
+
+        const reference = typeof definition.reference === 'function' ? definition.reference() : definition.reference
+        const uuid = reference[schema.uuid]
+
+        if (uuid === entry[schema.uuid]) {
+            // we referenced the root of the schema
+            return { $ref: '#' }
+        }
+        if (definitions[`{{${uuid}}}`] === undefined) {
+            definitions[`{{${uuid}}}`] = {} // mark spot as taken (prevents recursion)
+            definitions[`{{${uuid}}}`] = walkGraph(reference, jsonSchemaVisitor, context)
+        }
         if (definition[schema.nullable]) {
             return { oneOf: [{ type: 'null' }, { $ref: `#/definitions/{{${uuid}}}` }], ...annotate(definition) }
         }
@@ -152,7 +165,7 @@ export function toJsonSchema(obj: ThereforeTypes): JsonSchemaValidator {
     const definitions: NonNullable<JsonSchema['definitions']> = {}
     const definition: JsonSchema = {
         $schema: 'http://json-schema.org/draft-07/schema#',
-        ...walkGraph(obj, jsonSchemaVisitor, { definitions }),
+        ...walkGraph(obj, jsonSchemaVisitor, { definitions, entry: obj }),
     }
     if (Object.keys(definitions).length) {
         definition.definitions = definitions

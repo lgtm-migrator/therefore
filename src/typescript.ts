@@ -1,8 +1,11 @@
-import { TypescriptDefinition } from './definition'
-import { Json, schema, ThereforeCommon } from './therefore'
-import { $ref, DictType, ObjectType, ThereforeTypes } from './types/composite'
-import { GraphVisitor, walkGraph } from './ast'
-import { isEnum, isIntersection, isObject, isUnion } from './cli'
+import type { TypescriptDefinition } from './definition'
+import type { Json, ThereforeCommon } from './therefore'
+import { schema } from './therefore'
+import type { DictType, IntersectionType, ObjectType, RefType, ThereforeTypes, UnionType } from './types/composite'
+import { $ref } from './types/composite'
+import type { GraphVisitor } from './ast'
+import { walkGraph } from './ast'
+import { isEnum, isIntersection, isObject, isUnion } from './guard'
 
 import camelCase from 'camelcase'
 import CodeBlockWriter from 'code-block-writer'
@@ -29,7 +32,7 @@ const createWriter = () =>
     })
 
 export function toLiteral(obj: unknown): string {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const unsupported = (_: any) => {
         throw new Error('not supported')
     }
@@ -49,7 +52,6 @@ export function toLiteral(obj: unknown): string {
         bigint: (n: bigint) => `${n}`,
         string: (n: string) => `'${n}'`,
         boolean: (n: boolean) => `${n.toString()}`,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         undefined: (_: undefined) => 'null',
         symbol: unsupported,
         function: unsupported,
@@ -100,7 +102,7 @@ export function readonly(n: Pick<ThereforeTypes, typeof schema.readonly> | unkno
     return (n as Record<typeof schema.readonly, unknown>)[schema.readonly] === true ? 'readonly ' : ''
 }
 
-export function toDeclaration(
+export function toObjectDeclaration(
     obj: ObjectType | DictType,
     context: TypescriptWalkerContext
 ): { declaration: string; meta?: string; referenceName: string } {
@@ -109,28 +111,7 @@ export function toDeclaration(
 
     const exportString = exportSymbol ?? ''
     if (exportString) {
-        writer
-            .write(`export const ${name} = `)
-            .block(() => {
-                writer.writeLine(`schema: {{schema}},`)
-                writer.writeLine(
-                    `validate: typeof {{schema}} === 'function' ? {{schema}} : new AjvValidator().compile({{schema}}) as {(o: unknown | ${name}): o is ${name};  errors?: null | Array<import("ajv").ErrorObject>},`
-                )
-                writer.writeLine(`is: (o: unknown | ${name}): o is ${name} => ${name}.validate(o) === true,`)
-                writer
-                    .write(`assert: (o: unknown | ${name}): o is ${name} => `)
-                    .inlineBlock(() => {
-                        writer.write(`if (!${name}.validate(o))`).block(() => {
-                            writer.writeLine(`throw new AjvValidator.ValidationError(${name}.validate.errors ?? [])`)
-                        })
-                        writer.writeLine('return true')
-                    })
-                    .write(',')
-                if (obj[schema.default]) {
-                    writer.writeLine(`default: (): ${name} => (${toLiteral(obj[schema.default])}),`)
-                }
-            })
-            .write('\n')
+        writeThereforeSchema(writer, name, obj)
     }
     return {
         declaration: `${toJSDoc(name, obj) ?? ''}${exportString}interface ${name} ${walkGraph(
@@ -143,17 +124,67 @@ export function toDeclaration(
     }
 }
 
+export function toTypeDeclaration(
+    obj: UnionType | IntersectionType | RefType,
+    context: TypescriptWalkerContext
+): { declaration: string; meta?: string; referenceName: string } {
+    const { name, references, locals, exportSymbol } = context
+    const writer = createWriter()
+
+    const exportString = exportSymbol ?? ''
+    if (exportString) {
+        writeThereforeSchema(writer, name, obj)
+    }
+    return {
+        declaration: `${toJSDoc(name, obj) ?? ''}${exportSymbol ?? ''}type ${name} = ${walkGraph(obj, typescriptVisitor, {
+            name,
+            references,
+            locals,
+            exportSymbol,
+        })}\n`,
+        meta: exportString ? writer.toString() : undefined,
+        referenceName: name,
+    }
+}
+
+function writeThereforeSchema(writer: CodeBlockWriter, name: string, obj: ThereforeTypes) {
+    writer
+        .write(`export const ${name} = `)
+        .block(() => {
+            writer.writeLine(`schema: {{schema}},`)
+            writer.writeLine(
+                `validate: typeof {{schema}} === 'function' ? {{schema}} : new AjvValidator().compile({{schema}}) as {(o: unknown | ${name}): o is ${name};  errors?: null | Array<import("ajv").ErrorObject>},`
+            )
+            writer.writeLine(`is: (o: unknown | ${name}): o is ${name} => ${name}.validate(o) === true,`)
+            writer
+                .write(`assert: (o: unknown | ${name}): asserts o is ${name} => `)
+                .inlineBlock(() => {
+                    writer.write(`if (!${name}.validate(o))`).block(() => {
+                        writer.writeLine(`throw new AjvValidator.ValidationError(${name}.validate.errors ?? [])`)
+                    })
+                })
+                .write(',')
+            if (obj[schema.default] !== undefined) {
+                writer.writeLine(`default: (): ${name} => (${toLiteral(obj[schema.default])}),`)
+            }
+        })
+        .write('\n')
+}
+
 export const typeDefinitionVisitor: GraphVisitor<
     { declaration: string; meta?: string; referenceName: string },
     TypescriptWalkerContext
 > = {
-    object: (obj, context) => toDeclaration(obj, context),
-    dict: (obj, context) => toDeclaration(obj, context),
+    object: (obj, context) => toObjectDeclaration(obj, context),
+    dict: (obj, context) => toObjectDeclaration(obj, context),
+    union: (obj, context) => toTypeDeclaration(obj, context),
+    intersection: (obj, context) => toTypeDeclaration(obj, context),
+    $ref: (obj, context) => toTypeDeclaration(obj, context),
     enum: (obj, context) => {
         const { name } = context
         if (obj.names) {
             const exportString = context.exportSymbol ?? ''
-            const writer = createWriter()
+            let writer = createWriter()
             const names = obj.names
             let referenceName = name
             if (!obj.values.some((v) => typeof v === 'object')) {
@@ -170,8 +201,16 @@ export const typeDefinitionVisitor: GraphVisitor<
                 })
                 referenceName = `keyof typeof ${referenceName}`
             }
-
-            return { declaration: writer.writeLine('').toString(), referenceName }
+            const declaration = writer.writeLine('').toString()
+            writer = createWriter()
+            if (exportString) {
+                writeThereforeSchema(writer, name, obj)
+            }
+            return {
+                declaration,
+                meta: exportString ? writer.toString() : undefined,
+                referenceName,
+            }
         }
         return typeDefinitionVisitor._(obj, context)
     },
@@ -217,7 +256,13 @@ export const typescriptVisitor: GraphVisitor<string, TypescriptWalkerContext> = 
             const { locals } = context
             if (locals[obj.items.uuid] === undefined) {
                 const local = toTypescriptDefinition(
-                    `${context.name}${camelCase(context.property ?? obj.type, { pascalCase: true })}`,
+                    `${context.name}${
+                        context.property !== undefined
+                            ? camelCase(context.property, {
+                                  pascalCase: true,
+                              })
+                            : ''
+                    }${camelCase(obj.type, { pascalCase: true })}`,
                     obj.items,
                     false,
                     locals
@@ -259,11 +304,13 @@ export const typescriptVisitor: GraphVisitor<string, TypescriptWalkerContext> = 
         return writer.toString()
     },
     $ref: (obj, { references }) => {
-        const uuid = obj.reference[schema.uuid]
+        const reference = typeof obj.reference === 'function' ? obj.reference() : obj.reference
+
+        const uuid = reference[schema.uuid]
         if (!references.find((d) => d.uuid === uuid)) {
             const referenceName = camelCase(obj.name, { pascalCase: true })
             references.push({
-                reference: obj.reference,
+                reference: reference,
                 name: obj.name,
                 referenceName,
                 uuid: uuid,

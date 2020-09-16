@@ -1,4 +1,5 @@
-import { isExpandable, ThereforeTypes, ThereforeTypesExpandable } from './composite'
+import type { ThereforeTypes, ThereforeTypesExpandable } from './composite'
+import { isExpandable } from './composite'
 
 import { schema } from '../therefore'
 

@@ -1,4 +1,4 @@
-import { isArray, isDict, isEnum, isExportable, isObject, isTuple } from '~/cli'
+import { isArray, isDict, isEnum, isExportable, isObject, isShorthand, isTuple } from '~/guard'
 import { schema } from '~/therefore'
 
 describe('type guards', () => {
@@ -25,6 +25,12 @@ describe('type guards', () => {
     test('isTuple', () => {
         expect(isTuple({ [schema.type]: 'tuple' })).toBeTruthy()
         expect(isTuple({ [schema.type]: 'string' })).toBeFalsy()
+    })
+
+    test('isShorthand', () => {
+        expect(isShorthand({ [schema.type]: 'tuple' })).toBeTruthy()
+        expect(isShorthand({ [schema.type]: 'object' })).toBeTruthy()
+        expect(isShorthand({})).toBeFalsy()
     })
 
     test('isExportable', () => {

@@ -1,13 +1,15 @@
 import { $boolean } from './boolean'
-import { EnumType } from './enum'
+import type { EnumType } from './enum'
 import { $integer } from './integer'
 import { $null } from './null'
 import { $number } from './number'
 import { $string } from './string'
 import { $unknown } from './unknown'
 
-import { commonOptions, Json, OptionKeys, schema, SchemaOptions, ThereforeCommon } from '../therefore'
+import type { Json, OptionKeys, SchemaOptions, ThereforeCommon } from '../therefore'
+import { commonOptions, schema } from '../therefore'
 import { filterUndefined } from '../util'
+import { isShorthand } from '../guard'
 
 import { v4 as uuid } from 'uuid'
 
@@ -32,10 +34,6 @@ export type ThereforeTypes =
 
 export function isExpandable(v: ThereforeTypesExpandable | ThereforeTypes | undefined | unknown): v is ThereforeTypesExpandable {
     return v === $string || v === $number || v === $integer || v === $boolean || v === $null || v === $unknown
-}
-
-export function isShorthand(obj: unknown | ThereforeTypes | { [schema.type]: string }): obj is ThereforeTypes {
-    return (obj as Record<string, unknown>)[schema.type] !== undefined
 }
 
 // #region Objects
@@ -178,7 +176,7 @@ export function $tuple(
 export interface RefOptions {
     [schema.type]: '$ref'
     [schema.uuid]: string
-    reference: ThereforeTypes
+    reference: ThereforeTypes | (() => ThereforeTypes)
     name: string
 }
 
@@ -189,12 +187,15 @@ const refProperties: OptionKeys<RefType, 'reference' | 'name'> = {
 }
 
 function refFunction(
-    reference: SchemaOptions<RefType, 'reference' | 'name'> | Record<string, ThereforeTypes>,
+    reference: SchemaOptions<RefType, 'reference' | 'name'> | Record<string, ThereforeTypes | (() => ThereforeTypes)>,
     options: SchemaOptions<RefType, 'reference' | 'name'> = {}
 ): Readonly<RefType> {
     const entries = Object.entries(reference)
 
-    const filteredReferences = entries.filter(([_, v]) => isShorthand(v)) as [string, ThereforeTypes][]
+    const filteredReferences = entries.filter(([_, v]) => isShorthand(v) || typeof v === 'function') as [
+        string,
+        ThereforeTypes | (() => ThereforeTypes)
+    ][]
     const annotations: SchemaOptions<RefType, 'reference' | 'name'> = Object.fromEntries(
         entries.filter(([k, v]) => (objectProperties as Record<string, unknown>)[k] !== undefined && !isShorthand(v))
     )

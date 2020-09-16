@@ -5,6 +5,10 @@ export * from './types'
 
 import path from 'path'
 
+export function therefore<T>(v: unknown, schema: { assert: (o: unknown | T) => o is T }): asserts v is T {
+    schema.assert(v)
+}
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-assignment
 const { bin } = require('../package.json')
 
