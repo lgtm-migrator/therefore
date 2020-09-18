@@ -1,0 +1,14 @@
+import { $dict, $object, $string } from '~/index'
+
+export const command = $object({
+    description: $string,
+
+    suggested_key: $dict($string, {
+        // patternProperties: {
+        //     '^(default|mac|windows|linux|chromeos)$': {
+        //         type: 'string'
+        //         pattern: '^(Ctrl|Command|MacCtrl|Alt|Option)\\+(Shift\\+)?[A-Z]'
+        //     }
+        // }
+    }),
+})

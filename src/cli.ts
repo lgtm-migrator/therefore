@@ -197,7 +197,7 @@ export async function compileSchemas(
 
         schemaFiles.push(
             {
-                file: schemaFileName,
+                file: path.relative(cwd, schemaFileName),
                 type: 'typescript',
                 template: ([] as string[])
                     .concat(
@@ -225,7 +225,7 @@ export async function compileSchemas(
                 data: { ...localReferences, ...references },
             },
             ...definition.jsonFiles.map((j) => ({
-                file: j.file,
+                file: path.relative(cwd, j.file),
                 type: 'jsonschema' as const,
                 template: j.schema,
                 data: { ...localReferences, ...references },

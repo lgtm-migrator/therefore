@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "default_title": {
+      "type": "string",
+      "description": "Tooltip for the main toolbar icon."
+    },
+    "default_popup": {
+      "$ref": "#/definitions/Uri",
+      "description": "The popup appears when the user clicks the icon."
+    },
+    "default_icon": {
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "FIXME: String form is deprecated."
+        },
+        {
+          "type": "object",
+          "description": "Icon for the main toolbar.",
+          "properties": {
+            "19": {
+              "$ref": "#/definitions/Icon"
+            },
+            "38": {
+              "$ref": "#/definitions/Icon"
+            }
+          },
+          "required": ["19", "38"],
+          "additionalProperties": false
+        }
+      ]
+    }
+  },
+  "required": ["default_title", "default_popup", "default_icon"],
+  "additionalProperties": false,
+  "definitions": {
+    "Uri": {
+      "type": "string"
+    },
+    "Icon": {
+      "$ref": "#/definitions/Uri"
+    }
+  }
+}

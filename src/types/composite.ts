@@ -238,6 +238,7 @@ export function $union(
         ...options,
         union: expanded,
     })
+
     return unionDefinition
 }
 

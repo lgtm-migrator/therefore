@@ -437,6 +437,7 @@ describe('toTypeDefinition', () => {
             }
 
             ",
+              "meta": undefined,
               "referenceName": "Foo",
             }
         `)
@@ -450,6 +451,7 @@ describe('toTypeDefinition', () => {
             }
 
             ",
+              "meta": undefined,
               "referenceName": "keyof typeof Foo",
             }
         `)
@@ -572,6 +574,7 @@ describe('toTypeDefinition', () => {
             Object {
               "declaration": "type Foo = {{0002-000}}
             ",
+              "meta": undefined,
               "referenceName": "Foo",
             }
         `)
@@ -588,6 +591,7 @@ describe('toTypeDefinition', () => {
                 [k: string]: ( {{0002-000}} ) | undefined
             }
             ",
+              "meta": undefined,
               "referenceName": "Foo",
             }
         `)
@@ -599,6 +603,7 @@ describe('toTypeDefinition', () => {
             Object {
               "declaration": "type Foo = string
             ",
+              "meta": undefined,
               "referenceName": "Foo",
             }
         `)
@@ -608,6 +613,7 @@ describe('toTypeDefinition', () => {
             Object {
               "declaration": "type Foo = string | string | number
             ",
+              "meta": undefined,
               "referenceName": "Foo",
             }
         `)
@@ -619,6 +625,7 @@ describe('toTypeDefinition', () => {
             Object {
               "declaration": "type Foo = (string)
             ",
+              "meta": undefined,
               "referenceName": "Foo",
             }
         `)
@@ -627,6 +634,7 @@ describe('toTypeDefinition', () => {
             Object {
               "declaration": "type Foo = (string & number)
             ",
+              "meta": undefined,
               "referenceName": "Foo",
             }
         `)
@@ -643,6 +651,7 @@ describe('toTypeDefinition', () => {
             Object {
               "declaration": "type Foo = string | (string & number) | number
             ",
+              "meta": undefined,
               "referenceName": "Foo",
             }
         `)

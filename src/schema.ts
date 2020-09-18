@@ -9,7 +9,7 @@ import type { ThereforeTypes } from './types/composite'
 
 export interface JsonSchemaWalkerContext {
     //references: Record<string, string>
-    entry: ThereforeTypes
+    entry?: ThereforeTypes
     definitions: NonNullable<JsonSchema['definitions']>
 }
 
@@ -142,7 +142,7 @@ export const jsonSchemaVisitor: GraphVisitor<JsonSchema, JsonSchemaWalkerContext
         const reference = typeof definition.reference === 'function' ? definition.reference() : definition.reference
         const uuid = reference[schema.uuid]
 
-        if (uuid === entry[schema.uuid]) {
+        if (entry && uuid === entry[schema.uuid]) {
             // we referenced the root of the schema
             return { $ref: '#' }
         }

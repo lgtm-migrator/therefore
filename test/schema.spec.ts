@@ -105,7 +105,7 @@ describe('toTypeDefinition', () => {
     beforeEach(() => (uuid as jest.Mock).mockImplementation(mockUuid()))
 
     test('string', () => {
-        expect(walkGraph($string(), jsonSchemaVisitor, { references: {}, definitions: {} })).toMatchInlineSnapshot(`
+        expect(walkGraph($string(), jsonSchemaVisitor, { definitions: {} })).toMatchInlineSnapshot(`
             Object {
               "type": "string",
             }
@@ -113,7 +113,7 @@ describe('toTypeDefinition', () => {
     })
 
     test('number', () => {
-        expect(walkGraph($number(), jsonSchemaVisitor, { references: {}, definitions: {} })).toMatchInlineSnapshot(`
+        expect(walkGraph($number(), jsonSchemaVisitor, { definitions: {} })).toMatchInlineSnapshot(`
             Object {
               "type": "number",
             }
@@ -121,7 +121,7 @@ describe('toTypeDefinition', () => {
     })
 
     test('integer', () => {
-        expect(walkGraph($integer(), jsonSchemaVisitor, { references: {}, definitions: {} })).toMatchInlineSnapshot(`
+        expect(walkGraph($integer(), jsonSchemaVisitor, { definitions: {} })).toMatchInlineSnapshot(`
             Object {
               "type": "integer",
             }
@@ -129,7 +129,7 @@ describe('toTypeDefinition', () => {
     })
 
     test('boolean', () => {
-        expect(walkGraph($boolean(), jsonSchemaVisitor, { references: {}, definitions: {} })).toMatchInlineSnapshot(`
+        expect(walkGraph($boolean(), jsonSchemaVisitor, { definitions: {} })).toMatchInlineSnapshot(`
             Object {
               "type": "boolean",
             }
@@ -137,7 +137,7 @@ describe('toTypeDefinition', () => {
     })
 
     test('null', () => {
-        expect(walkGraph($null(), jsonSchemaVisitor, { references: {}, definitions: {} })).toMatchInlineSnapshot(`
+        expect(walkGraph($null(), jsonSchemaVisitor, { definitions: {} })).toMatchInlineSnapshot(`
             Object {
               "type": "null",
             }
@@ -145,12 +145,11 @@ describe('toTypeDefinition', () => {
     })
 
     test('unknown', () => {
-        expect(walkGraph($unknown(), jsonSchemaVisitor, { references: {}, definitions: {} })).toMatchInlineSnapshot(`Object {}`)
+        expect(walkGraph($unknown(), jsonSchemaVisitor, { definitions: {} })).toMatchInlineSnapshot(`Object {}`)
     })
 
     test('enum', () => {
-        expect(walkGraph($enum(['foo', 'bar', { foo: 'bar' }]), jsonSchemaVisitor, { references: {}, definitions: {} }))
-            .toMatchInlineSnapshot(`
+        expect(walkGraph($enum(['foo', 'bar', { foo: 'bar' }]), jsonSchemaVisitor, { definitions: {} })).toMatchInlineSnapshot(`
             Object {
               "enum": Array [
                 "foo",
@@ -161,7 +160,7 @@ describe('toTypeDefinition', () => {
               ],
             }
         `)
-        expect(walkGraph($enum({ foo: 'bar', bar: 1, baz: true }), jsonSchemaVisitor, { references: {}, definitions: {} }))
+        expect(walkGraph($enum({ foo: 'bar', bar: 1, baz: true }), jsonSchemaVisitor, { definitions: {} }))
             .toMatchInlineSnapshot(`
             Object {
               "enum": Array [
@@ -171,8 +170,7 @@ describe('toTypeDefinition', () => {
               ],
             }
         `)
-        expect(walkGraph($enum({ foo: 'bar', bar: [1, 2, 3] }), jsonSchemaVisitor, { references: {}, definitions: {} }))
-            .toMatchInlineSnapshot(`
+        expect(walkGraph($enum({ foo: 'bar', bar: [1, 2, 3] }), jsonSchemaVisitor, { definitions: {} })).toMatchInlineSnapshot(`
             Object {
               "enum": Array [
                 "bar",
@@ -184,7 +182,7 @@ describe('toTypeDefinition', () => {
               ],
             }
         `)
-        expect(walkGraph($enum(['foobar']), jsonSchemaVisitor, { references: {}, definitions: {} })).toMatchInlineSnapshot(`
+        expect(walkGraph($enum(['foobar']), jsonSchemaVisitor, { definitions: {} })).toMatchInlineSnapshot(`
             Object {
               "const": "foobar",
             }
@@ -192,7 +190,7 @@ describe('toTypeDefinition', () => {
     })
 
     test('array', () => {
-        expect(walkGraph($array($string), jsonSchemaVisitor, { references: {}, definitions: {} })).toMatchInlineSnapshot(`
+        expect(walkGraph($array($string), jsonSchemaVisitor, { definitions: {} })).toMatchInlineSnapshot(`
             Object {
               "items": Object {
                 "type": "string",
@@ -200,7 +198,7 @@ describe('toTypeDefinition', () => {
               "type": "array",
             }
         `)
-        expect(walkGraph($array($enum(['foo', 'bar', { foo: 'bar' }])), jsonSchemaVisitor, { references: {}, definitions: {} }))
+        expect(walkGraph($array($enum(['foo', 'bar', { foo: 'bar' }])), jsonSchemaVisitor, { definitions: {} }))
             .toMatchInlineSnapshot(`
             Object {
               "items": Object {
@@ -215,8 +213,7 @@ describe('toTypeDefinition', () => {
               "type": "array",
             }
         `)
-        expect(walkGraph($array($union([$string, $integer])), jsonSchemaVisitor, { references: {}, definitions: {} }))
-            .toMatchInlineSnapshot(`
+        expect(walkGraph($array($union([$string, $integer])), jsonSchemaVisitor, { definitions: {} })).toMatchInlineSnapshot(`
             Object {
               "items": Object {
                 "oneOf": Array [
@@ -234,8 +231,7 @@ describe('toTypeDefinition', () => {
     })
 
     test('tuple', () => {
-        expect(walkGraph($tuple([$string, $string, $integer]), jsonSchemaVisitor, { references: {}, definitions: {} }))
-            .toMatchInlineSnapshot(`
+        expect(walkGraph($tuple([$string, $string, $integer]), jsonSchemaVisitor, { definitions: {} })).toMatchInlineSnapshot(`
             Object {
               "additionalItems": false,
               "items": Array [
@@ -262,7 +258,7 @@ describe('toTypeDefinition', () => {
                     boo: $integer,
                 }),
                 jsonSchemaVisitor,
-                { references: {}, definitions: {} }
+                { definitions: {} }
             )
         ).toMatchInlineSnapshot(`
             Object {
@@ -286,7 +282,7 @@ describe('toTypeDefinition', () => {
                     z: $number,
                 }),
                 jsonSchemaVisitor,
-                { references: {}, definitions: {} }
+                { definitions: {} }
             )
         ).toMatchInlineSnapshot(`
             Object {
@@ -308,7 +304,7 @@ describe('toTypeDefinition', () => {
     })
 
     test('dict', () => {
-        expect(walkGraph($dict($string), jsonSchemaVisitor, { references: {}, definitions: {} })).toMatchInlineSnapshot(`
+        expect(walkGraph($dict($string), jsonSchemaVisitor, { definitions: {} })).toMatchInlineSnapshot(`
             Object {
               "additionalProperties": Object {
                 "type": "string",
@@ -320,13 +316,13 @@ describe('toTypeDefinition', () => {
 
     test('ref', () => {
         const foo = $dict($string)
-        expect(walkGraph($ref({ foo }), jsonSchemaVisitor, { references: {}, definitions: {} })).toMatchInlineSnapshot(`
+        expect(walkGraph($ref({ foo }), jsonSchemaVisitor, { definitions: {} })).toMatchInlineSnapshot(`
             Object {
               "$ref": "#/definitions/{{0002-000}}",
             }
         `)
         // test the stable uuid referencing
-        expect(walkGraph($union([$ref({ foo }), $dict($ref({ foo }))]), jsonSchemaVisitor, { references: {}, definitions: {} }))
+        expect(walkGraph($union([$ref({ foo }), $dict($ref({ foo }))]), jsonSchemaVisitor, { definitions: {} }))
             .toMatchInlineSnapshot(`
             Object {
               "oneOf": Array [
@@ -344,7 +340,6 @@ describe('toTypeDefinition', () => {
         `)
         expect(
             walkGraph($union([$ref({ foo }), $dict($nullable($ref({ foo })))]), jsonSchemaVisitor, {
-                references: {},
                 definitions: {},
             })
         ).toMatchInlineSnapshot(`
@@ -372,7 +367,7 @@ describe('toTypeDefinition', () => {
     })
 
     test('union', () => {
-        expect(walkGraph($union([$string]), jsonSchemaVisitor, { references: {}, definitions: {} })).toMatchInlineSnapshot(`
+        expect(walkGraph($union([$string]), jsonSchemaVisitor, { definitions: {} })).toMatchInlineSnapshot(`
             Object {
               "oneOf": Array [
                 Object {
@@ -381,8 +376,7 @@ describe('toTypeDefinition', () => {
               ],
             }
         `)
-        expect(walkGraph($union([$string, $string, $integer]), jsonSchemaVisitor, { references: {}, definitions: {} }))
-            .toMatchInlineSnapshot(`
+        expect(walkGraph($union([$string, $string, $integer]), jsonSchemaVisitor, { definitions: {} })).toMatchInlineSnapshot(`
             Object {
               "oneOf": Array [
                 Object {
@@ -400,8 +394,7 @@ describe('toTypeDefinition', () => {
     })
 
     test('intersection', () => {
-        expect(walkGraph($intersection([$string]), jsonSchemaVisitor, { references: {}, definitions: {} }))
-            .toMatchInlineSnapshot(`
+        expect(walkGraph($intersection([$string]), jsonSchemaVisitor, { definitions: {} })).toMatchInlineSnapshot(`
             Object {
               "allOf": Array [
                 Object {
@@ -410,8 +403,7 @@ describe('toTypeDefinition', () => {
               ],
             }
         `)
-        expect(walkGraph($intersection([$string, $integer]), jsonSchemaVisitor, { references: {}, definitions: {} }))
-            .toMatchInlineSnapshot(`
+        expect(walkGraph($intersection([$string, $integer]), jsonSchemaVisitor, { definitions: {} })).toMatchInlineSnapshot(`
             Object {
               "allOf": Array [
                 Object {
@@ -428,7 +420,6 @@ describe('toTypeDefinition', () => {
     test('union & intersection', () => {
         expect(
             walkGraph($union([$string, $intersection([$string, $integer]), $integer]), jsonSchemaVisitor, {
-                references: {},
                 definitions: {},
             })
         ).toMatchInlineSnapshot(`
@@ -456,8 +447,7 @@ describe('toTypeDefinition', () => {
     })
 
     test('object', () => {
-        expect(walkGraph($object({ foo: $string }), jsonSchemaVisitor, { references: {}, definitions: {} }))
-            .toMatchInlineSnapshot(`
+        expect(walkGraph($object({ foo: $string }), jsonSchemaVisitor, { definitions: {} })).toMatchInlineSnapshot(`
             Object {
               "additionalProperties": false,
               "properties": Object {
@@ -473,7 +463,6 @@ describe('toTypeDefinition', () => {
         `)
         expect(
             walkGraph($object({ foo: $string, bar: $nullable($integer), baz: $optional($integer) }), jsonSchemaVisitor, {
-                references: {},
                 definitions: {},
             })
         ).toMatchInlineSnapshot(`
@@ -502,7 +491,6 @@ describe('toTypeDefinition', () => {
         `)
         expect(
             walkGraph($object({ foo: $string, bar: $string({ [schema.description]: 'fooscription' }) }), jsonSchemaVisitor, {
-                references: {},
                 definitions: {},
             })
         ).toMatchInlineSnapshot(`
@@ -535,7 +523,6 @@ describe('toTypeDefinition', () => {
                 ),
                 jsonSchemaVisitor,
                 {
-                    references: {},
                     definitions: {},
                 }
             )

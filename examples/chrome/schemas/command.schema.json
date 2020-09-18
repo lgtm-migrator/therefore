@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "description": {
+      "type": "string"
+    },
+    "suggested_key": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    }
+  },
+  "required": ["description", "suggested_key"],
+  "additionalProperties": false
+}
