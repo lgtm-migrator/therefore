@@ -56,6 +56,6 @@
     "@zefiros/npm-defaults": "0.2.0-beta.60",
     "@zerollup/ts-transform-paths": "^1.7.18",
     "ts-node": "^9.0.0",
-    "typescript": "^4.0.2"
+    "typescript": "4.1.0-beta"
   }
 }

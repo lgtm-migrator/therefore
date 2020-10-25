@@ -44,7 +44,7 @@ export function isIntersection(obj: ThereforeTypes | { [schema.type]: string }):
 }
 
 export function isShorthand(obj: unknown | ThereforeTypes | { [schema.type]: string }): obj is ThereforeTypes {
-    return (obj as Record<string, unknown>)[schema.type] !== undefined
+    return (obj as Record<string, unknown> | undefined)?.[schema.type] !== undefined
 }
 
 export function isExportable(

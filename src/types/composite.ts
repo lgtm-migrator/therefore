@@ -200,7 +200,12 @@ function refFunction(
         entries.filter(([k, v]) => (objectProperties as Record<string, unknown>)[k] !== undefined && !isShorthand(v))
     )
 
-    const [name, ref] = filteredReferences[0]
+    const first = filteredReferences[0]
+    if (first === undefined) {
+        throw new Error('no reference found')
+    }
+
+    const [name, ref] = first
     const refDefinition: RefType = filterUndefined({
         [schema.type]: '$ref',
         [schema.uuid]: uuid(),

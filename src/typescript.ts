@@ -155,9 +155,9 @@ function writeThereforeSchema(writer: CodeBlockWriter, name: string, obj: Theref
             writer.writeLine(
                 `validate: typeof {{schema}} === 'function' ? {{schema}} : new AjvValidator().compile({{schema}}) as {(o: unknown | ${name}): o is ${name};  errors?: null | Array<import("ajv").ErrorObject>},`
             )
-            writer.writeLine(`is: (o: unknown | ${name}): o is ${name} => ${name}.validate(o) === true,`)
+            writer.writeLine(`is: (o: unknown): o is ${name} => ${name}.validate(o) === true,`)
             writer
-                .write(`assert: (o: unknown | ${name}): asserts o is ${name} => `)
+                .write(`assert: (o: unknown): asserts o is ${name} => `)
                 .inlineBlock(() => {
                     writer.write(`if (!${name}.validate(o))`).block(() => {
                         writer.writeLine(`throw new AjvValidator.ValidationError(${name}.validate.errors ?? [])`)
@@ -190,15 +190,19 @@ export const typeDefinitionVisitor: GraphVisitor<
             if (!obj.values.some((v) => typeof v === 'object')) {
                 writer.write(`${exportString}enum ${name} `).block(() => {
                     for (let i = 0; i < names.length ?? 0; ++i) {
-                        writer.writeLine(`${names[i]} = ${toLiteral(obj.values[i])},`)
+                        writer.writeLine(`${names[i]!} = ${toLiteral(obj.values[i]!)},`)
                     }
                 })
             } else {
-                writer.write(`${exportString}const ${name} = `).block(() => {
-                    for (let i = 0; i < names.length ?? 0; ++i) {
-                        writer.writeLine(`${names[i]}: ${toLiteral(obj.values[i])} as const,`)
-                    }
-                })
+                writer
+                    .write(`${exportString}const ${name}Enum = `)
+                    .inlineBlock(() => {
+                        for (let i = 0; i < names.length ?? 0; ++i) {
+                            writer.writeLine(`${names[i]!}: ${toLiteral(obj.values[i]!)},`)
+                        }
+                    })
+                    .write(' as const')
+                    .writeLine(`${exportString}type ${name} = typeof ${name}Enum`)
                 referenceName = `keyof typeof ${referenceName}`
             }
             const declaration = writer.writeLine('').toString()
@@ -290,7 +294,7 @@ export const typescriptVisitor: GraphVisitor<string, TypescriptWalkerContext> = 
         // for named tuples
         if (names !== undefined) {
             return `[${obj.items
-                .map((value, i) => `${names[i]}${optional(value)}: ${walkGraph(value, typescriptVisitor, context)}`)
+                .map((value, i) => `${names[i]!}${optional(value)}: ${walkGraph(value, typescriptVisitor, context)}`)
                 .join(', ')}]`
         }
         return `[${obj.items.map((i) => walkGraph(i, typescriptVisitor, context)).join(', ')}]`

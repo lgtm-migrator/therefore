@@ -7,6 +7,7 @@ export interface FileSymbol {
     schemaFile?: string
     //schema: JsonSchemaValidator
     tsDefinition: TypescriptDefinition
+    typeOnly: boolean
 }
 
 export interface FileDefinition {

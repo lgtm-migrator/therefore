@@ -5,7 +5,7 @@ export * from './types'
 
 import path from 'path'
 
-export function therefore<T>(v: unknown, schema: { assert: (o: unknown | T) => o is T }): asserts v is T {
+export function therefore<T>(v: unknown, schema: { assert: (o: unknown) => asserts o is T }): asserts v is T {
     schema.assert(v)
 }
 
@@ -14,7 +14,7 @@ const { bin } = require('../package.json')
 
 export async function run(): Promise<void> {
     const argv = yargs
-        .scriptName(Object.keys(bin)[0])
+        .scriptName(Object.keys(bin)[0] as string)
         .option('file', {
             alias: 'f',
             //demandOption: true,
@@ -26,7 +26,7 @@ export async function run(): Promise<void> {
             alias: 'd',
             describe: 'directories',
             type: 'array',
-            coerce: (ds: readonly string[]) => ds.map((d) => path.join('.', d, `**/*.ts`).replace(/\\/g, '/')),
+            coerce: (ds: readonly string[]) => ds.map((d) => path.join('.', d, `**/*.schema.ts`).replace(/\\/g, '/')),
         })
         .option('exclude', {
             alias: 'e',
@@ -40,7 +40,7 @@ export async function run(): Promise<void> {
             type: 'boolean',
         })
         .option('ext', {
-            default: '.schema.ts',
+            default: '.type.ts',
             type: 'string',
         })
         .strict()
