@@ -3,10 +3,8 @@ import { toTypescriptDefinition } from './typescript'
 import { toJsonSchema } from './schema'
 import { renderTemplate } from './template'
 import { isDefined } from './util'
-import { isExportable, isShorthand } from './guard'
+import { isExportable } from './guard'
 import { prepass } from './ast'
-import type { ThereforeTypes } from './types/composite'
-import { schema } from './therefore'
 
 import decamelize from 'decamelize'
 import execa from 'execa'
@@ -84,8 +82,6 @@ export function scanModule(entry: string, definitions: { [k: string]: FileDefini
     const relative = path.relative(__dirname, entry).replace(/\\/g, '/').replace('.ts', '')
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
     const module = requireFunc(relative.startsWith('.') ? relative : `./${relative}`)
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    //const def: Record<string, ThereforeTypes | unknown> = module.default
     for (const [name, symbol] of Object.entries(module)) {
         if (isExportable(symbol)) {
             const simplified = prepass(symbol)
@@ -149,10 +145,10 @@ export function scanFiles(files: string[], basePath: string): { [k: string]: Fil
 
         try {
             scanModule(entry, definitions, fullPath)
-        } catch (e) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            console.debug(e.message, e.stack)
-            throw e
+        } catch (e: unknown) {
+            const error = e as Error
+            console.debug(error.message, error.stack)
+            throw error
         }
     }
     return definitions

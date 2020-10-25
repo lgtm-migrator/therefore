@@ -445,10 +445,11 @@ describe('toTypeDefinition', () => {
             walkGraph($enum({ foo: 'bar', bar: [1, 2, 3] }), typeDefinitionVisitor, { references: [], name: 'Foo', locals: {} })
         ).toMatchInlineSnapshot(`
             Object {
-              "declaration": "const Foo = {
-                foo: 'bar' as const,
-                bar: [1, 2, 3] as const,
-            }
+              "declaration": "const FooEnum = {
+                foo: 'bar',
+                bar: [1, 2, 3],
+            } as const
+            type Foo = typeof FooEnum
 
             ",
               "meta": undefined,
@@ -1002,8 +1003,8 @@ describe('toTypescriptDefinition', () => {
               "meta": "export const Foo = {
                 schema: {{schema}},
                 validate: typeof {{schema}} === 'function' ? {{schema}} : new AjvValidator().compile({{schema}}) as {(o: unknown | Foo): o is Foo;  errors?: null | Array<import(\\"ajv\\").ErrorObject>},
-                is: (o: unknown | Foo): o is Foo => Foo.validate(o) === true,
-                assert: (o: unknown | Foo): asserts o is Foo => {
+                is: (o: unknown): o is Foo => Foo.validate(o) === true,
+                assert: (o: unknown): asserts o is Foo => {
                     if (!Foo.validate(o)) {
                         throw new AjvValidator.ValidationError(Foo.validate.errors ?? [])
                     }
@@ -1032,8 +1033,8 @@ describe('toTypescriptDefinition', () => {
               "meta": "export const Foo = {
                 schema: {{schema}},
                 validate: typeof {{schema}} === 'function' ? {{schema}} : new AjvValidator().compile({{schema}}) as {(o: unknown | Foo): o is Foo;  errors?: null | Array<import(\\"ajv\\").ErrorObject>},
-                is: (o: unknown | Foo): o is Foo => Foo.validate(o) === true,
-                assert: (o: unknown | Foo): asserts o is Foo => {
+                is: (o: unknown): o is Foo => Foo.validate(o) === true,
+                assert: (o: unknown): asserts o is Foo => {
                     if (!Foo.validate(o)) {
                         throw new AjvValidator.ValidationError(Foo.validate.errors ?? [])
                     }
@@ -1196,8 +1197,8 @@ describe('toTypescriptDefinition', () => {
               "meta": "export const Foo = {
                 schema: {{schema}},
                 validate: typeof {{schema}} === 'function' ? {{schema}} : new AjvValidator().compile({{schema}}) as {(o: unknown | Foo): o is Foo;  errors?: null | Array<import(\\"ajv\\").ErrorObject>},
-                is: (o: unknown | Foo): o is Foo => Foo.validate(o) === true,
-                assert: (o: unknown | Foo): asserts o is Foo => {
+                is: (o: unknown): o is Foo => Foo.validate(o) === true,
+                assert: (o: unknown): asserts o is Foo => {
                     if (!Foo.validate(o)) {
                         throw new AjvValidator.ValidationError(Foo.validate.errors ?? [])
                     }
@@ -1225,8 +1226,8 @@ describe('toTypescriptDefinition', () => {
               "meta": "export const Foo = {
                 schema: {{schema}},
                 validate: typeof {{schema}} === 'function' ? {{schema}} : new AjvValidator().compile({{schema}}) as {(o: unknown | Foo): o is Foo;  errors?: null | Array<import(\\"ajv\\").ErrorObject>},
-                is: (o: unknown | Foo): o is Foo => Foo.validate(o) === true,
-                assert: (o: unknown | Foo): asserts o is Foo => {
+                is: (o: unknown): o is Foo => Foo.validate(o) === true,
+                assert: (o: unknown): asserts o is Foo => {
                     if (!Foo.validate(o)) {
                         throw new AjvValidator.ValidationError(Foo.validate.errors ?? [])
                     }
@@ -1256,8 +1257,8 @@ describe('toTypescriptDefinition', () => {
               "meta": "export const Foo = {
                 schema: {{schema}},
                 validate: typeof {{schema}} === 'function' ? {{schema}} : new AjvValidator().compile({{schema}}) as {(o: unknown | Foo): o is Foo;  errors?: null | Array<import(\\"ajv\\").ErrorObject>},
-                is: (o: unknown | Foo): o is Foo => Foo.validate(o) === true,
-                assert: (o: unknown | Foo): asserts o is Foo => {
+                is: (o: unknown): o is Foo => Foo.validate(o) === true,
+                assert: (o: unknown): asserts o is Foo => {
                     if (!Foo.validate(o)) {
                         throw new AjvValidator.ValidationError(Foo.validate.errors ?? [])
                     }

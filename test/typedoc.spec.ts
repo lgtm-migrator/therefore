@@ -9,6 +9,6 @@ import { v4 as uuid } from 'uuid'
 describe('schema', () => {
     beforeEach(() => (uuid as jest.Mock).mockImplementation(mockUuid()))
     test('typedoc', async () => {
-        expect(await compileSchemas(['examples/typedoc/typedoc.ts'], '.schema.ts', process.cwd())).toMatchSnapshot()
+        expect(await compileSchemas(['examples/typedoc/typedoc.schema.ts'], '.type.ts', process.cwd())).toMatchSnapshot()
     })
 })

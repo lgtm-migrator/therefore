@@ -9,9 +9,9 @@ import { v4 as uuid } from 'uuid'
 describe('schema', () => {
     beforeEach(() => (uuid as jest.Mock).mockImplementation(mockUuid()))
     test('json', async () => {
-        expect(await compileSchemas(['examples/json/json.ts'], '.schema.ts', process.cwd())).toMatchSnapshot()
+        expect(await compileSchemas(['examples/json/json.schema.ts'], '.type.ts', process.cwd())).toMatchSnapshot()
     })
     test('simple', async () => {
-        expect(await compileSchemas(['examples/json/simple.ts'], '.schema.ts', process.cwd())).toMatchSnapshot()
+        expect(await compileSchemas(['examples/json/simple.schema.ts'], '.type.ts', process.cwd())).toMatchSnapshot()
     })
 })

@@ -14,7 +14,7 @@ const { bin } = require('../package.json')
 
 export async function run(): Promise<void> {
     const argv = yargs
-        .scriptName(Object.keys(bin)[0] as string)
+        .scriptName(Object.keys(bin)[0])
         .option('file', {
             alias: 'f',
             //demandOption: true,

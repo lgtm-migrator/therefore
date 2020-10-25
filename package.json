@@ -20,14 +20,18 @@
   "engines": {
     "node": ">=12"
   },
-  "files": ["bin", "dist", "package.json"],
+  "files": [
+    "bin",
+    "dist",
+    "package.json"
+  ],
   "scripts": {
     "build": "webpack --version && webpack",
     "test": "concurrently \"yarn check:types\" \"jest test --maxWorkers=1\"",
     "fix": "yarn lint --fix",
-    "lint": "yarn eslint \"{src,test,typing}/**/*.{ts,js}\" --ignore-pattern **/node_modules/* --resolve-plugins-relative-to .",
+    "lint": "yarn eslint \"{src,test,typing}/**/*.{ts,js}\" --ignore-path .gitignore --resolve-plugins-relative-to .",
     "lint:full": "bash -c \"FULL_LINT=true yarn lint\"",
-    "format": "prettier \"{src/*,test/*,typing/*,templates/*,examples/*,}*/*.{ts,js,json}\" --write",
+    "format": "prettier \"**/*.{ts,js,json,yml,yaml}\" --ignore-path .gitignore --write",
     "release": "semantic-release",
     "release:dry": "yarn release --dry-run",
     "check:types": "yarn tsc -p tsconfig.json",
@@ -54,8 +58,7 @@
     "@types/webpack-env": "^1.15.2",
     "@types/yargs": "^15.0.5",
     "@zefiros/npm-defaults": "0.2.0-beta.60",
-    "@zerollup/ts-transform-paths": "^1.7.18",
     "ts-node": "^9.0.0",
-    "typescript": "4.1.0-beta"
+    "typescript": "^4.1.0-beta"
   }
 }
