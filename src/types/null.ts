@@ -5,13 +5,26 @@ import { schema } from '../therefore'
 import { v4 as uuid } from 'uuid'
 
 export interface NullOptions {
+    /**
+     * @internal
+     */
     [schema.type]: 'null'
-    [schema.uuid]: string
 }
 
-export type NullType = NullOptions & ThereforeCommon<null>
+type InternalNullType = NullOptions & ThereforeCommon<null>
 
-export const $null = (options: SchemaOptions<NullType> = {}): Readonly<NullType> => {
+/**
+ * @category $null
+ */
+export interface NullType extends InternalNullType {}
+
+/**
+ *
+ * @param options - additional options to pass to the property
+ *
+ * @category $null
+ */
+export function $null(options: SchemaOptions<NullType> = {}): Readonly<NullType> {
     const nullDefinition: NullType = filterUndefined({
         [schema.type]: 'null',
         [schema.uuid]: uuid(),

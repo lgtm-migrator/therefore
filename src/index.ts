@@ -1,10 +1,19 @@
 import { execute } from './cli'
 
 import yargs from 'yargs'
+
 export * from './types'
+export { SchemaOptions } from './therefore'
 
 import path from 'path'
 
+/**
+ *
+ * @param v
+ * @param schema
+ *
+ * @alpha
+ */
 export function therefore<T>(v: unknown, schema: { assert: (o: unknown) => asserts o is T }): asserts v is T {
     schema.assert(v)
 }
@@ -12,6 +21,9 @@ export function therefore<T>(v: unknown, schema: { assert: (o: unknown) => asser
 // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-assignment
 const { bin } = require('../package.json')
 
+/**
+ * @internal
+ */
 export async function run(): Promise<void> {
     const argv = yargs
         .scriptName(Object.keys(bin)[0])

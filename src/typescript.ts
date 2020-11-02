@@ -153,7 +153,7 @@ function writeThereforeSchema(writer: CodeBlockWriter, name: string, obj: Theref
         .block(() => {
             writer.writeLine(`schema: {{schema}},`)
             writer.writeLine(
-                `validate: typeof {{schema}} === 'function' ? {{schema}} : new AjvValidator().compile({{schema}}) as {(o: unknown | ${name}): o is ${name};  errors?: null | Array<import("ajv").ErrorObject>},`
+                `validate: typeof {{schema}} === 'function' ? {{schema}} : new AjvValidator().compile<${name}>({{schema}}),`
             )
             writer.writeLine(`is: (o: unknown): o is ${name} => ${name}.validate(o) === true,`)
             writer

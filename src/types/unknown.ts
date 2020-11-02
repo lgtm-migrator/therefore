@@ -4,14 +4,24 @@ import { schema } from '../therefore'
 
 import { v4 as uuid } from 'uuid'
 
-export interface UnknownOptions {
+interface BaseUnknownOptions {
     [schema.type]: 'unknown'
-    [schema.uuid]: string
 }
 
-export type UnknownType = UnknownOptions & ThereforeCommon
+type InternalUnknownType = BaseUnknownOptions & ThereforeCommon
 
-export const $unknown = (options: SchemaOptions<UnknownType> = {}): Readonly<UnknownType> => {
+/**
+ * @category $unknown
+ */
+export interface UnknownType extends InternalUnknownType {}
+
+/**
+ *
+ * @param options - additional options to pass to the property
+ *
+ * @category $unknown
+ */
+export function $unknown(options: SchemaOptions<UnknownType> = {}): Readonly<UnknownType> {
     const unknownDefinition: UnknownType = filterUndefined({
         [schema.type]: 'unknown',
         [schema.uuid]: uuid(),

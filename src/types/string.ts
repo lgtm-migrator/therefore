@@ -5,18 +5,31 @@ import type { JsonStringInstance } from '../json'
 
 import { v4 as uuid } from 'uuid'
 
-export interface StringOptions {
+interface BaseStringOptions {
+    /**
+     * @internal
+     */
     [schema.type]: 'string'
-    [schema.uuid]: string
     minLength?: number
     maxLength?: number
     pattern?: string | RegExp
     format?: JsonStringInstance['format']
 }
 
-export type StringType = StringOptions & ThereforeCommon<string>
+type InternalStringType = BaseStringOptions & ThereforeCommon<string>
 
-export const $string = (options: SchemaOptions<StringType> = {}): Readonly<StringType> => {
+/**
+ * @category $string
+ */
+export interface StringType extends InternalStringType {}
+
+/**
+ *
+ * @param options - additional options to pass to the property
+ *
+ * @category $string
+ */
+export function $string(options: SchemaOptions<StringType> = {}): Readonly<StringType> {
     const stringDefinition: StringType = filterUndefined({
         [schema.type]: 'string',
         [schema.uuid]: uuid(),

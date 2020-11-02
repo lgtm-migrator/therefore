@@ -6,8 +6,8 @@ Array [
     "data": Object {
       "0001-000": "UriLocal",
       "00010-000": "ActionLocal",
-      "000123-000": "ExtensionVoicesArrayEventTypesArray",
-      "000125-000": "ExtensionVoicesArray",
+      "000125-000": "ExtensionVoicesArrayEventTypesArray",
+      "000127-000": "ExtensionVoicesArray",
       "00014-000": "CommandLocal",
       "00015-000": "VersionStringLocal",
       "00016-000": "PageLocal",
@@ -132,7 +132,7 @@ interface ExtensionVoicesArray {
     /**
      * Events sent to update the client on the progress of speech synthesis.
      */
-    event_types: [{{000123-000}},  ...({{000123-000}})[]]
+    event_types: [{{000125-000}},  ...({{000125-000}})[]]
 }
 
 /**
@@ -406,7 +406,7 @@ export interface Extension {
         /**
          * Voices the extension can synthesize.
          */
-        voices: [{{000125-000}},  ...({{000125-000}})[]]
+        voices: [{{000127-000}},  ...({{000127-000}})[]]
         /**
          * In addition to the version field, which is used for update purposes, version_name can be set to a descriptive version string and will be used for display purposes if present.
          */
@@ -429,7 +429,7 @@ export interface Extension {
 
 export const Extension = {
     schema: extensionSchema,
-    validate: typeof extensionSchema === 'function' ? extensionSchema : new AjvValidator().compile(extensionSchema) as {(o: unknown | Extension): o is Extension;  errors?: null | Array<import(\\"ajv\\").ErrorObject>},
+    validate: typeof extensionSchema === 'function' ? extensionSchema : new AjvValidator().compile<Extension>(extensionSchema),
     is: (o: unknown): o is Extension => Extension.validate(o) === true,
     assert: (o: unknown): asserts o is Extension => {
         if (!Extension.validate(o)) {
@@ -492,8 +492,8 @@ type PermissionsLocal = (string)[]
     "data": Object {
       "0001-000": "UriLocal",
       "00010-000": "ActionLocal",
-      "000123-000": "ExtensionVoicesArrayEventTypesArray",
-      "000125-000": "ExtensionVoicesArray",
+      "000125-000": "ExtensionVoicesArrayEventTypesArray",
+      "000127-000": "ExtensionVoicesArray",
       "00014-000": "CommandLocal",
       "00015-000": "VersionStringLocal",
       "00016-000": "PageLocal",

@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "type": {
+      "const": "asteroid"
+    },
+    "location": {
+      "$ref": "#/definitions/VectorLocal"
+    },
+    "mass": {
+      "type": "number",
+      "minimum": 0
+    }
+  },
+  "required": ["type", "location", "mass"],
+  "additionalProperties": false,
+  "definitions": {
+    "VectorLocal": {
+      "type": "array",
+      "items": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        }
+      ],
+      "additionalItems": false
+    }
+  }
+}

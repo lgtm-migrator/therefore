@@ -14,14 +14,14 @@ describe('optional', () => {
             Object {
               "optional": true,
               "type": "string",
-              "uuid": "0001-000",
+              "uuid": "0002-000",
             }
         `)
         expect($optional($string())).toMatchInlineSnapshot(`
             Object {
               "optional": true,
               "type": "string",
-              "uuid": "0002-000",
+              "uuid": "0004-000",
             }
         `)
     })
@@ -35,14 +35,14 @@ describe('$nullable', () => {
             Object {
               "nullable": true,
               "type": "string",
-              "uuid": "0001-000",
+              "uuid": "0002-000",
             }
         `)
         expect($nullable($string())).toMatchInlineSnapshot(`
             Object {
               "nullable": true,
               "type": "string",
-              "uuid": "0002-000",
+              "uuid": "0004-000",
             }
         `)
     })

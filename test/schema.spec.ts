@@ -27,20 +27,27 @@ import { walkGraph } from '~/ast'
 import { v4 as uuid } from 'uuid'
 
 describe('toType', () => {
+    beforeEach(() => (uuid as jest.Mock).mockImplementation(mockUuid()))
     test('nullable', () => {
-        expect(toType('string', { [schema.nullable]: true, [schema.type]: 'string' })).toEqual(['string', 'null'])
+        expect(toType('string', { [schema.nullable]: true, [schema.type]: 'string', [schema.uuid]: uuid() })).toEqual([
+            'string',
+            'null',
+        ])
     })
 
     test('first argument (json schema type) is leading', () => {
-        expect(toType('string', { [schema.nullable]: true, [schema.type]: 'integer' })).toEqual(['string', 'null'])
+        expect(toType('string', { [schema.nullable]: true, [schema.type]: 'integer', [schema.uuid]: uuid() })).toEqual([
+            'string',
+            'null',
+        ])
     })
 
     test('not nullable', () => {
-        expect(toType('string', { [schema.nullable]: false, [schema.type]: 'string' })).toEqual('string')
+        expect(toType('string', { [schema.nullable]: false, [schema.type]: 'string', [schema.uuid]: uuid() })).toEqual('string')
     })
 
     test('default', () => {
-        expect(toType('string', { [schema.type]: 'string' })).toEqual('string')
+        expect(toType('string', { [schema.type]: 'string', [schema.uuid]: uuid() })).toEqual('string')
     })
 })
 

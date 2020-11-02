@@ -403,13 +403,7 @@ export interface Extension {
 
 export const Extension = {
     schema: extensionSchema,
-    validate:
-        typeof extensionSchema === 'function'
-            ? extensionSchema
-            : (new AjvValidator().compile(extensionSchema) as {
-                  (o: unknown | Extension): o is Extension
-                  errors?: null | Array<import('ajv').ErrorObject>
-              }),
+    validate: typeof extensionSchema === 'function' ? extensionSchema : new AjvValidator().compile<Extension>(extensionSchema),
     is: (o: unknown): o is Extension => Extension.validate(o) === true,
     assert: (o: unknown): asserts o is Extension => {
         if (!Extension.validate(o)) {

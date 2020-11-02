@@ -178,7 +178,7 @@ export interface Typedoc {
 
 export const Typedoc = {
     schema: typedocSchema,
-    validate: typeof typedocSchema === 'function' ? typedocSchema : new AjvValidator().compile(typedocSchema) as {(o: unknown | Typedoc): o is Typedoc;  errors?: null | Array<import(\\"ajv\\").ErrorObject>},
+    validate: typeof typedocSchema === 'function' ? typedocSchema : new AjvValidator().compile<Typedoc>(typedocSchema),
     is: (o: unknown): o is Typedoc => Typedoc.validate(o) === true,
     assert: (o: unknown): asserts o is Typedoc => {
         if (!Typedoc.validate(o)) {

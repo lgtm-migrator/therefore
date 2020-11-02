@@ -84,8 +84,10 @@ describe('literals', () => {
 })
 
 describe('toJSDoc', () => {
+    beforeEach(() => (uuid as jest.Mock).mockImplementation(mockUuid()))
     test('description', () => {
-        expect(toJSDoc('foo', { [schema.type]: 'string', [schema.description]: 'lorum ipsum' })).toMatchInlineSnapshot(`
+        expect(toJSDoc('foo', { [schema.type]: 'string', [schema.description]: 'lorum ipsum', [schema.uuid]: uuid() }))
+            .toMatchInlineSnapshot(`
             "/**
              * lorum ipsum
              */
@@ -94,9 +96,16 @@ describe('toJSDoc', () => {
     })
 
     test('examples', () => {
-        expect(toJSDoc('foo', { [schema.type]: 'string', [schema.examples]: [] })).toMatchInlineSnapshot(`undefined`)
-        expect(toJSDoc('foo', { [schema.type]: 'string', [schema.examples]: ['lorum ipsum', 'dolor sit amet'] }))
-            .toMatchInlineSnapshot(`
+        expect(toJSDoc('foo', { [schema.type]: 'string', [schema.examples]: [], [schema.uuid]: uuid() })).toMatchInlineSnapshot(
+            `undefined`
+        )
+        expect(
+            toJSDoc('foo', {
+                [schema.type]: 'string',
+                [schema.examples]: ['lorum ipsum', 'dolor sit amet'],
+                [schema.uuid]: uuid(),
+            })
+        ).toMatchInlineSnapshot(`
             "/**
              * @example foo = 'lorum ipsum'
              * @example foo = 'dolor sit amet'
@@ -106,13 +115,14 @@ describe('toJSDoc', () => {
     })
 
     test('default', () => {
-        expect(toJSDoc('foo', { [schema.type]: 'string', [schema.default]: [] })).toMatchInlineSnapshot(`
+        expect(toJSDoc('foo', { [schema.type]: 'string', [schema.default]: [], [schema.uuid]: uuid() })).toMatchInlineSnapshot(`
             "/**
              * @default []
              */
             "
         `)
-        expect(toJSDoc('foo', { [schema.type]: 'string', [schema.default]: 'lorum ipsum' })).toMatchInlineSnapshot(`
+        expect(toJSDoc('foo', { [schema.type]: 'string', [schema.default]: 'lorum ipsum', [schema.uuid]: uuid() }))
+            .toMatchInlineSnapshot(`
             "/**
              * @default 'lorum ipsum'
              */
@@ -127,6 +137,7 @@ describe('toJSDoc', () => {
                 [schema.description]: 'lorum ipsum',
                 [schema.default]: 'dolor sit amet',
                 [schema.examples]: ['lorum ipsum', 'dolor sit amet'],
+                [schema.uuid]: uuid(),
             })
         ).toMatchInlineSnapshot(`
             "/**
@@ -1002,7 +1013,7 @@ describe('toTypescriptDefinition', () => {
               "locals": Object {},
               "meta": "export const Foo = {
                 schema: {{schema}},
-                validate: typeof {{schema}} === 'function' ? {{schema}} : new AjvValidator().compile({{schema}}) as {(o: unknown | Foo): o is Foo;  errors?: null | Array<import(\\"ajv\\").ErrorObject>},
+                validate: typeof {{schema}} === 'function' ? {{schema}} : new AjvValidator().compile<Foo>({{schema}}),
                 is: (o: unknown): o is Foo => Foo.validate(o) === true,
                 assert: (o: unknown): asserts o is Foo => {
                     if (!Foo.validate(o)) {
@@ -1032,7 +1043,7 @@ describe('toTypescriptDefinition', () => {
               "locals": Object {},
               "meta": "export const Foo = {
                 schema: {{schema}},
-                validate: typeof {{schema}} === 'function' ? {{schema}} : new AjvValidator().compile({{schema}}) as {(o: unknown | Foo): o is Foo;  errors?: null | Array<import(\\"ajv\\").ErrorObject>},
+                validate: typeof {{schema}} === 'function' ? {{schema}} : new AjvValidator().compile<Foo>({{schema}}),
                 is: (o: unknown): o is Foo => Foo.validate(o) === true,
                 assert: (o: unknown): asserts o is Foo => {
                     if (!Foo.validate(o)) {
@@ -1196,7 +1207,7 @@ describe('toTypescriptDefinition', () => {
               "locals": Object {},
               "meta": "export const Foo = {
                 schema: {{schema}},
-                validate: typeof {{schema}} === 'function' ? {{schema}} : new AjvValidator().compile({{schema}}) as {(o: unknown | Foo): o is Foo;  errors?: null | Array<import(\\"ajv\\").ErrorObject>},
+                validate: typeof {{schema}} === 'function' ? {{schema}} : new AjvValidator().compile<Foo>({{schema}}),
                 is: (o: unknown): o is Foo => Foo.validate(o) === true,
                 assert: (o: unknown): asserts o is Foo => {
                     if (!Foo.validate(o)) {
@@ -1225,7 +1236,7 @@ describe('toTypescriptDefinition', () => {
               "locals": Object {},
               "meta": "export const Foo = {
                 schema: {{schema}},
-                validate: typeof {{schema}} === 'function' ? {{schema}} : new AjvValidator().compile({{schema}}) as {(o: unknown | Foo): o is Foo;  errors?: null | Array<import(\\"ajv\\").ErrorObject>},
+                validate: typeof {{schema}} === 'function' ? {{schema}} : new AjvValidator().compile<Foo>({{schema}}),
                 is: (o: unknown): o is Foo => Foo.validate(o) === true,
                 assert: (o: unknown): asserts o is Foo => {
                     if (!Foo.validate(o)) {
@@ -1238,7 +1249,7 @@ describe('toTypescriptDefinition', () => {
               "referenceName": "Foo",
               "references": Array [],
               "symbolName": "foo",
-              "uuid": "0006-000",
+              "uuid": "0008-000",
             }
         `)
         expect(toTypescriptDefinition('foo', $object({ foo: $string, bar: $string({ [schema.description]: 'fooscription' }) })))
@@ -1256,7 +1267,7 @@ describe('toTypescriptDefinition', () => {
               "locals": Object {},
               "meta": "export const Foo = {
                 schema: {{schema}},
-                validate: typeof {{schema}} === 'function' ? {{schema}} : new AjvValidator().compile({{schema}}) as {(o: unknown | Foo): o is Foo;  errors?: null | Array<import(\\"ajv\\").ErrorObject>},
+                validate: typeof {{schema}} === 'function' ? {{schema}} : new AjvValidator().compile<Foo>({{schema}}),
                 is: (o: unknown): o is Foo => Foo.validate(o) === true,
                 assert: (o: unknown): asserts o is Foo => {
                     if (!Foo.validate(o)) {
@@ -1269,7 +1280,7 @@ describe('toTypescriptDefinition', () => {
               "referenceName": "Foo",
               "references": Array [],
               "symbolName": "foo",
-              "uuid": "0009-000",
+              "uuid": "00011-000",
             }
         `)
     })
