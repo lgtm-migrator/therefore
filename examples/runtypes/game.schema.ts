@@ -1,4 +1,4 @@
-import { $number, $object, $union, $enum, $tuple, $ref, $boolean, $string, $array, $dict } from '~/index'
+import { $number, $object, $union, $enum, $tuple, $ref, $boolean, $string, $array, $dict, $const } from '~/index'
 
 const nonNegative = $number({
     minimum: 0,
@@ -7,13 +7,13 @@ const nonNegative = $number({
 const vector = $tuple([$number, $number, $number])
 
 export const asteroid = $object({
-    type: $enum(['asteroid']),
+    type: $const('asteroid'),
     location: $ref({ vector }),
     mass: nonNegative,
 })
 
 export const planet = $object({
-    type: $enum(['planet']),
+    type: $const('planet'),
     location: $ref({ vector }),
     mass: nonNegative,
     population: nonNegative,
@@ -30,7 +30,7 @@ export const crewMember = $object({
 })
 
 export const ship = $object({
-    type: $enum(['ship']),
+    type: $const('ship'),
     location: $ref({ vector }),
     mass: nonNegative,
     name: $string,
