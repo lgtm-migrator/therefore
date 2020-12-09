@@ -40,8 +40,6 @@ Therefore is:
 - [API](#api)
 - [Alternative projects](#alternative-projects)
 - [When not to use Therefore?](#when-not-to-use-therefore)
-- [Maintainer](#maintainer)
-- [Contributing](#contributing)
 - [License](#license)
 
 <!-- tocstop -->
@@ -229,10 +227,6 @@ PR's are very welcome if you think your project is missing here.
     -   indexable types are always explicitly nullable i.e. `Record<string, string | undefined>` instead of `Record<string, string>`
 -   We only support JSON Schema validation through Ajv. If you do not want to/can't use Ajv, Therefore probably isn't for you.
 -   Therefore is an insanely opinionated implementation of runtime validation of types, it will not fit for everyone's needs.
-
-## Maintainer
-
-## Contributing
 
 ## License
 
