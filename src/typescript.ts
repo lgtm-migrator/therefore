@@ -62,9 +62,9 @@ export function toLiteral(obj: unknown): string {
 export function toJSDoc<T extends Json>(key: string, obj: ThereforeCommon<T>): string | undefined {
     const docs: string[] = []
     const pad = () => (docs.length > 0 ? docs.push('') : undefined)
-    const decription = obj[schema.description] ?? obj[schema.title]
-    if (decription !== undefined) {
-        docs.push(...decription.split('\n'))
+    const description = obj[schema.description] ?? obj[schema.title]
+    if (description !== undefined) {
+        docs.push(...description.split('\n'))
     }
     const properties: string[] = []
 
