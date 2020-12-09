@@ -19,7 +19,7 @@ export interface Person {
 
 export const Person = {
     schema: personSchema,
-    validate: typeof personSchema === 'function' ? personSchema : new AjvValidator().compile<Person>(personSchema),
+    validate: new AjvValidator().compile<Person>(personSchema),
     is: (o: unknown): o is Person => Person.validate(o) === true,
     assert: (o: unknown): asserts o is Person => {
         if (!Person.validate(o)) {

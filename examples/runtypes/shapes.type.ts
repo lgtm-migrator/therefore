@@ -17,7 +17,7 @@ export interface Square {
 
 export const Square = {
     schema: squareSchema,
-    validate: typeof squareSchema === 'function' ? squareSchema : new AjvValidator().compile<Square>(squareSchema),
+    validate: new AjvValidator().compile<Square>(squareSchema),
     is: (o: unknown): o is Square => Square.validate(o) === true,
     assert: (o: unknown): asserts o is Square => {
         if (!Square.validate(o)) {
@@ -33,7 +33,7 @@ export interface Rectangle {
 
 export const Rectangle = {
     schema: rectangleSchema,
-    validate: typeof rectangleSchema === 'function' ? rectangleSchema : new AjvValidator().compile<Rectangle>(rectangleSchema),
+    validate: new AjvValidator().compile<Rectangle>(rectangleSchema),
     is: (o: unknown): o is Rectangle => Rectangle.validate(o) === true,
     assert: (o: unknown): asserts o is Rectangle => {
         if (!Rectangle.validate(o)) {
@@ -48,7 +48,7 @@ export interface Circle {
 
 export const Circle = {
     schema: circleSchema,
-    validate: typeof circleSchema === 'function' ? circleSchema : new AjvValidator().compile<Circle>(circleSchema),
+    validate: new AjvValidator().compile<Circle>(circleSchema),
     is: (o: unknown): o is Circle => Circle.validate(o) === true,
     assert: (o: unknown): asserts o is Circle => {
         if (!Circle.validate(o)) {
@@ -61,7 +61,7 @@ export type Shape = Square | Rectangle | Circle
 
 export const Shape = {
     schema: shapeSchema,
-    validate: typeof shapeSchema === 'function' ? shapeSchema : new AjvValidator().compile<Shape>(shapeSchema),
+    validate: new AjvValidator().compile<Shape>(shapeSchema),
     is: (o: unknown): o is Shape => Shape.validate(o) === true,
     assert: (o: unknown): asserts o is Shape => {
         if (!Shape.validate(o)) {

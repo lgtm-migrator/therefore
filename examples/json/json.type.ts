@@ -21,7 +21,7 @@ export type Json =
 
 export const Json = {
     schema: jsonSchema,
-    validate: typeof jsonSchema === 'function' ? jsonSchema : new AjvValidator().compile<Json>(jsonSchema),
+    validate: new AjvValidator().compile<Json>(jsonSchema),
     is: (o: unknown): o is Json => Json.validate(o) === true,
     assert: (o: unknown): asserts o is Json => {
         if (!Json.validate(o)) {
@@ -34,7 +34,7 @@ export type JsonAdv = JsonRefLocal
 
 export const JsonAdv = {
     schema: jsonAdvSchema,
-    validate: typeof jsonAdvSchema === 'function' ? jsonAdvSchema : new AjvValidator().compile<JsonAdv>(jsonAdvSchema),
+    validate: new AjvValidator().compile<JsonAdv>(jsonAdvSchema),
     is: (o: unknown): o is JsonAdv => JsonAdv.validate(o) === true,
     assert: (o: unknown): asserts o is JsonAdv => {
         if (!JsonAdv.validate(o)) {

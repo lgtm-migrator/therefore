@@ -1,3 +1,5 @@
+import type { InstanceOptions } from 'ajv'
+
 const typeSymbol = 'type' // Symbol('type')
 const titleSymbol = 'title' // Symbol('title')
 const idSymbol = 'id' // Symbol('id')
@@ -10,6 +12,8 @@ const examplesSymbol = 'examples' // Symbol('example')
 
 const readonlySymbol = 'readonly' // Symbol('readonly')
 //const writeonlySymbol = ('readonly') // Symbol('readonly')
+
+const ajvOptionsSymbol = 'ajvOptions'
 
 const uuidSymbol = 'uuid' // Symbol('uuid')
 
@@ -28,6 +32,8 @@ export const schema = {
     readonly: readonlySymbol,
 
     examples: examplesSymbol,
+
+    ajvOptions: ajvOptionsSymbol,
 } as const
 
 export type Json = string | number | boolean | null | { [property: string]: Json } | ReadonlyArray<Json>
@@ -47,7 +53,7 @@ export type TypeLiterals =
     | 'union'
     | 'intersection'
 
-export interface ThereforeCommon<T extends Json = Json> {
+export interface ThereforeCommon<T = Json> {
     /**
      * @internal
      */
@@ -125,6 +131,11 @@ export interface ThereforeCommon<T extends Json = Json> {
     [schema.readonly]?: boolean
 
     /**
+     * The ajv options to validate this object with
+     */
+    [schema.ajvOptions]?: InstanceOptions
+
+    /**
      * @internal
      */
     [schema.uuid]: string
@@ -142,6 +153,8 @@ export const commonOptions = {
     default: schema.default,
 
     readonly: schema.readonly,
+
+    ajvOptions: schema.ajvOptions,
 }
 
 /**

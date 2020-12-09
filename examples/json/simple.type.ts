@@ -12,7 +12,7 @@ export type Simple = number | Simple[]
 
 export const Simple = {
     schema: simpleSchema,
-    validate: typeof simpleSchema === 'function' ? simpleSchema : new AjvValidator().compile<Simple>(simpleSchema),
+    validate: new AjvValidator().compile<Simple>(simpleSchema),
     is: (o: unknown): o is Simple => Simple.validate(o) === true,
     assert: (o: unknown): asserts o is Simple => {
         if (!Simple.validate(o)) {

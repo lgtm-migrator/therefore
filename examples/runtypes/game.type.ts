@@ -21,7 +21,7 @@ export interface Asteroid {
 
 export const Asteroid = {
     schema: asteroidSchema,
-    validate: typeof asteroidSchema === 'function' ? asteroidSchema : new AjvValidator().compile<Asteroid>(asteroidSchema),
+    validate: new AjvValidator().compile<Asteroid>(asteroidSchema),
     is: (o: unknown): o is Asteroid => Asteroid.validate(o) === true,
     assert: (o: unknown): asserts o is Asteroid => {
         if (!Asteroid.validate(o)) {
@@ -40,7 +40,7 @@ export interface Planet {
 
 export const Planet = {
     schema: planetSchema,
-    validate: typeof planetSchema === 'function' ? planetSchema : new AjvValidator().compile<Planet>(planetSchema),
+    validate: new AjvValidator().compile<Planet>(planetSchema),
     is: (o: unknown): o is Planet => Planet.validate(o) === true,
     assert: (o: unknown): asserts o is Planet => {
         if (!Planet.validate(o)) {
@@ -60,8 +60,7 @@ export interface CrewMember {
 
 export const CrewMember = {
     schema: crewMemberSchema,
-    validate:
-        typeof crewMemberSchema === 'function' ? crewMemberSchema : new AjvValidator().compile<CrewMember>(crewMemberSchema),
+    validate: new AjvValidator().compile<CrewMember>(crewMemberSchema),
     is: (o: unknown): o is CrewMember => CrewMember.validate(o) === true,
     assert: (o: unknown): asserts o is CrewMember => {
         if (!CrewMember.validate(o)) {
@@ -80,7 +79,7 @@ export interface Ship {
 
 export const Ship = {
     schema: shipSchema,
-    validate: typeof shipSchema === 'function' ? shipSchema : new AjvValidator().compile<Ship>(shipSchema),
+    validate: new AjvValidator().compile<Ship>(shipSchema),
     is: (o: unknown): o is Ship => Ship.validate(o) === true,
     assert: (o: unknown): asserts o is Ship => {
         if (!Ship.validate(o)) {
@@ -95,7 +94,7 @@ export interface Fleet {
 
 export const Fleet = {
     schema: fleetSchema,
-    validate: typeof fleetSchema === 'function' ? fleetSchema : new AjvValidator().compile<Fleet>(fleetSchema),
+    validate: new AjvValidator().compile<Fleet>(fleetSchema),
     is: (o: unknown): o is Fleet => Fleet.validate(o) === true,
     assert: (o: unknown): asserts o is Fleet => {
         if (!Fleet.validate(o)) {
@@ -108,8 +107,7 @@ export type SpaceObject = Asteroid | Planet | Ship
 
 export const SpaceObject = {
     schema: spaceObjectSchema,
-    validate:
-        typeof spaceObjectSchema === 'function' ? spaceObjectSchema : new AjvValidator().compile<SpaceObject>(spaceObjectSchema),
+    validate: new AjvValidator().compile<SpaceObject>(spaceObjectSchema),
     is: (o: unknown): o is SpaceObject => SpaceObject.validate(o) === true,
     assert: (o: unknown): asserts o is SpaceObject => {
         if (!SpaceObject.validate(o)) {

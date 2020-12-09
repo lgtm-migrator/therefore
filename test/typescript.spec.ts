@@ -1013,7 +1013,7 @@ describe('toTypescriptDefinition', () => {
               "locals": Object {},
               "meta": "export const Foo = {
                 schema: {{schema}},
-                validate: typeof {{schema}} === 'function' ? {{schema}} : new AjvValidator().compile<Foo>({{schema}}),
+                validate: new AjvValidator().compile<Foo>({{schema}}),
                 is: (o: unknown): o is Foo => Foo.validate(o) === true,
                 assert: (o: unknown): asserts o is Foo => {
                     if (!Foo.validate(o)) {
@@ -1043,7 +1043,7 @@ describe('toTypescriptDefinition', () => {
               "locals": Object {},
               "meta": "export const Foo = {
                 schema: {{schema}},
-                validate: typeof {{schema}} === 'function' ? {{schema}} : new AjvValidator().compile<Foo>({{schema}}),
+                validate: new AjvValidator().compile<Foo>({{schema}}),
                 is: (o: unknown): o is Foo => Foo.validate(o) === true,
                 assert: (o: unknown): asserts o is Foo => {
                     if (!Foo.validate(o)) {
@@ -1207,7 +1207,7 @@ describe('toTypescriptDefinition', () => {
               "locals": Object {},
               "meta": "export const Foo = {
                 schema: {{schema}},
-                validate: typeof {{schema}} === 'function' ? {{schema}} : new AjvValidator().compile<Foo>({{schema}}),
+                validate: new AjvValidator().compile<Foo>({{schema}}),
                 is: (o: unknown): o is Foo => Foo.validate(o) === true,
                 assert: (o: unknown): asserts o is Foo => {
                     if (!Foo.validate(o)) {
@@ -1236,7 +1236,7 @@ describe('toTypescriptDefinition', () => {
               "locals": Object {},
               "meta": "export const Foo = {
                 schema: {{schema}},
-                validate: typeof {{schema}} === 'function' ? {{schema}} : new AjvValidator().compile<Foo>({{schema}}),
+                validate: new AjvValidator().compile<Foo>({{schema}}),
                 is: (o: unknown): o is Foo => Foo.validate(o) === true,
                 assert: (o: unknown): asserts o is Foo => {
                     if (!Foo.validate(o)) {
@@ -1267,7 +1267,7 @@ describe('toTypescriptDefinition', () => {
               "locals": Object {},
               "meta": "export const Foo = {
                 schema: {{schema}},
-                validate: typeof {{schema}} === 'function' ? {{schema}} : new AjvValidator().compile<Foo>({{schema}}),
+                validate: new AjvValidator().compile<Foo>({{schema}}),
                 is: (o: unknown): o is Foo => Foo.validate(o) === true,
                 assert: (o: unknown): asserts o is Foo => {
                     if (!Foo.validate(o)) {
