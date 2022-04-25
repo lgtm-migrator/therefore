@@ -1,4 +1,4 @@
-import { $number, $object, $ref, $union } from '~/index'
+import { $number, $object, $ref, $union } from '../../src'
 
 export const square = $object({
     size: $number,

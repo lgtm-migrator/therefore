@@ -1,40 +1,38 @@
 import type { JsonSchema } from './json'
-import type { RefType } from './types/composite'
+import type { CstSubNode } from './lib/cst/cst'
+import type { RefType } from './lib/types'
 
-export interface FileSymbol {
-    name: string
-    //root: string
-    schemaFile?: string
-    //schema: JsonSchemaValidator
-    tsDefinition: TypescriptDefinition
-    typeOnly: boolean
-}
-
-export interface FileDefinition {
-    file: string
-    jsonFiles: { file: string; schema: string }[]
-    symbols: FileSymbol[]
-    dependencies: Record<string, string[] | undefined>
-}
+import type { ValidateFunction } from 'ajv'
 
 export interface TypescriptReference {
     name: string
     referenceName: string
     uuid: string
-    reference: RefType['reference']
+    reference: RefType['children']
 }
 
 export interface TypescriptDefinition {
     references: TypescriptReference[]
+    sourceSymbol: string
     symbolName: string
     uuid: string
-    interfaceName: string
     referenceName: string
     declaration: string
-    meta?: string
-    locals?: Record<string, TypescriptDefinition | undefined>
+    schema: CstSubNode
+    isExported: boolean
+    locals?: Record<string, TypescriptDefinition>
 }
 
-export interface JsonSchemaValidator {
-    schema: JsonSchema
-}
+export type JsonSchemaValidator =
+    | {
+          compiled: true
+          validator: ValidateFunction
+          code: string
+          schema: JsonSchema
+      }
+    | {
+          compiled?: false
+          schema: JsonSchema
+          validator?: ValidateFunction
+          code?: string
+      }

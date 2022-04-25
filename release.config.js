@@ -1,1 +1,1 @@
-module.exports = require('@zefiros/npm-defaults/release.config')
+module.exports = require('@zefiros-software/node-standards/release.config')

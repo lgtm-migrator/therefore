@@ -1,1 +1,1 @@
-module.exports = require('@zefiros/npm-defaults/commitlint.config')
+module.exports = require('@zefiros-software/node-standards/commitlint.config')

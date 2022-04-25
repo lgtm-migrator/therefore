@@ -1,5 +1,5 @@
-import { $array, $boolean, $dict, $null, $number, $ref, $string, $union } from '~/index'
-import type { RefType } from '~/types/composite'
+import type { RefType } from '../../src'
+import { $array, $boolean, $dict, $null, $number, $ref, $string, $union } from '../../src'
 
 export const json = $union([
     $string,

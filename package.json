@@ -1,65 +1,59 @@
 {
-  "name": "@zefiros/therefore",
+  "name": "@zefiros-software/therefore",
   "description": "",
   "version": "0.0.1",
   "license": "MIT",
-  "main": "./dist/main.js",
-  "types": "./dist/index.d.ts",
+  "main": ".main.js",
+  "types": "index.d.ts",
   "sideEffects": false,
   "bin": {
-    "therefore": "./bin/run"
+    "therefore": "bin/run"
   },
-  "npm-defaults": {
-    "type": "library",
-    "template": {
-      "ignore": {
-        "files": true
-      }
-    }
+  "node-standards": {
+    "type": "yargs-cli"
   },
   "engines": {
-    "node": ">=12"
+    "node": ">=14"
   },
-  "files": [
-    "bin",
-    "dist",
-    "package.json"
-  ],
+  "files": ["bin", ".main.js", ".main.js.map", "index.d.ts", "src/**/*.d.ts", "package.json"],
   "scripts": {
-    "build": "webpack --version && webpack",
-    "test": "concurrently \"yarn check:types\" \"jest test --maxWorkers=1\"",
-    "fix": "yarn lint --fix",
-    "lint": "yarn eslint \"{src,test,typing}/**/*.{ts,js}\" --ignore-path .gitignore --resolve-plugins-relative-to .",
-    "lint:full": "bash -c \"FULL_LINT=true yarn lint\"",
-    "format": "prettier \"**/*.{ts,js,json,yml,yaml}\" --ignore-path .gitignore --write",
-    "release": "semantic-release",
-    "release:dry": "yarn release --dry-run",
-    "check:types": "yarn tsc -p tsconfig.json",
-    "check:project": "yarn npm-defaults lint",
-    "package": "rm -rf dist && yarn build",
-    "check:cost": "npx cost-of-modules --yarn --no-install --include-dev",
-    "coverage": "jest test --maxWorkers=1 --collectCoverage=true"
+    "build": "npx ts-node esbuild.config.ts",
+    "build:clean": "npx tsc --build --clean && rm .main.js && rm .main.js.map",
+    "check:cost": "npx cost-of-modules --no-install --include-dev",
+    "check:coverage": "npx jest --collectCoverage=true",
+    "check:full": "npm run lint && npm run check:types && npm run check:coverage && npm run build && npm run check:project",
+    "check:project": "npx node-standards lint",
+    "check:types": "npx tsc -p tsconfig.json",
+    "fix": "npm run lint -- --fix",
+    "format": "npx prettier \"**/*.{ts,js,json,yml,yaml}\" --ignore-path .gitignore --write",
+    "lint": "npx eslint \"{src,test,typing}/**/*.{ts,js}\" --no-eslintrc --cache -c .eslintrc.js --ignore-path .gitignore",
+    "lint:full": "bash -c \"FULL_LINT=true npm run lint\"",
+    "package": "rm -rf .dist && npm run build",
+    "prepare": "npx husky install || true",
+    "test": "npx jest"
   },
   "dependencies": {
-    "camelcase": "^6.0.0",
-    "code-block-writer": "^10.1.0",
-    "decamelize": "^4.0.0",
-    "execa": "^4.0.3",
-    "fast-glob": "^3.2.4",
-    "tslib": "^2.0.1",
-    "uuid": "^8.3.0",
-    "yargs": "^16.0.3"
+    "@zefiros-software/axioms": "next",
+    "camelcase": "^6.3.0",
+    "code-block-writer": "^11.0.0",
+    "decamelize": "^5.0.0",
+    "picomatch": "^2.3.1",
+    "uuid": "^8.3.2",
+    "yargs": "^17.4.1"
   },
   "peerDependencies": {
-    "ajv": "^7.0.0-beta.2"
+    "ajv": "^8.11.0"
   },
   "devDependencies": {
-    "@types/uuid": "^8.3.0",
-    "@types/webpack-env": "^1.15.2",
-    "@types/yargs": "^15.0.5",
-    "@zefiros/npm-defaults": "0.2.0-beta.60",
-    "ajv": "^7.0.0-beta.2",
-    "ts-node": "^9.0.0",
-    "typescript": "^4.1.0-beta"
+    "@types/source-map-support": "^0.5.4",
+    "@types/uuid": "^8.3.4",
+    "@types/yargs": "^17.0.10",
+    "@zefiros-software/node-standards": "next",
+    "ajv": "^8.11.0",
+    "source-map-support": "^0.5.21",
+    "ts-node": "^10.7.0",
+    "tslib": "^2.3.1",
+    "typescript": "^4.6.3",
+    "yargs": "^17.4.1"
   }
 }

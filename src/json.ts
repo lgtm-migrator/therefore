@@ -1,11 +1,4 @@
-export type JsonSchemaType =
-    | string
-    | number
-    | boolean
-    | null
-    | { [property: string]: Readonly<JsonSchemaType> }
-    | ReadonlyArray<JsonSchemaType>
-export type JsonSchema7TypeName = 'object' | 'array' | 'string' | 'number' | 'integer' | 'boolean' | 'null'
+export type JsonSchema7TypeName = 'array' | 'boolean' | 'integer' | 'null' | 'number' | 'object' | 'string'
 
 export type SchemaVersion = 'http://json-schema.org/draft-07/schema#'
 
@@ -19,16 +12,14 @@ export interface JsonHyperSchema {
     // https://tools.ietf.org/html/draft-handrews-json-schema-01#section-9
     $comment?: string
     // https://tools.ietf.org/html/draft-handrews-json-schema-validation-01#section-9
-    definitions?: {
-        [key: string]: JsonSchema
-    }
+    definitions?: Record<string, JsonSchema>
 }
 
 // https://tools.ietf.org/html/draft-handrews-json-schema-validation-01#section-6.1
 export interface JsonAnyInstance {
     type?: JsonSchema7TypeName | JsonSchema7TypeName[]
-    enum?: JsonSchemaType[]
-    const?: JsonSchemaType
+    enum?: unknown[]
+    const?: unknown
 }
 
 // https://tools.ietf.org/html/draft-handrews-json-schema-validation-01#section-6.2
@@ -49,22 +40,22 @@ export interface JsonStringInstance {
     // https://tools.ietf.org/html/draft-handrews-json-schema-validation-01#section-7
     format?:
         | 'date-time'
-        | 'time'
         | 'date'
         | 'email'
-        | 'idn-email'
         | 'hostname'
+        | 'idn-email'
         | 'idn-hostname'
         | 'ipv4'
         | 'ipv6'
-        | 'uri'
-        | 'uri-reference'
-        | 'iri'
         | 'iri-reference'
-        | 'uri-template'
+        | 'iri'
         | 'json-pointer'
-        | 'relative-json-pointer'
         | 'regex'
+        | 'relative-json-pointer'
+        | 'time'
+        | 'uri-reference'
+        | 'uri-template'
+        | 'uri'
 
     // https://tools.ietf.org/html/draft-handrews-json-schema-validation-01#section-8
     contentMediaType?: string
@@ -120,21 +111,21 @@ export interface JsonBooleanLogic {
 export interface JsonAnnotations {
     title?: string
     description?: string
-    default?: JsonSchemaType
+    default?: unknown
     /** 2019-09 draft */
-    depricated?: boolean
+    deprecated?: boolean
     /** @deprecated */
     readonly?: boolean
     /** @deprecated */
     writeonly?: boolean
-    examples?: JsonSchemaType
+    examples?: unknown
 }
 
-export type JsonSchema = JsonHyperSchema &
+export type JsonSchema = JsonAnnotations &
     JsonAnyInstance &
-    JsonNumericInstance &
-    JsonStringInstance &
     JsonArrayInstance &
-    JsonObjectInstance &
     JsonBooleanLogic &
-    JsonAnnotations
+    JsonHyperSchema &
+    JsonNumericInstance &
+    JsonObjectInstance &
+    JsonStringInstance

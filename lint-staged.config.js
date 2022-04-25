@@ -1,1 +1,1 @@
-module.exports = require('@zefiros/npm-defaults/lint-staged.config')
+module.exports = require('@zefiros-software/node-standards/lint-staged.config')

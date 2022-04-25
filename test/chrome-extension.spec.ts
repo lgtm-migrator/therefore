@@ -1,14 +1,13 @@
-jest.mock('uuid')
-
-import { mockUuid } from './util'
-
-import { compileSchemas } from '~/cli'
-
-import { v4 as uuid } from 'uuid'
+import { compileSchemas } from '../src/commands/generate/generate'
 
 describe('schema', () => {
-    beforeEach(() => (uuid as jest.Mock).mockImplementation(mockUuid()))
     test('typedoc', async () => {
-        expect(await compileSchemas(['examples/chrome/extension.schema.ts'], '.type.ts', process.cwd())).toMatchSnapshot()
+        expect(
+            await compileSchemas(['examples/chrome/extension.schema.ts'], {
+                outputFileRename: (file: string) => file.replace('.ts', '.type.ts'),
+                cwd: process.cwd(),
+                compile: false,
+            })
+        ).toMatchSnapshot()
     })
 })

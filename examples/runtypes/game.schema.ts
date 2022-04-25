@@ -1,4 +1,4 @@
-import { $number, $object, $union, $enum, $tuple, $ref, $boolean, $string, $array, $dict, $const } from '~/index'
+import { $number, $object, $union, $enum, $tuple, $ref, $boolean, $string, $array, $dict, $const } from '../../src'
 
 const nonNegative = $number({
     minimum: 0,

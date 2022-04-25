@@ -1,1 +1,1 @@
-module.exports = require('@zefiros/npm-defaults/babel.config')
+module.exports = require('@zefiros-software/node-standards/babel.config')

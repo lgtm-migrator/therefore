@@ -1,1 +1,1 @@
-module.exports = require('@zefiros/npm-defaults/prettier.config')
+module.exports = require('@zefiros-software/node-standards/prettier.config')

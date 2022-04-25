@@ -1,4 +1,4 @@
-import { $number, $object, $string } from '~/index'
+import { $number, $object, $string } from '../../src'
 
 export const person = $object({
     firstName: $string({

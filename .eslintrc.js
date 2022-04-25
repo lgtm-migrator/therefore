@@ -1,1 +1,1 @@
-module.exports = require('@zefiros/npm-defaults/.eslintrc.base.js')
+module.exports = require('@zefiros-software/node-standards/.eslintrc.base.js')

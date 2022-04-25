@@ -70,13 +70,13 @@ In a nutshell:
 Install Therefore using [`yarn`](https://yarnpkg.com/):
 
 ```console
- $ yarn add --dev @zefiros/therefore
+ $ yarn add --dev @zefiros-software/therefore
 ```
 
 Or [`npm`](https://www.npmjs.com/):
 
 ```console
- $ npm install --save-dev @zefiros/therefore
+ $ npm install --save-dev @zefiros-software/therefore
 ```
 
 ## Usage
@@ -86,7 +86,7 @@ Let's get started with a simple JSON Schema taken as example:
 **example.schema.ts**
 
 ```ts
-import { $number, $object, $string } from '@zefiros/therefore'
+import { $number, $object, $string } from '@zefiros-software/therefore'
 
 export const person = $object({
     firstName: $string({

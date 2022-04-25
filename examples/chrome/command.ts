@@ -1,4 +1,4 @@
-import { $dict, $object, $string } from '~/index'
+import { $dict, $object, $string } from '../../src'
 
 export const command = $object({
     description: $string,
