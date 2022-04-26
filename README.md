@@ -1,4 +1,4 @@
-# ∴ Therefore _(@zefiros/therefore)_
+# ∴ Therefore _(@zefiros-software/therefore)_
 
 <p>
   <img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/zefiros-software/therefore">
@@ -61,7 +61,7 @@ This is where Therefore comes in. Therefore itself does not do **any** validatio
 In a nutshell:
 
 1.  You define your schema definitions in files with a specific extension (`.schema.ts` by default)
-2.  You run Therefore on the folder `yarn therefore -d src`
+2.  You run Therefore on the folder `yarn therefore -f src`
 3.  Therefore will generate a type file with extension `.type.ts` for you with helper functions of all exported symbols, and in a subfolder `schemas` you will find all generated JSON Schemas waiting for you.
 4.  No runtime dependency on Therefore :)
 
@@ -100,7 +100,7 @@ export const person = $object({
 With this schema defined we can generate the typescript types and JSON schema file:
 
 ```console
- $ therefore -d examples/json-schema/
+ $ therefore -f examples/json-schema/
 scanning examples/json-schema/example.schema.ts
  - found Person
 $ prettier --write examples/json-schema/example.type.ts examples/json-schema/schemas/person.schema.json
@@ -142,15 +142,19 @@ export interface Person {
 }
 
 export const Person = {
-    schema: personSchema,
-    validate: new AjvValidator().compile<Person>(personSchema),
+    validate: require('./schemas/person.schema.js') as ValidateFunction<Person>,
+    get schema() {
+        return Person.validate.schema
+    },
+    source: `${__dirname}person.schema`,
+    sourceSymbol: 'person',
     is: (o: unknown): o is Person => Person.validate(o) === true,
     assert: (o: unknown): asserts o is Person => {
         if (!Person.validate(o)) {
             throw new AjvValidator.ValidationError(Person.validate.errors ?? [])
         }
     },
-}
+} as const
 ```
 
 </td>
@@ -194,14 +198,14 @@ USAGE
  $ therefore
 
 Options:
-      --version  Show version number                                   [boolean]
-  -f, --file     globs to scan for schemas                               [array]
-  -d, --dir      directories                                             [array]
-  -e, --exclude  globs to exclude
-                   [array] [required] [default: ["**/*.d.ts","node_modules/**"]]
-      --fmt                                            [boolean] [default: true]
-      --ext                                       [string] [default: ".type.ts"]
-      --help     Show help                                             [boolean]
+      --version         Show version number                            [boolean]
+      --help            Show help                                      [boolean]
+  -f, --files           globs to scan for schemas             [array] [required]
+  -i, --ignore-pattern  globs to exclude
+                      [array] [required] [default: ["**/*.d.ts","node_modules"]]
+      --compile                                        [boolean] [default: true]
+      --ext                                     [string] [default: ".schema.ts"]
+      --out-ext                                   [string] [default: ".type.ts"]
 ```
 
 ## API

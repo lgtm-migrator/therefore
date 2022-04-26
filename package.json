@@ -37,7 +37,6 @@
     "camelcase": "^6.3.0",
     "code-block-writer": "^11.0.0",
     "decamelize": "^5.0.0",
-    "picomatch": "^2.3.1",
     "uuid": "^8.3.2",
     "yargs": "^17.4.1"
   },
