@@ -9,4 +9,8 @@ module.exports = {
     collectCoverage: false,
     coverageDirectory: '<rootDir>/.coverage/',
     coverageReporters: ['lcov', 'text-summary'],
+    fakeTimers: {
+        enableGlobally: true,
+        now: new Date(2022, 1, 10).valueOf(),
+    },
 }

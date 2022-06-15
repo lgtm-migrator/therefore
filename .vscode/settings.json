@@ -34,7 +34,7 @@
   "typescript.format.semicolons": "remove",
   "typescript.implementationsCodeLens.enabled": true,
   "typescript.inlayHints.enumMemberValues.enabled": true,
-  "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
+  "typescript.inlayHints.functionLikeReturnTypes.enabled": false,
   "typescript.inlayHints.parameterNames.enabled": "literals",
   "typescript.inlayHints.parameterNames.suppressWhenArgumentMatchesName": true,
   "typescript.referencesCodeLens.enabled": true,

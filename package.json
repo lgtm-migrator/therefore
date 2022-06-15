@@ -10,7 +10,10 @@
     "therefore": "bin/run"
   },
   "node-standards": {
-    "type": "yargs-cli"
+    "type": "yargs-cli",
+    "template": {
+      "exclude": ["bin/run"]
+    }
   },
   "engines": {
     "node": ">=14"
@@ -26,7 +29,7 @@
     "check:types": "npx tsc -p tsconfig.json",
     "fix": "npm run lint -- --fix",
     "format": "npx prettier \"**/*.{ts,js,json,yml,yaml}\" --ignore-path .gitignore --write",
-    "lint": "npx eslint \"{src,test,typing}/**/*.{ts,js}\" --no-eslintrc --cache -c .eslintrc.js --ignore-path .gitignore",
+    "lint": "npx eslint \"{src,test,typing}/**/*.ts\" --no-eslintrc --cache -c .eslintrc.js --ignore-path .gitignore",
     "lint:full": "bash -c \"FULL_LINT=true npm run lint\"",
     "package": "rm -rf .dist && npm run build",
     "prepare": "npx husky install || true",
@@ -41,7 +44,8 @@
     "yargs": "^17.4.1"
   },
   "peerDependencies": {
-    "ajv": "^8.11.0"
+    "ajv": "^8.11.0",
+    "ts-node": "^10.7.0"
   },
   "devDependencies": {
     "@types/source-map-support": "^0.5.4",
@@ -51,8 +55,8 @@
     "ajv": "^8.11.0",
     "source-map-support": "^0.5.21",
     "ts-node": "^10.7.0",
-    "tslib": "^2.3.1",
-    "typescript": "^4.6.3",
-    "yargs": "^17.4.1"
+    "tslib": "^2.4.0",
+    "typescript": "^4.7.3",
+    "yargs": "^17.5.1"
   }
 }
