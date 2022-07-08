@@ -2,10 +2,10 @@ import type { CstNode, CstSubNode } from '../../cst/cst'
 import { cstNode } from '../../cst/cst'
 import type { SchemaOptions } from '../base'
 
-import type { EmptyObj, IsUnion } from '@zefiros-software/axioms'
+import type { IsUnion } from '@zefiros-software/axioms'
 import { omit, valuesOf, isArray, entriesOf, isTuple } from '@zefiros-software/axioms'
 
-type SingleKey<T> = IsUnion<keyof T> extends true ? never : EmptyObj extends T ? never : T
+type SingleKey<T> = IsUnion<keyof T> extends true ? never : any extends T ? never : T
 
 export interface RefOptions {}
 
@@ -35,7 +35,7 @@ export function $ref<T extends Record<string, CstSubNode>>(
         const ref: readonly [string, CstSubNode] = isArray(reference.reference)
             ? [reference.reference[0], reference.reference[1]]
             : entriesOf(reference.reference).map(([name, node]) => [name, node] as const)[0]
-        return cstNode('ref', omit(['reference'], reference), ref)
+        return cstNode('ref', omit(reference, ['reference']), ref)
     }
     const ref: readonly [string, CstSubNode] = isArray(reference)
         ? [reference[0], reference[1]]

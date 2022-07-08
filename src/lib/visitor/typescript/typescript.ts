@@ -146,7 +146,7 @@ export const typescriptVisitor: CstVisitor<string, TypescriptWalkerContext> = {
     enum: ({ children }) => children.map((v) => toLiteral(v)).join(' | '),
     union: ({ children }, context) =>
         children.map((v) => walkCst<string, TypescriptWalkerContext>(v, typescriptVisitor, context)).join(' | '),
-    object: ({ children }, context) => {
+    object: ({ children, value }, context) => {
         const writer = createWriter()
         writer.block(() => {
             for (const property of children) {
@@ -158,6 +158,9 @@ export const typescriptVisitor: CstVisitor<string, TypescriptWalkerContext> = {
                         description.nullable ? `(${child} | null)` : child
                     }`
                 )
+            }
+            if (value.indexSignature !== undefined) {
+                writer.writeLine(`[k: string]: ${walkCst(value.indexSignature, typescriptVisitor, context)}`)
             }
         })
         return writer.toString()

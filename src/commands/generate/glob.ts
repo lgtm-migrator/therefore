@@ -1,4 +1,4 @@
-import { fixPath, fstat, isJust, isRight, Nothing } from '@zefiros-software/axioms'
+import { normalizePath, fstat, isJust, isRight, Nothing } from '@zefiros-software/axioms'
 import fastGlob from 'fast-glob'
 
 import path from 'path'
@@ -34,17 +34,17 @@ export async function expandGlobs({
                 const eitherStat = await fstat(absolutePath)
                 if (isRight(eitherStat) && eitherStat.right !== Nothing) {
                     if (eitherStat.right.isFile()) {
-                        return fastGlob.escapePath(fixPath(pattern))
+                        return fastGlob.escapePath(normalizePath(pattern))
                     } else if (eitherStat.right.isDirectory()) {
-                        return `${fastGlob.escapePath(fixPath(path.relative(cwd, absolutePath) ?? '.'))}/**/*${extension}`
+                        return `${fastGlob.escapePath(normalizePath(path.relative(cwd, absolutePath) ?? '.'))}/**/*${extension}`
                     }
 
                     return Nothing
                 } else if (pattern.startsWith('!')) {
-                    globOptions.ignore.push(fixPath(pattern.slice(1)))
+                    globOptions.ignore.push(normalizePath(pattern.slice(1)))
                     return Nothing
                 }
-                return fixPath(pattern)
+                return normalizePath(pattern)
             })
         )
     ).filter(isJust)

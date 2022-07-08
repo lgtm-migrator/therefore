@@ -656,6 +656,24 @@ describe('toTypeDefinition', () => {
             }
         `)
     })
+
+    expect(
+        walkCst($object({ foo: $string }, { indexSignature: $number }), typeDefinitionVisitor, {
+            references: [],
+            symbolName: 'Foo',
+            locals: {},
+        } as unknown as TypescriptWalkerContext)
+    ).toMatchInlineSnapshot(`
+        Object {
+          "declaration": "interface Foo {
+            foo: string
+            [k: string]: number
+        }
+        ",
+          "referenceName": "Foo",
+          "sourceSymbol": undefined,
+        }
+    `)
 })
 
 describe('toTypescriptDefinition', () => {

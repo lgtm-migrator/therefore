@@ -6,6 +6,7 @@ import type { ThereforeCst } from '../../types/types'
 
 import type { Arbitrary } from '@zefiros-software/axioms'
 import {
+    chainArbitrary,
     domain,
     datetime,
     mapArbitrary,
@@ -53,8 +54,17 @@ export const arbitraryVisitor: CstVisitor<Arbitrary<unknown>, ArbitraryContext> 
     unknown: () => unknown(),
     enum: ({ children }) => oneOf(...(isNamedArray(children) ? children.map(([, c]) => c) : children).map((c) => constant(c))),
     union: ({ children }, context) => oneOf(...children.map((c) => walkCst(c, arbitraryVisitor, context))),
-    object: ({ children }, context) =>
-        object(Object.fromEntries(children.map((c) => [c.name, walkCst(c, arbitraryVisitor, context)] as const))),
+    object: ({ children, value: { indexSignature } }, context) =>
+        indexSignature !== undefined
+            ? chainArbitrary(array(string()), (dictKeys) =>
+                  object(
+                      Object.fromEntries([
+                          ...dictKeys.map((k) => [k, walkCst(indexSignature, arbitraryVisitor, context)]),
+                          ...children.map((c) => [c.name, walkCst(c, arbitraryVisitor, context)] as const),
+                      ])
+                  )
+              )
+            : object(Object.fromEntries(children.map((c) => [c.name, walkCst(c, arbitraryVisitor, context)] as const))),
     array: ({ children, value: image }, context) => {
         const [items] = children
         const child = walkCst(items, arbitraryVisitor, context)

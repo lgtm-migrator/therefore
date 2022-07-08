@@ -29,8 +29,8 @@ export function cstNode<D extends TypeDiscriminator, O, T, C extends readonly un
     return omitUndefined({
         uuid: uuid(),
         type,
-        value: omit(descriptionKeys, options) as unknown as O,
-        description: pick(descriptionKeys, options) as MetaDescription<T>,
+        value: omit(options, descriptionKeys) as unknown as O,
+        description: pick(options, descriptionKeys) as MetaDescription<T>,
         children,
     })
 }

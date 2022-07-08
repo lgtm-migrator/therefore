@@ -25,7 +25,7 @@ test('expand', () => {
           "value": Object {},
         }
     `)
-    expect($object({ foo: $object() })).toMatchInlineSnapshot(`
+    expect($object({ foo: $object({}) })).toMatchInlineSnapshot(`
         Object {
           "children": Array [
             Object {

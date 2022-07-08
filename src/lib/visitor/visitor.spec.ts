@@ -1,7 +1,7 @@
 import { toArbitrary } from './arbitrary/arbitrary'
 import { toJsonSchema } from './json-schema/json-schema'
 
-import { $array, $null } from '../types'
+import { $array, $null, $object } from '../types'
 import { $boolean } from '../types/boolean'
 import { $integer } from '../types/integer'
 import { $number } from '../types/number'
@@ -42,6 +42,12 @@ test('null', () => {
 
 test('unknown', () => {
     const arb = $unknown()
+    const val = toJsonSchema(arb, true)
+    forAll(toArbitrary(arb), (x) => val.validator(x))
+})
+
+test.only('object', () => {
+    const arb = $object({ foo: $string() }, { indexSignature: $unknown() })
     const val = toJsonSchema(arb, true)
     forAll(toArbitrary(arb), (x) => val.validator(x))
 })

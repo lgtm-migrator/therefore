@@ -77,7 +77,7 @@ export const jsonSchemaVisitor: CstVisitor<RelaxedPartial<JsonSchema>, JsonSchem
             oneOf: children.map((u) => walkCst(u, jsonSchemaVisitor, context)),
         }
     },
-    object: ({ children }, context) => {
+    object: ({ children, value }, context) => {
         const properties: NonNullable<JsonSchema['properties']> = {}
         const required: string[] = []
         for (const child of children) {
@@ -90,7 +90,8 @@ export const jsonSchemaVisitor: CstVisitor<RelaxedPartial<JsonSchema>, JsonSchem
             type: 'object',
             properties,
             required,
-            additionalProperties: false,
+            additionalProperties:
+                value.indexSignature !== undefined ? walkCst(value.indexSignature, jsonSchemaVisitor, context) : false,
         }
     },
     array: (node, context) => {
@@ -151,7 +152,7 @@ export function jsonSchemaContext(obj?: ThereforeCst): JsonSchemaWalkerContext {
             return omitUndefined({
                 type: toType(schema.type, node.description),
                 ...annotate(node.description),
-                ...omit(['type'], schema),
+                ...omit(schema, ['type']),
             })
         },
     }
