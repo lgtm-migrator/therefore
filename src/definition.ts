@@ -5,7 +5,7 @@ import type { RefType } from './lib/types'
 import type { ValidateFunction } from 'ajv'
 
 export interface TypescriptReference {
-    name: string
+    name: string | undefined
     referenceName: string
     uuid: string
     reference: RefType['children']

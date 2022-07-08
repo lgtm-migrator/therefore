@@ -2,7 +2,7 @@ import type { CstNode } from './cst'
 
 import type { ThereforeCst } from '../types/types'
 
-export type CstVisitor<R, C = any, Cst extends CstNode = ThereforeCst> = {
+export type CstVisitor<R, C = unknown, Cst extends CstNode = ThereforeCst> = {
     default: (node: Cst, context: C) => R
 } & { [K in Cst['type']]?: (node: Extract<Cst, { type: K }>, context: C) => R }
 
@@ -15,7 +15,7 @@ export function walkCst<U, C, R = U>(obj: CstNode, visitor: CstVisitor<U, C>, co
 export function walkCst<R, C>(obj: CstNode, visitor: CstVisitor<R, C>): R
 export function walkCst<
     U,
-    C extends { transform?: (node: CstNode, obj: U) => R } = any,
+    C extends { transform?: (node: CstNode, obj: U) => R } = Record<string, unknown>,
     R = U,
     Cst extends CstNode = ThereforeCst
 >(obj: Cst, visitor: CstVisitor<U, C, Cst>, context: C = {} as C): R {

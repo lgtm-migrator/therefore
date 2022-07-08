@@ -431,6 +431,7 @@ type ThemeLocal = 'default' | 'minimal' | string
   \\"additionalProperties\\": false,
   \\"definitions\\": {
     \\"{{0003-000}}\\": {
+      \\"title\\": \\"plugin\\",
       \\"description\\": \\"Specify the npm plugins that should be loaded. Omit to load all installed plugins.\\",
       \\"oneOf\\": [
         {
@@ -445,6 +446,7 @@ type ThemeLocal = 'default' | 'minimal' | string
       ]
     },
     \\"{{0006-000}}\\": {
+      \\"title\\": \\"readme\\",
       \\"description\\": \\"Path to the readme file that should be displayed on the index page. Pass none to disable the index page and start the documentation on the globals page.\\",
       \\"oneOf\\": [
         {
@@ -456,6 +458,7 @@ type ThemeLocal = 'default' | 'minimal' | string
       ]
     },
     \\"{{00010-000}}\\": {
+      \\"title\\": \\"src\\",
       \\"description\\": \\"The sources files from which to build documentation.\\\\nDEPRECATED: Use inputFiles instead.\\",
       \\"oneOf\\": [
         {
@@ -470,6 +473,7 @@ type ThemeLocal = 'default' | 'minimal' | string
       ]
     },
     \\"{{00013-000}}\\": {
+      \\"title\\": \\"theme\\",
       \\"description\\": \\"Specify the path to the theme that should be used.\\",
       \\"oneOf\\": [
         {

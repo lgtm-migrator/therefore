@@ -17,3 +17,7 @@ export function isNamedCstNodeArray<T extends CstNode>(
 export function isThereforeExport(x: ThereforeCst | unknown): x is ThereforeCst {
     return isObject(x) && 'type' in x && 'uuid' in x && 'value' in x && 'description' in x
 }
+
+export function isCstNode(x: unknown): x is CstNode {
+    return isObject(x) && 'type' in x && 'uuid' in x && 'value' in x && 'description' in x
+}

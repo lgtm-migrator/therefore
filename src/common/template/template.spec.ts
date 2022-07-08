@@ -9,5 +9,7 @@ test('replace templates', () => {
 })
 
 test('leave weird nesting', () => {
-    expect(renderTemplate('foo{{bar{{bar}}}}', { bar: 'foo' })).toMatchInlineSnapshot(`"foo{{bar{{bar}}}}"`)
+    expect(() => renderTemplate('foo{{bar{{bar}}}}', { bar: 'foo' })).toThrowErrorMatchingInlineSnapshot(
+        `"Reference bar{{bar not found"`
+    )
 })

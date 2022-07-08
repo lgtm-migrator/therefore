@@ -13,4 +13,4 @@ export const circle = $object({
     radius: $number,
 })
 
-export const shape = $union([$ref({ square }), $ref({ rectangle }), $ref({ circle })])
+export const shape = $union([$ref(square), $ref(rectangle), $ref(circle)])

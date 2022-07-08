@@ -5,7 +5,7 @@ Array [
   Object {
     "data": Object {
       "00010-000": "JsonAdv",
-      "00019-000": "JsonRefLocal",
+      "00019-000": "JsonAdvLocal",
       "0009-000": "Json",
     },
     "file": "examples/json/json.schema.type.ts",
@@ -55,7 +55,7 @@ export const JsonAdv = {
     },
 } as const
 
-type JsonRefLocal = string | null | boolean | number | {
+type JsonAdvLocal = string | null | boolean | number | {
     [k: string]: ( {{00010-000}} ) | undefined
 } | ({{00010-000}})[]
 ",
@@ -64,7 +64,7 @@ type JsonRefLocal = string | null | boolean | number | {
   Object {
     "data": Object {
       "00010-000": "JsonAdv",
-      "00019-000": "JsonRefLocal",
+      "00019-000": "JsonAdvLocal",
       "0009-000": "Json",
     },
     "file": "examples/json/schemas/json.schema.json",
@@ -104,7 +104,7 @@ type JsonRefLocal = string | null | boolean | number | {
   Object {
     "data": Object {
       "00010-000": "JsonAdv",
-      "00019-000": "JsonRefLocal",
+      "00019-000": "JsonAdvLocal",
       "0009-000": "Json",
     },
     "file": "examples/json/schemas/json-adv.schema.json",
@@ -115,6 +115,7 @@ type JsonRefLocal = string | null | boolean | number | {
   \\"$ref\\": \\"#/definitions/{{00019-000}}\\",
   \\"definitions\\": {
     \\"{{00019-000}}\\": {
+      \\"title\\": \\"jsonAdv\\",
       \\"oneOf\\": [
         {
           \\"type\\": \\"string\\"

@@ -137,7 +137,7 @@ describe('typescriptVisitor', () => {
     test('ref', () => {
         const foo = $dict($string)
         expect(
-            walkCst($ref({ foo }), typescriptVisitor, {
+            walkCst($ref(foo), typescriptVisitor, {
                 references: [],
                 locals: {},
                 symbolName: '',
@@ -145,7 +145,7 @@ describe('typescriptVisitor', () => {
         ).toMatchInlineSnapshot(`"{{0002-000}}"`)
         // test the stable uuid referencing
         expect(
-            walkCst($union([$ref({ foo }), $dict($ref({ foo }))]), typescriptVisitor, {
+            walkCst($union([$ref(foo), $dict($ref(foo))]), typescriptVisitor, {
                 references: [],
                 locals: {},
                 symbolName: '',
@@ -502,7 +502,7 @@ describe('toTypeDefinition', () => {
     test('ref', () => {
         const foo = $dict($string)
         expect(
-            walkCst($ref({ foo }), typeDefinitionVisitor, {
+            walkCst($ref(foo), typeDefinitionVisitor, {
                 references: [],
                 symbolName: 'Foo',
                 locals: {},
@@ -517,7 +517,7 @@ describe('toTypeDefinition', () => {
         `)
         // test the stable uuid referencing
         expect(
-            walkCst($union([$ref({ foo }), $dict($ref({ foo }))]), typeDefinitionVisitor, {
+            walkCst($union([$ref(foo), $dict($ref(foo))]), typeDefinitionVisitor, {
                 references: [],
                 symbolName: 'Foo',
                 locals: {},
@@ -838,9 +838,8 @@ describe('toTypescriptDefinition', () => {
               "referenceName": "Foo",
               "references": Array [
                 Object {
-                  "name": "",
+                  "name": undefined,
                   "reference": Array [
-                    "",
                     Object {
                       "children": Array [
                         Object {
@@ -862,7 +861,7 @@ describe('toTypescriptDefinition', () => {
                       "value": Object {},
                     },
                   ],
-                  "referenceName": "",
+                  "referenceName": "{{0007-000}}",
                   "uuid": "0007-000",
                 },
               ],
@@ -961,7 +960,7 @@ describe('toTypescriptDefinition', () => {
 
     test('ref', () => {
         const foo = $dict($string)
-        expect(toTypescriptDefinition({ sourceSymbol: 'foo', schema: $object({ bar: $ref({ foo }) }) })).toMatchInlineSnapshot(`
+        expect(toTypescriptDefinition({ sourceSymbol: 'foo', schema: $object({ bar: $ref(foo) }) })).toMatchInlineSnapshot(`
             Object {
               "declaration": "export interface Foo {
                 bar: {{0002-000}}
@@ -972,9 +971,8 @@ describe('toTypescriptDefinition', () => {
               "referenceName": "Foo",
               "references": Array [
                 Object {
-                  "name": "foo",
+                  "name": undefined,
                   "reference": Array [
-                    "foo",
                     Object {
                       "children": Array [
                         Object {
@@ -990,7 +988,7 @@ describe('toTypescriptDefinition', () => {
                       "value": Object {},
                     },
                   ],
-                  "referenceName": "Foo",
+                  "referenceName": "{{0002-000}}",
                   "uuid": "0002-000",
                 },
               ],
@@ -1186,6 +1184,27 @@ describe('toTypescriptDefinition', () => {
               "sourceSymbol": "foo",
               "symbolName": "Foo",
               "uuid": "00011-000",
+            }
+        `)
+        expect(
+            toTypescriptDefinition({
+                sourceSymbol: 'foo',
+                schema: $object({ foo: $enum(['foo', 'bar']) }),
+            })
+        ).toMatchInlineSnapshot(`
+            Object {
+              "declaration": "export interface Foo {
+                foo: 'foo' | 'bar'
+            }
+            ",
+              "isExported": true,
+              "locals": Object {},
+              "referenceName": "Foo",
+              "references": Array [],
+              "schema": [Function],
+              "sourceSymbol": "foo",
+              "symbolName": "Foo",
+              "uuid": "00013-000",
             }
         `)
     })

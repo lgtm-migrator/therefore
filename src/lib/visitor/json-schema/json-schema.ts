@@ -5,7 +5,7 @@ import type { CstNode } from '../../cst/cst'
 import type { CstVisitor } from '../../cst/visitor'
 import { walkCst } from '../../cst/visitor'
 import { isNamedArray } from '../../guard'
-import type { MetaDescription } from '../../types/base'
+import type { MetaDescription, SchemaMeta } from '../../types/base'
 import type { ThereforeCst } from '../../types/types'
 
 import type { RelaxedPartial } from '@zefiros-software/axioms'
@@ -27,9 +27,9 @@ export function toType(type: JsonSchema['type'], definition: MetaDescription): J
     return definition.nullable ? ((isArray(type) ? [...type, 'null'] : [type, 'null']) as JsonSchema7TypeName[]) : type
 }
 
-export function annotate(doc: MetaDescription): JsonAnnotations {
+export function annotate(doc: SchemaMeta): JsonAnnotations {
     return omitUndefined({
-        title: doc.title,
+        title: doc.title ?? doc.name,
         description: doc.description,
         default: doc.default,
         readonly: doc.readonly,
@@ -117,9 +117,8 @@ export const jsonSchemaVisitor: CstVisitor<RelaxedPartial<JsonSchema>, JsonSchem
             additionalProperties: walkCst(items, jsonSchemaVisitor, context),
         }
     },
-    ref: ({ children, description }, context) => {
-        const [, unevaluatedReference] = children
-        const reference = evaluate(unevaluatedReference)
+    ref: ({ children: unevaluatedReference, description }, context) => {
+        const reference = evaluate(unevaluatedReference[0])
 
         const { definitions, entry } = context
 
@@ -129,6 +128,7 @@ export const jsonSchemaVisitor: CstVisitor<RelaxedPartial<JsonSchema>, JsonSchem
             // we referenced the root of the schema
             return { $ref: '#' }
         }
+
         if (definitions[`{{${uuid}}}`] === undefined) {
             definitions[`{{${uuid}}}`] = {} // mark spot as taken (prevents recursion)
             definitions[`{{${uuid}}}`] = walkCst(reference, jsonSchemaVisitor, context)
@@ -161,7 +161,6 @@ export function jsonSchemaContext(obj?: ThereforeCst): JsonSchemaWalkerContext {
 export function toJsonSchema(obj: ThereforeCst, compile: true): Extract<JsonSchemaValidator, { compiled: true }>
 export function toJsonSchema(obj: ThereforeCst, compile?: boolean): JsonSchemaValidator
 export function toJsonSchema(obj: ThereforeCst, compile = false): JsonSchemaValidator {
-    //const references: Record<string, string> = {}
     const context = jsonSchemaContext(obj)
     const definition: JsonSchema = {
         $schema: 'http://json-schema.org/draft-07/schema#',

@@ -221,16 +221,15 @@ export const typescriptVisitor: CstVisitor<string, TypescriptWalkerContext> = {
 
         return writer.toString()
     },
-    ref: ({ children }, { references }) => {
-        const [name, unevaluatedReference] = children
-        const reference = evaluate(unevaluatedReference)
+    ref: ({ children: unevaluatedReference }, { references }) => {
+        const reference = evaluate(unevaluatedReference[0])
 
         const uuid = reference.uuid
         if (!references.find((d) => d.uuid === uuid)) {
-            const referenceName = camelCase(name, { pascalCase: true })
+            const referenceName = reference.name !== undefined ? camelCase(reference.name, { pascalCase: true }) : `{{${uuid}}}`
             references.push({
-                reference: [name, reference],
-                name: name,
+                reference: [reference],
+                name: reference.name,
                 referenceName,
                 uuid: uuid,
             })

@@ -34,7 +34,7 @@ export const Json = {
     },
 } as const
 
-export type JsonAdv = JsonRefLocal
+export type JsonAdv = JsonAdvLocal
 
 export const JsonAdv = {
     validate: require('./schemas/json-adv.schema.js') as ValidateFunction<JsonAdv>,
@@ -51,7 +51,7 @@ export const JsonAdv = {
     },
 } as const
 
-type JsonRefLocal =
+type JsonAdvLocal =
     | string
     | null
     | boolean

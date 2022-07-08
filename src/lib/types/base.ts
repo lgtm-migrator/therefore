@@ -100,7 +100,8 @@ export interface MetaDescription<T = unknown> {
     ajvOptions?: InstanceOptions
 }
 
-export const descriptionKeys: readonly (keyof MetaDescription)[] = [
+export const descriptionKeys: readonly (keyof SchemaOptions<unknown>)[] = [
+    'name',
     'title',
     'id',
     'description',
@@ -112,4 +113,8 @@ export const descriptionKeys: readonly (keyof MetaDescription)[] = [
     'ajvOptions',
 ] as const
 
-export type SchemaOptions<O, T = unknown> = SimplifyOnce<MetaDescription<T> & O>
+export type ThereforeMeta = {
+    name?: string
+}
+export type SchemaMeta<T = unknown> = MetaDescription<T> & ThereforeMeta
+export type SchemaOptions<O, T = unknown> = SimplifyOnce<MetaDescription<T> & O> & ThereforeMeta

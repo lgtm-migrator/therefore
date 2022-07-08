@@ -1168,16 +1168,20 @@ type PermissionsLocal = (string)[]
   \\"definitions\\": {
     \\"{{00015-000}}\\": {
       \\"type\\": \\"string\\",
+      \\"title\\": \\"versionString\\",
       \\"pattern\\": \\"^(?:\\\\\\\\d{1,5}\\\\\\\\.){0,3}\\\\\\\\d{1,5}$\\"
     },
     \\"{{0002-000}}\\": {
+      \\"title\\": \\"icon\\",
       \\"$ref\\": \\"#/definitions/{{0001-000}}\\"
     },
     \\"{{0001-000}}\\": {
-      \\"type\\": \\"string\\"
+      \\"type\\": \\"string\\",
+      \\"title\\": \\"uri\\"
     },
     \\"{{00010-000}}\\": {
       \\"type\\": \\"object\\",
+      \\"title\\": \\"action\\",
       \\"properties\\": {
         \\"default_title\\": {
           \\"type\\": \\"string\\",
@@ -1222,6 +1226,7 @@ type PermissionsLocal = (string)[]
     },
     \\"{{00018-000}}\\": {
       \\"type\\": \\"array\\",
+      \\"title\\": \\"scripts\\",
       \\"items\\": {
         \\"$ref\\": \\"#/definitions/{{0001-000}}\\"
       },
@@ -1229,10 +1234,12 @@ type PermissionsLocal = (string)[]
       \\"uniqueItems\\": true
     },
     \\"{{00016-000}}\\": {
+      \\"title\\": \\"page\\",
       \\"$ref\\": \\"#/definitions/{{0001-000}}\\"
     },
     \\"{{00014-000}}\\": {
       \\"type\\": \\"object\\",
+      \\"title\\": \\"command\\",
       \\"properties\\": {
         \\"description\\": {
           \\"type\\": \\"string\\"
@@ -1251,22 +1258,27 @@ type PermissionsLocal = (string)[]
       \\"additionalProperties\\": false
     },
     \\"{{00021-000}}\\": {
-      \\"type\\": \\"string\\"
+      \\"type\\": \\"string\\",
+      \\"title\\": \\"match pattern\\"
     },
     \\"{{00020-000}}\\": {
-      \\"type\\": \\"string\\"
+      \\"type\\": \\"string\\",
+      \\"title\\": \\"glob pattern\\"
     },
     \\"{{00019-000}}\\": {
       \\"type\\": \\"string\\",
+      \\"title\\": \\"contentSecurityPolicy\\",
       \\"description\\": \\"This introduces some fairly strict policies that will make extensions more secure by default, and provides you with the ability to create and enforce rules governing the types of content that can be loaded and executed by your extensions and applications.\\",
       \\"default\\": \\"script-src 'self'; object-src 'self'\\"
     },
     \\"{{00022-000}}\\": {
       \\"type\\": \\"string\\",
+      \\"title\\": \\"mime_type\\",
       \\"pattern\\": \\"^(?:application|audio|image|message|model|multipart|text|video)\\\\\\\\/[-+.\\\\\\\\\\\\\\\\w]+$\\"
     },
     \\"{{00024-000}}\\": {
       \\"type\\": \\"array\\",
+      \\"title\\": \\"permissions\\",
       \\"items\\": {
         \\"type\\": \\"string\\"
       }

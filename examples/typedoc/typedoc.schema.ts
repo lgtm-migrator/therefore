@@ -1,19 +1,20 @@
+import { plugin } from './internal'
+
 import { $array, $boolean, $enum, $object, $ref, $string, $union } from '../../src'
 
-const plugin = $union([$array($string, { default: ['none'] })], {
-    description: 'Specify the npm plugins that should be loaded. Omit to load all installed plugins.',
-})
-
 const readme = $union([$enum(['none']), $string], {
+    name: 'readme',
     description:
         'Path to the readme file that should be displayed on the index page. Pass none to disable the index page and start the documentation on the globals page.',
 })
 
 const src = $union([$string, $array($string)], {
+    name: 'src',
     description: 'The sources files from which to build documentation.\nDEPRECATED: Use inputFiles instead.',
 })
 
 const theme = $union([$enum(['default', 'minimal']), $string], {
+    name: 'theme',
     description: 'Specify the path to the theme that should be used.',
 })
 
@@ -102,7 +103,7 @@ export const typedoc = $object({
         out: $string({
             description: 'Specifies the location the documentation should be written to.',
         }),
-        plugin: $ref({ plugin }),
+        plugin: $ref(plugin),
         includeVersion: $boolean({
             default: false,
             description: 'Add the package version according to package.json to the projects name.',
@@ -111,13 +112,13 @@ export const typedoc = $object({
             default: [],
             description: 'Specify tags that should be removed from doc comments when parsing.',
         }),
-        readme: $ref({ readme }),
-        src: $ref({ src }),
+        readme: $ref(readme),
+        src: $ref(src),
         stripInternal: $boolean({
             default: false,
             description: 'Remove reflections annotated with @internal',
         }),
-        theme: $ref({ theme }),
+        theme: $ref(theme),
         toc: $array($string, {
             description: 'Specifies the top level table of contents.',
         }),

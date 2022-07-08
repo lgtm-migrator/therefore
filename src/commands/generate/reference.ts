@@ -13,6 +13,9 @@ interface ExpandedReference {
     referenceName: string
 }
 
+const localVersion = new Map<string, number>()
+const referenceRegister = new WeakMap<object, string>()
+
 export function requireReference(
     definitions: Record<string, FileDefinition>,
     current: FileDefinition,
@@ -32,8 +35,24 @@ export function requireReference(
 
     if (!found) {
         // this is a locally defined variable
-        const [refName, reference] = ref.reference
-        const sourceSymbol = `${refName}Local`
+        let sourceSymbol: string
+        const [reference] = ref.reference
+
+        const refName = ref.name
+        if (refName !== undefined) {
+            sourceSymbol = `${refName}Local`
+        } else {
+            if (!referenceRegister.has(reference)) {
+                if (!localVersion.has(current.file)) {
+                    localVersion.set(current.file, 0)
+                }
+                const localIterator = localVersion.get(current.file)!
+                referenceRegister.set(reference, `local${localIterator}`)
+                localVersion.set(current.file, localIterator + 1)
+            }
+            sourceSymbol = referenceRegister.get(reference)!
+        }
+
         const definition = toTypescriptDefinition({
             sourceSymbol,
             schema: evaluate(reference) as ThereforeCst,

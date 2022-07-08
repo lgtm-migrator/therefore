@@ -12,24 +12,27 @@ import { $string, $object, $ref, $union } from '../../src'
 //     },
 // }
 
-export const action = $object({
-    default_title: $string({
-        description: 'Tooltip for the main toolbar icon.',
-    }),
-    default_popup: $ref({
-        description: 'The popup appears when the user clicks the icon.',
-        reference: { uri },
-    }),
-    default_icon: $union([
-        $string({
-            description: 'FIXME: String form is deprecated.',
+export const action = $object(
+    {
+        default_title: $string({
+            description: 'Tooltip for the main toolbar icon.',
         }),
-        $object({
-            description: 'Icon for the main toolbar.',
-            properties: {
-                '19': $ref({ icon }),
-                '38': $ref({ icon }),
-            },
+        default_popup: $ref({
+            description: 'The popup appears when the user clicks the icon.',
+            reference: uri,
         }),
-    ]),
-})
+        default_icon: $union([
+            $string({
+                description: 'FIXME: String form is deprecated.',
+            }),
+            $object({
+                description: 'Icon for the main toolbar.',
+                properties: {
+                    '19': $ref(icon),
+                    '38': $ref(icon),
+                },
+            }),
+        ]),
+    },
+    { name: 'action' }
+)

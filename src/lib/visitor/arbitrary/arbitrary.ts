@@ -83,7 +83,7 @@ export const arbitraryVisitor: CstVisitor<Arbitrary<unknown>, ArbitraryContext> 
         return dict([string(), child])
     },
     ref: ({ children }, context) => {
-        const [, reference] = children
+        const [reference] = children
         return walkCst(evaluate(reference), arbitraryVisitor, context)
     },
     default: () => {

@@ -61,19 +61,13 @@ This is where Therefore comes in. Therefore itself does not do **any** validatio
 In a nutshell:
 
 1.  You define your schema definitions in files with a specific extension (`.schema.ts` by default)
-2.  You run Therefore on the folder `yarn therefore -f src`
+2.  You run Therefore on the folder `npx therefore -f src`
 3.  Therefore will generate a type file with extension `.type.ts` for you with helper functions of all exported symbols, and in a subfolder `schemas` you will find all generated JSON Schemas waiting for you.
 4.  No runtime dependency on Therefore :)
 
 ## Install
 
-Install Therefore using [`yarn`](https://yarnpkg.com/):
-
-```console
- $ yarn add --dev @zefiros-software/therefore
-```
-
-Or [`npm`](https://www.npmjs.com/):
+Install Therefore using [`npm`](https://www.npmjs.com/):
 
 ```console
  $ npm install --save-dev @zefiros-software/therefore
@@ -146,7 +140,7 @@ export const Person = {
     get schema() {
         return Person.validate.schema
     },
-    source: `${__dirname}person.schema`,
+    source: `${__dirname}example.schema`,
     sourceSymbol: 'person',
     is: (o: unknown): o is Person => Person.validate(o) === true,
     assert: (o: unknown): asserts o is Person => {

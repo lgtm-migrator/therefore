@@ -310,14 +310,13 @@ describe('toTypeDefinition', () => {
 
     test('ref', () => {
         const foo = $dict($string)
-        expect(walkCst($ref({ foo }), jsonSchemaVisitor, jsonSchemaContext())).toMatchInlineSnapshot(`
+        expect(walkCst($ref(foo), jsonSchemaVisitor, jsonSchemaContext())).toMatchInlineSnapshot(`
             Object {
               "$ref": "#/definitions/{{0002-000}}",
             }
         `)
         // test the stable uuid referencing
-        expect(walkCst($union([$ref({ foo }), $dict($ref({ foo }))]), jsonSchemaVisitor, jsonSchemaContext()))
-            .toMatchInlineSnapshot(`
+        expect(walkCst($union([$ref(foo), $dict($ref(foo))]), jsonSchemaVisitor, jsonSchemaContext())).toMatchInlineSnapshot(`
             Object {
               "oneOf": Array [
                 Object {
@@ -332,7 +331,7 @@ describe('toTypeDefinition', () => {
               ],
             }
         `)
-        expect(walkCst($union([$ref({ foo }), $dict($nullable($ref({ foo })))]), jsonSchemaVisitor, jsonSchemaContext()))
+        expect(walkCst($union([$ref(foo), $dict($nullable($ref(foo)))]), jsonSchemaVisitor, jsonSchemaContext()))
             .toMatchInlineSnapshot(`
             Object {
               "oneOf": Array [
@@ -550,7 +549,7 @@ describe('toJsonSchema', () => {
 
     test('ref', () => {
         const foo = $dict($string)
-        expect(toJsonSchema($union([$ref({ foo }), $dict($nullable($ref({ foo })))]))).toMatchInlineSnapshot(`
+        expect(toJsonSchema($union([$ref(foo), $dict($nullable($ref(foo)))]))).toMatchInlineSnapshot(`
             Object {
               "compiled": false,
               "schema": Object {
