@@ -13,8 +13,13 @@ interface ExpandedReference {
     referenceName: string
 }
 
-const localVersion = new Map<string, number>()
+let globalVersion = 0
 const referenceRegister = new WeakMap<object, string>()
+const referenceMap: Record<string, string | undefined> = {}
+
+export function getLocalRefName(id: string) {
+    return referenceMap[id]
+}
 
 export function requireReference(
     definitions: Record<string, FileDefinition>,
@@ -43,12 +48,8 @@ export function requireReference(
             sourceSymbol = `${refName}Local`
         } else {
             if (!referenceRegister.has(reference)) {
-                if (!localVersion.has(current.file)) {
-                    localVersion.set(current.file, 0)
-                }
-                const localIterator = localVersion.get(current.file)!
-                referenceRegister.set(reference, `local${localIterator}`)
-                localVersion.set(current.file, localIterator + 1)
+                referenceMap[ref.uuid] = `local${globalVersion++}`
+                referenceRegister.set(reference, referenceMap[ref.uuid]!)
             }
             sourceSymbol = referenceRegister.get(reference)!
         }

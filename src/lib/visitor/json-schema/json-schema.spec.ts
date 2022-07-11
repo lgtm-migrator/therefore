@@ -584,4 +584,67 @@ describe('toJsonSchema', () => {
             }
         `)
     })
+
+    test('ref - complex', () => {
+        const wut = $object({ wut: $string })
+        const foo = $union([$ref(wut)])
+        const bar = $object({ foo: $ref(foo) })
+        expect(
+            toJsonSchema(
+                $object({
+                    bar: $ref(bar),
+                })
+            )
+        ).toMatchInlineSnapshot(`
+            Object {
+              "compiled": false,
+              "schema": Object {
+                "$schema": "http://json-schema.org/draft-07/schema#",
+                "additionalProperties": false,
+                "definitions": Object {
+                  "{{0002-000}}": Object {
+                    "additionalProperties": false,
+                    "properties": Object {
+                      "wut": Object {
+                        "type": "string",
+                      },
+                    },
+                    "required": Array [
+                      "wut",
+                    ],
+                    "type": "object",
+                  },
+                  "{{0004-000}}": Object {
+                    "oneOf": Array [
+                      Object {
+                        "$ref": "#/definitions/{{0002-000}}",
+                      },
+                    ],
+                  },
+                  "{{0006-000}}": Object {
+                    "additionalProperties": false,
+                    "properties": Object {
+                      "foo": Object {
+                        "$ref": "#/definitions/{{0004-000}}",
+                      },
+                    },
+                    "required": Array [
+                      "foo",
+                    ],
+                    "type": "object",
+                  },
+                },
+                "properties": Object {
+                  "bar": Object {
+                    "$ref": "#/definitions/{{0006-000}}",
+                  },
+                },
+                "required": Array [
+                  "bar",
+                ],
+                "type": "object",
+              },
+            }
+        `)
+    })
 })

@@ -1,7 +1,9 @@
+import { getLocalRefName } from '../../commands/generate/reference'
+
 export function renderTemplate(templ: string, data: Record<string, string | undefined> = {}): string {
     return templ.replace(/\{\{([^}]+)\}\}/g, (match) => {
         match = match.slice(2, -2)
-        const val = data[match]
+        const val = data[match] ?? getLocalRefName(match)
         if (val !== undefined) {
             return val
         }
