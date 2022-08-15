@@ -13,6 +13,7 @@ export interface JsonHyperSchema {
     $comment?: string
     // https://tools.ietf.org/html/draft-handrews-json-schema-validation-01#section-9
     definitions?: Record<string, JsonSchema>
+    $defs?: Record<string, JsonSchema>
 }
 
 // https://tools.ietf.org/html/draft-handrews-json-schema-validation-01#section-6.1
@@ -64,7 +65,7 @@ export interface JsonStringInstance {
 
 // https://tools.ietf.org/html/draft-handrews-json-schema-validation-01#section-6.4
 export interface JsonArrayInstance {
-    items?: JsonSchema | ReadonlyArray<JsonSchema>
+    items?: JsonSchema | JsonSchema[]
     additionalItems?: JsonSchema | false
     maxItems?: number
     minItems?: number
@@ -81,7 +82,6 @@ export interface JsonObjectInstance {
     minProperties?: number
     required?: ReadonlyArray<string>
     properties?: Record<string, JsonSchema>
-    /** @deprecated */
     patternProperties?: Record<string, JsonSchema>
     additionalProperties?: JsonSchema | false
     dependencies?: Record<string, JsonSchema | ReadonlyArray<string>>
@@ -118,13 +118,18 @@ export interface JsonAnnotations {
     readonly?: boolean
     /** @deprecated */
     writeonly?: boolean
-    examples?: unknown
+    examples?: unknown[]
+}
+
+export interface JsonDefs {
+    $defs?: Record<string, JsonSchema>
 }
 
 export type JsonSchema = JsonAnnotations &
     JsonAnyInstance &
     JsonArrayInstance &
     JsonBooleanLogic &
+    JsonDefs &
     JsonHyperSchema &
     JsonNumericInstance &
     JsonObjectInstance &

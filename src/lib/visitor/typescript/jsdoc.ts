@@ -1,16 +1,26 @@
 import { toLiteral } from './literal'
 
-import type { MetaDescription } from '../../types/base'
+import type { MetaDescription } from '../../primitives/base'
 
 function escapeComment(x: string) {
     return x.replaceAll(/\*\//g, '* /')
 }
 
-export function toJSDoc(key: string, meta: MetaDescription): string | undefined {
+export function toJSDoc({ key, meta }: { key?: string; meta: MetaDescription }): string | undefined {
     const docs: string[] = []
     const pad = () => (docs.length > 0 ? docs.push('') : undefined)
-    const description = meta.description ?? meta.title
-    if (description !== undefined) {
+
+    const summary = meta.summary ?? meta.title
+    const hasSummary = summary !== undefined && summary.length > 1
+    if (hasSummary) {
+        docs.push(...escapeComment(summary).split('\n'))
+    }
+
+    const description = meta.description
+    if (description !== undefined && description.length > 1 && description !== summary) {
+        if (hasSummary) {
+            docs.push('')
+        }
         docs.push(...escapeComment(description).split('\n'))
     }
     const properties: string[] = []
@@ -33,7 +43,7 @@ export function toJSDoc(key: string, meta: MetaDescription): string | undefined 
     }
 
     const examples = meta.examples
-    if (examples) {
+    if (examples && key !== undefined) {
         pad()
         for (const example of examples) {
             docs.push(`@example ${escapeComment(key)} = ${escapeComment(toLiteral(example))}`)

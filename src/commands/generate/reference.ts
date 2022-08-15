@@ -1,88 +1,105 @@
-import type { FileDefinition } from './types'
+import type { FileDefinition, TypescriptDefinition, TypescriptReference } from './types'
 
-import type { TypescriptReference, TypescriptDefinition } from '../../definition'
-import type { ThereforeCst } from '../../lib/types/types'
+import type { ThereforeCst } from '../../lib/primitives/types'
 import { toTypescriptDefinition } from '../../lib/visitor'
 
-import { evaluate } from '@zefiros-software/axioms'
+import { evaluate, sha256 } from '@skyleague/axioms'
+
+import path from 'path'
 
 interface ExpandedReference {
-    file: string
+    srcPath: string
+    targetPath: string
     symbolName: string
     uuid: string
     referenceName: string
+    uniqueSymbolName: string
 }
 
 const localVersion = new Map<string, number>()
-const referenceRegister = new WeakMap<object, string>()
+const referenceRegister = new Map<string, string>()
 
-export function requireReference(
-    definitions: Record<string, FileDefinition>,
-    current: FileDefinition,
-    ref: TypescriptReference,
+export function requireReference({
+    definitions,
+    current,
+    ref,
+    locals,
+}: {
+    definitions: Record<string, FileDefinition>
+    current: FileDefinition
+    ref: TypescriptReference
     locals: NonNullable<TypescriptDefinition['locals']>
-): ExpandedReference[] {
+}): ExpandedReference[] {
     const found = Object.values(definitions)
         .flatMap((d) =>
             d.symbols.map((s) => ({
                 uuid: s.definition.uuid,
                 symbolName: s.definition.symbolName,
                 referenceName: s.definition.referenceName,
-                file: d.file,
+                uniqueSymbolName: s.definition.uniqueSymbolName,
+                srcPath: d.srcPath,
+                targetPath: d.targetPath,
             }))
         )
         .find((s) => s.uuid === ref.uuid)
 
-    if (!found) {
+    if (found === undefined) {
         // this is a locally defined variable
         let sourceSymbol: string
-        const [reference] = ref.reference
+        const reference = evaluate(ref.reference[0])
 
         const refName = ref.name
+        const fileHash = sha256(path.basename(current.srcPath)).slice(0, 4)
         if (refName !== undefined) {
-            sourceSymbol = `${refName}Local`
+            sourceSymbol = refName
         } else {
-            if (!referenceRegister.has(reference)) {
-                if (!localVersion.has(current.file)) {
-                    localVersion.set(current.file, 0)
+            if (!referenceRegister.has(reference.uuid)) {
+                if (!localVersion.has(current.targetPath)) {
+                    localVersion.set(current.targetPath, 0)
                 }
-                const localIterator = localVersion.get(current.file)!
-                referenceRegister.set(reference, `local${localIterator}`)
-                localVersion.set(current.file, localIterator + 1)
+                const localIterator = localVersion.get(current.targetPath)!
+                referenceRegister.set(reference.uuid, `local${localIterator}`)
+                localVersion.set(current.targetPath, localIterator + 1)
             }
-            sourceSymbol = referenceRegister.get(reference)!
+            sourceSymbol = referenceRegister.get(reference.uuid)!
         }
 
-        const definition = toTypescriptDefinition({
+        const { definition } = toTypescriptDefinition({
             sourceSymbol,
             schema: evaluate(reference) as ThereforeCst,
-            exportSymbol: false,
+            fileHash,
+            exportSymbol: ref.exportSymbol,
             locals,
         })
         current.symbols.push({
+            uuid: ref.uuid,
             definition,
             symbolName: sourceSymbol,
             typeOnly: true,
         })
 
         // make the DFS well defined
-        const extra = definition.references.map((r) => requireReference(definitions, current, r, locals)).flat()
+        const extra = definition.references.map((r) => requireReference({ definitions, current, ref: r, locals })).flat()
         return [
             ...extra,
             {
-                file: current.file,
-                symbolName: definition.symbolName,
-                referenceName: definition.referenceName,
                 uuid: ref.uuid,
+                symbolName: definition.symbolName,
+                srcPath: current.srcPath,
+                targetPath: current.targetPath,
+                referenceName: definition.referenceName,
+                uniqueSymbolName: definition.uniqueSymbolName,
             },
         ]
     }
     return [
         {
-            file: found.file,
-            symbolName: found.symbolName,
-            referenceName: found.referenceName,
             uuid: ref.uuid,
+            symbolName: found.symbolName,
+            srcPath: found.srcPath,
+            targetPath: found.targetPath,
+            referenceName: found.referenceName,
+            uniqueSymbolName: found.uniqueSymbolName,
         },
     ]
 }

@@ -2,9 +2,9 @@ import type { CstNode } from '../../cst/cst'
 import type { CstVisitor } from '../../cst/visitor'
 import { walkCst } from '../../cst/visitor'
 import { isNamedArray } from '../../guard'
-import type { ThereforeCst } from '../../types/types'
+import type { ThereforeCst } from '../../primitives/types'
 
-import type { Arbitrary } from '@zefiros-software/axioms'
+import type { Arbitrary } from '@skyleague/axioms'
 import {
     chainArbitrary,
     domain,
@@ -26,7 +26,7 @@ import {
     tuple,
     nullable,
     optional,
-} from '@zefiros-software/axioms'
+} from '@skyleague/axioms'
 
 export interface ArbitraryContext {
     transform: (node: CstNode, arbitrary: Arbitrary<unknown>) => Arbitrary<unknown>

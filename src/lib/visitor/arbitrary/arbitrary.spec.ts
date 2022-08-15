@@ -1,9 +1,9 @@
 import { toArbitrary } from './arbitrary'
 
-import { $array, $boolean, $integer, $null, $object } from '../../types'
-import { $number } from '../../types/number'
-import { $string } from '../../types/string'
-import { $unknown } from '../../types/unknown'
+import { $array, $boolean, $integer, $null, $object } from '../../primitives'
+import { $number } from '../../primitives/number'
+import { $string } from '../../primitives/string'
+import { $unknown } from '../../primitives/unknown'
 
 import {
     forAll,
@@ -15,7 +15,7 @@ import {
     toISO8601Date,
     isObject,
     xoroshiro128plus,
-} from '@zefiros-software/axioms'
+} from '@skyleague/axioms'
 
 test('string', () => {
     forAll(toArbitrary($string()), isString)

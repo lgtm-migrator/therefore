@@ -1,4 +1,11 @@
-import { isAlphaNumeric, isDigits } from '@zefiros-software/axioms'
+import { isAlphaNumeric, isDigits } from '@skyleague/axioms'
+
+export function objectProperty(x: string) {
+    if (x.includes('.')) {
+        return `[${stringLiteral(x, { allowBacktick: true })}]`
+    }
+    return x
+}
 
 export function stringLiteral(x: string, { allowBacktick = false }: { allowBacktick?: boolean } = {}): string {
     const escaped = x.replaceAll('\\', '\\\\')

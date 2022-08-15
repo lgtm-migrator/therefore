@@ -3,4 +3,5 @@ export const defaultAjvConfig = {
     strictTypes: true,
     useDefaults: true,
     removeAdditional: false,
+    strictSchema: false,
 }

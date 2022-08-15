@@ -1,27 +1,58 @@
+import { awaitAll } from '../../../common/util'
 import type { CstNode } from '../../cst/cst'
-import type { CstVisitor } from '../../cst/visitor'
-import { walkCst } from '../../cst/visitor'
-import { isCstNode } from '../../guard'
-import type { ThereforeCst } from '../../types/types'
+import { isCstNode } from '../../cst/cst'
+import type { AsyncCstVisitor } from '../../cst/visitor'
+import { asyncWalkCst } from '../../cst/visitor'
+import type { AyncThereforeCst, ThereforeCst } from '../../primitives/types'
 
-import { evaluate } from '@zefiros-software/axioms'
+import { entriesOf, evaluate } from '@skyleague/axioms'
 
-export function prepass(obj: ThereforeCst & { prepass?: true }): ThereforeCst & { prepass?: true } {
-    const prepassVisitor: CstVisitor<CstNode, unknown, CstNode> = {
-        ref: (node) => ({
-            ...node,
-            // fix the functions to the evaluated format
-            children: [evaluate(node.children[0])],
-        }),
-        default: (node) => {
-            return {
-                ...node,
-                children: node.children?.map((c) => (isCstNode(c) ? walkCst(c, prepassVisitor) : c)),
+export async function prepass(obj: AyncThereforeCst & { prepass?: true }): Promise<ThereforeCst & { prepass?: true }> {
+    const seen = new WeakSet()
+    const prepassVisitor: AsyncCstVisitor<CstNode, unknown, AyncThereforeCst> = {
+        object: async (node, ctx) => {
+            if (seen.has(node)) {
+                return node
             }
+
+            const { value } = node
+            const { indexSignature } = value
+
+            await prepassVisitor.default(node, ctx)
+            if (value.indexPatterns !== undefined) {
+                node.value.indexPatterns = Object.fromEntries(
+                    await awaitAll(
+                        entriesOf(value.indexPatterns).map(
+                            async ([name, pattern]) =>
+                                [name, await prepassVisitor.default(pattern as AyncThereforeCst, ctx)] as const
+                        )
+                    )
+                )
+            }
+            if (indexSignature !== undefined) {
+                node.value.indexSignature = await prepassVisitor.default(indexSignature as AyncThereforeCst, ctx)
+            }
+
+            return node
+        },
+        default: async (node) => {
+            if (seen.has(node)) {
+                return node
+            }
+            seen.add(node)
+
+            const children = []
+            for (const v of node.children ?? []) {
+                const evaluated = await evaluate(v)
+                children.push(isCstNode(evaluated) ? await asyncWalkCst(evaluated, prepassVisitor) : evaluated)
+            }
+            node.children = children
+            return node
         },
     }
+
     if (obj.prepass !== true) {
-        return { ...walkCst(obj, prepassVisitor), prepass: true } as ThereforeCst & { prepass?: true }
+        return { ...(await asyncWalkCst(obj, prepassVisitor)), prepass: true } as ThereforeCst & { prepass?: true }
     }
-    return obj
+    return obj as ThereforeCst
 }

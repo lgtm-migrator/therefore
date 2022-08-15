@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import { toJSDoc } from './jsdoc'
 
-import { array, boolean, forAll, json, object, string, tuple } from '@zefiros-software/axioms'
+import { array, boolean, forAll, json, object, string, tuple } from '@skyleague/axioms'
 
 test('description', () => {
-    expect(toJSDoc('foo', { description: 'lorum ipsum' })).toMatchInlineSnapshot(`
+    expect(toJSDoc({ key: 'foo', meta: { description: 'lorum ipsum' } })).toMatchInlineSnapshot(`
             "/**
              * lorum ipsum
              */
@@ -13,10 +13,13 @@ test('description', () => {
 })
 
 test('examples', () => {
-    expect(toJSDoc('foo', { examples: [] })).toMatchInlineSnapshot(`undefined`)
+    expect(toJSDoc({ key: 'foo', meta: { examples: [] } })).toMatchInlineSnapshot(`undefined`)
     expect(
-        toJSDoc('foo', {
-            examples: ['lorum ipsum', 'dolor sit amet'],
+        toJSDoc({
+            key: 'foo',
+            meta: {
+                examples: ['lorum ipsum', 'dolor sit amet'],
+            },
         })
     ).toMatchInlineSnapshot(`
             "/**
@@ -28,13 +31,13 @@ test('examples', () => {
 })
 
 test('default', () => {
-    expect(toJSDoc('foo', { default: [] })).toMatchInlineSnapshot(`
+    expect(toJSDoc({ key: 'foo', meta: { default: [] } })).toMatchInlineSnapshot(`
             "/**
              * @default []
              */
             "
         `)
-    expect(toJSDoc('foo', { default: 'lorum ipsum' })).toMatchInlineSnapshot(`
+    expect(toJSDoc({ key: 'foo', meta: { default: 'lorum ipsum' } })).toMatchInlineSnapshot(`
             "/**
              * @default 'lorum ipsum'
              */
@@ -44,11 +47,14 @@ test('default', () => {
 
 test('combined', () => {
     expect(
-        toJSDoc('foo', {
-            description: 'lorum ipsum',
-            default: 'dolor sit amet',
-            examples: ['lorum ipsum', 'dolor sit amet'],
-            deprecated: true,
+        toJSDoc({
+            key: 'foo',
+            meta: {
+                description: 'lorum ipsum',
+                default: 'dolor sit amet',
+                examples: ['lorum ipsum', 'dolor sit amet'],
+                deprecated: true,
+            },
         })
     ).toMatchInlineSnapshot(`
         "/**
@@ -78,6 +84,6 @@ test('jsdoc is always valid javascript', () => {
             })
         ),
         ([key, { description, title, default: def, examples, readonly, deprecated }]) =>
-            eval(toJSDoc(key, { description, title, default: def, examples, readonly, deprecated }) ?? '')
+            eval(toJSDoc({ key, meta: { description, title, default: def, examples, readonly, deprecated } }) ?? '')
     )
 })

@@ -12,5 +12,6 @@ module.exports = {
     fakeTimers: {
         enableGlobally: true,
         now: new Date(2022, 1, 10).valueOf(),
+        doNotFake: ['setImmediate', 'nextTick', 'setTimeout'],
     },
 }

@@ -1,9 +1,11 @@
-import { $number, $object, $string } from '../../src'
+import { $number, $object, $string, $validator } from '../../src'
 
-export const person = $object({
-    firstName: $string({
-        description: "The person's first name.",
-    }),
-    lastName: $string,
-    age: $number,
-})
+export const person = $validator(
+    $object({
+        firstName: $string({
+            description: "The person's first name.",
+        }),
+        lastName: $string,
+        age: $number,
+    })
+)

@@ -1,16 +1,22 @@
-import { $number, $object, $ref, $union } from '../../src'
+import { $number, $object, $ref, $union, $validator } from '../../src'
 
-export const square = $object({
-    size: $number,
-})
+export const square = $validator(
+    $object({
+        size: $number,
+    })
+)
 
-export const rectangle = $object({
-    width: $number,
-    height: $number,
-})
+export const rectangle = $validator(
+    $object({
+        width: $number,
+        height: $number,
+    })
+)
 
-export const circle = $object({
-    radius: $number,
-})
+export const circle = $validator(
+    $object({
+        radius: $number,
+    })
+)
 
-export const shape = $union([$ref(square), $ref(rectangle), $ref(circle)])
+export const shape = $validator($union([$ref(square), $ref(rectangle), $ref(circle)]))

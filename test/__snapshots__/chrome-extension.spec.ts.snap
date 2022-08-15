@@ -4,57 +4,144 @@ exports[`schema typedoc 1`] = `
 Array [
   Object {
     "data": Object {
-      "0001-000": "UriLocal",
-      "00010-000": "ActionLocal",
-      "000125-000": "ExtensionVoicesArrayEventTypesArray",
-      "000127-000": "ExtensionVoicesArray",
-      "00014-000": "CommandLocal",
-      "00015-000": "VersionStringLocal",
-      "00016-000": "PageLocal",
-      "00018-000": "ScriptsLocal",
-      "00019-000": "ContentSecurityPolicyLocal",
-      "0002-000": "IconLocal",
-      "00020-000": "GlobPatternLocal",
-      "00021-000": "MatchPatternLocal",
-      "00022-000": "MimeTypeLocal",
-      "00024-000": "PermissionsLocal",
-      "00061-000": "ExtensionContentScriptsArray",
-      "00075-000": "ExtensionFileBrowserHandlersArray",
-      "00086-000": "ExtensionInputComponentsArray",
-      "00092-000": "ExtensionNaclModulesArray",
+      "0001-000": Object {
+        "referenceName": "{{0001-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "Uri",
+        "uniqueSymbolName": "{{0001-000:symbolName}}6a83",
+      },
+      "00010-000": Object {
+        "referenceName": "{{00010-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "Action",
+        "uniqueSymbolName": "{{00010-000:symbolName}}6a83",
+      },
+      "000125-000": Object {
+        "referenceName": "{{000125-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "ExtensionVoicesArrayEventTypesArray",
+        "uniqueSymbolName": "{{000125-000:symbolName}}",
+      },
+      "000127-000": Object {
+        "referenceName": "{{000127-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "ExtensionVoicesArray",
+        "uniqueSymbolName": "{{000127-000:symbolName}}",
+      },
+      "00014-000": Object {
+        "referenceName": "{{00014-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "Command",
+        "uniqueSymbolName": "{{00014-000:symbolName}}6a83",
+      },
+      "000143-000": Object {
+        "referenceName": "{{000143-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "Extension",
+        "uniqueSymbolName": "{{000143-000:symbolName}}",
+      },
+      "00015-000": Object {
+        "referenceName": "{{00015-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "VersionString",
+        "uniqueSymbolName": "{{00015-000:symbolName}}6a83",
+      },
+      "00016-000": Object {
+        "referenceName": "{{00016-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "Page",
+        "uniqueSymbolName": "{{00016-000:symbolName}}6a83",
+      },
+      "00018-000": Object {
+        "referenceName": "{{00018-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "Scripts",
+        "uniqueSymbolName": "{{00018-000:symbolName}}6a83",
+      },
+      "00019-000": Object {
+        "referenceName": "{{00019-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "ContentSecurityPolicy",
+        "uniqueSymbolName": "{{00019-000:symbolName}}6a83",
+      },
+      "0002-000": Object {
+        "referenceName": "{{0002-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "Icon",
+        "uniqueSymbolName": "{{0002-000:symbolName}}6a83",
+      },
+      "00020-000": Object {
+        "referenceName": "{{00020-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "GlobPattern",
+        "uniqueSymbolName": "{{00020-000:symbolName}}6a83",
+      },
+      "00021-000": Object {
+        "referenceName": "{{00021-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "MatchPattern",
+        "uniqueSymbolName": "{{00021-000:symbolName}}6a83",
+      },
+      "00022-000": Object {
+        "referenceName": "{{00022-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "MimeType",
+        "uniqueSymbolName": "{{00022-000:symbolName}}6a83",
+      },
+      "00024-000": Object {
+        "referenceName": "{{00024-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "Permissions",
+        "uniqueSymbolName": "{{00024-000:symbolName}}6a83",
+      },
+      "00061-000": Object {
+        "referenceName": "{{00061-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "ExtensionContentScriptsArray",
+        "uniqueSymbolName": "{{00061-000:symbolName}}",
+      },
+      "00075-000": Object {
+        "referenceName": "{{00075-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "ExtensionFileBrowserHandlersArray",
+        "uniqueSymbolName": "{{00075-000:symbolName}}",
+      },
+      "00086-000": Object {
+        "referenceName": "{{00086-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "ExtensionInputComponentsArray",
+        "uniqueSymbolName": "{{00086-000:symbolName}}",
+      },
     },
-    "file": "examples/chrome/extension.schema.type.ts",
     "prettify": true,
     "relativeSource": "./extension.schema",
+    "targetPath": "examples/chrome/extension.schema.type.ts",
     "template": "/**
- * Generated by @zefiros-software/therefore@v0.0.1
- * Do not manually touch this
- */
-
+* Generated by @zefiros-software/therefore@v0.0.1
+* Do not manually touch this
+*/
 /* eslint-disable */
-
+import AjvValidator from 'ajv'
 import type { ValidateFunction } from 'ajv'
 
 
-import AjvValidator from 'ajv'
-
-interface ExtensionContentScriptsArray {
+interface {{00061-000:symbolName}} {
     /**
      * Specifies which pages this content script will be injected into.
      */
-    matches: [{{00021-000}},  ...({{00021-000}})[]]
+    matches: [{{00021-000:referenceName}},  ...({{00021-000:referenceName}})[]]
     /**
      * Excludes pages that this content script would otherwise be injected into.
      */
-    exclude_matches: ({{00021-000}})[]
+    exclude_matches: ({{00021-000:referenceName}})[]
     /**
      * The list of CSS files to be injected into matching pages. These are injected in the order they appear in this array, before any DOM is constructed or displayed for the page.
      */
-    css: ({{0001-000}})[]
+    css: ({{0001-000:referenceName}})[]
     /**
      * The list of JavaScript files to be injected into matching pages. These are injected in the order they appear in this array.
      */
-    js: {{00018-000}}
+    js: {{00018-000:referenceName}}
     /**
      * Controls when the files in js are injected.
      * 
@@ -70,11 +157,11 @@ interface ExtensionContentScriptsArray {
     /**
      * Applied after matches to include only those URLs that also match this glob. Intended to emulate the @include Greasemonkey keyword.
      */
-    include_globs: ({{00020-000}})[]
+    include_globs: ({{00020-000:referenceName}})[]
     /**
      * Applied after matches to exclude URLs that match this glob. Intended to emulate the @exclude Greasemonkey keyword.
      */
-    exclude_globs: ({{00020-000}})[]
+    exclude_globs: ({{00020-000:referenceName}})[]
     /**
      * Whether to insert the content script on about:blank and about:srcdoc.
      * 
@@ -83,7 +170,7 @@ interface ExtensionContentScriptsArray {
     match_about_blank: boolean
 }
 
-interface ExtensionFileBrowserHandlersArray {
+interface {{00075-000:symbolName}} {
     /**
      * Used by event handling code to differentiate between multiple file handlers
      */
@@ -98,7 +185,7 @@ interface ExtensionFileBrowserHandlersArray {
     file_filters: [string,  ...(string)[]]
 }
 
-interface ExtensionInputComponentsArray {
+interface {{00086-000:symbolName}} {
     name: string
     type: string
     id: string
@@ -107,20 +194,9 @@ interface ExtensionInputComponentsArray {
     layouts: (string)[]
 }
 
-interface ExtensionNaclModulesArray {
-    /**
-     * The location of a Native Client manifest (a .nmf file) within the extension directory.
-     */
-    path: {{0001-000}}
-    /**
-     * The MIME type for which the Native Client module will be registered as content handler.
-     */
-    mime_type: {{00022-000}}
-}
+type {{000125-000:symbolName}} = 'start' | 'word' | 'sentence' | 'marker' | 'end' | 'error'
 
-type ExtensionVoicesArrayEventTypesArray = 'start' | 'word' | 'sentence' | 'marker' | 'end' | 'error'
-
-interface ExtensionVoicesArray {
+interface {{000127-000:symbolName}} {
     /**
      * Identifies the name of the voice and the engine used.
      */
@@ -136,13 +212,13 @@ interface ExtensionVoicesArray {
     /**
      * Events sent to update the client on the progress of speech synthesis.
      */
-    event_types?: [{{000125-000}},  ...({{000125-000}})[]]
+    event_types?: [{{000125-000:referenceName}},  ...({{000125-000:referenceName}})[]]
 }
 
 /**
  * JSON schema for Google Chrome extension manifest files
  */
-export interface Extension {
+export interface {{000143-000:symbolName}} {
     /**
      * One integer specifying the version of the manifest file format your package requires.
      */
@@ -154,7 +230,7 @@ export interface Extension {
     /**
      * One to four dot-separated integers identifying the version of this extension.
      */
-    version: {{00015-000}}
+    version: {{00015-000:referenceName}}
     /**
      * Specifies the subdirectory of _locales that contains the default strings for this extension.
      * 
@@ -172,28 +248,28 @@ export interface Extension {
         /**
          * Used as the favicon for an extension's pages and infobar.
          */
-        '16': {{0002-000}}
+        '16': {{0002-000:referenceName}}
         /**
          * Used on the extension management page (chrome://extensions).
          */
-        '48': {{0002-000}}
+        '48': {{0002-000:referenceName}}
         /**
          * Used during installation and in the Chrome Web Store.
          */
-        '128': {{0002-000}}
+        '128': {{0002-000:referenceName}}
         /**
          * Used during installation and in the Chrome Web Store.
          */
-        '256': {{0002-000}}
+        '256': {{0002-000:referenceName}}
     }
     /**
      * Use browser actions to put icons in the main Google Chrome toolbar, to the right of the address bar. In addition to its icon, a browser action can also have a tooltip, a badge, and a popup.
      */
-    browser_action: {{00010-000}}
+    browser_action: {{00010-000:referenceName}}
     /**
      * Use the chrome.pageAction API to put icons inside the address bar. Page actions represent actions that can be taken on the current page, but that aren't applicable to all pages.
      */
-    page_action: {{00010-000}}
+    page_action: {{00010-000:referenceName}}
     /**
      * The background page is an HTML page that runs in the extension process. It exists for the lifetime of your extension, and only one instance of it at a time is active.
      */
@@ -209,13 +285,13 @@ export interface Extension {
          * 
          * @default 'background.html'
          */
-        page: {{0001-000}}
+        page: {{0001-000:referenceName}}
         /**
          * A background page will be generated by the extension system that includes each of the files listed in the scripts property.
          * 
          * @default ['background.js']
          */
-        scripts: {{00018-000}}
+        scripts: {{00018-000:referenceName}}
     }
     /**
      * Override pages are a way to substitute an HTML file from your extension for a page that Google Chrome normally provides.
@@ -226,35 +302,35 @@ export interface Extension {
          * 
          * @default 'bookmarks.html'
          */
-        bookmarks: {{00016-000}}
+        bookmarks: {{00016-000:referenceName}}
         /**
          * The page that appears when the user chooses the History menu item from the Chrome menu or, on Mac, the Show Full History item from the History menu. You can also get to this page by entering the URL chrome://history.
          * 
          * @default 'history.html'
          */
-        history: {{00016-000}}
+        history: {{00016-000:referenceName}}
         /**
          * The page that appears when the user creates a new tab or window. You can also get to this page by entering the URL chrome://newtab.
          * 
          * @default 'newtab.html'
          */
-        newtab: {{00016-000}}
+        newtab: {{00016-000:referenceName}}
     }
     /**
      * Use the commands API to add keyboard shortcuts that trigger actions in your extension, for example, an action to open the browser action or send a command to the extension.
      */
     commands: {
-        [k: string]: ( {{00014-000}} ) | undefined
+        [k: string]: ( {{00014-000:referenceName}} ) | undefined
     }
     /**
      * Content scripts are JavaScript files that run in the context of web pages.
      */
-    content_scripts: [{{00061-000}},  ...({{00061-000}})[]]
-    content_security_policy: {{00019-000}}
+    content_scripts: [{{00061-000:referenceName}},  ...({{00061-000:referenceName}})[]]
+    content_security_policy: {{00019-000:referenceName}}
     /**
      * A DevTools extension adds functionality to the Chrome DevTools. It can add new UI panels and sidebars, interact with the inspected page, get information about network requests, and more.
      */
-    devtools_page: {{00016-000}}
+    devtools_page: {{00016-000:referenceName}}
     /**
      * Declares which extensions, apps, and web pages can connect to your extension via runtime.connect and runtime.sendMessage.
      */
@@ -277,11 +353,11 @@ export interface Extension {
     /**
      * You can use this API to enable users to upload files to your website.
      */
-    file_browser_handlers: [{{00075-000}},  ...({{00075-000}})[]]
+    file_browser_handlers: [{{00075-000:referenceName}},  ...({{00075-000:referenceName}})[]]
     /**
      * The URL of the homepage for this extension.
      */
-    homepage_url: {{0001-000}}
+    homepage_url: {{0001-000:referenceName}}
     /**
      * Specify how this extension will behave if allowed to run in incognito mode.
      * 
@@ -291,7 +367,7 @@ export interface Extension {
     /**
      * Allows your extension to handle keystrokes, set the composition, and manage the candidate window.
      */
-    input_components: ({{00086-000}})[]
+    input_components: ({{00086-000:referenceName}})[]
     /**
      * This value can be used to control the unique ID of an extension, app, or theme when it is loaded during development.
      */
@@ -299,11 +375,29 @@ export interface Extension {
     /**
      * The version of Chrome that your extension, app, or theme requires, if any.
      */
-    minimum_chrome_version: {{00015-000}}
+    minimum_chrome_version: {{00015-000:referenceName}}
     /**
      * One or more mappings from MIME types to the Native Client module that handles each type.
      */
-    nacl_modules: [{{00092-000}},  ...({{00092-000}})[]]
+    nacl_modules: [{
+        /**
+         * The location of a Native Client manifest (a .nmf file) within the extension directory.
+         */
+        path: {{0001-000:referenceName}}
+        /**
+         * The MIME type for which the Native Client module will be registered as content handler.
+         */
+        mime_type: {{00022-000:referenceName}}
+    },  ...({
+        /**
+         * The location of a Native Client manifest (a .nmf file) within the extension directory.
+         */
+        path: {{0001-000:referenceName}}
+        /**
+         * The MIME type for which the Native Client module will be registered as content handler.
+         */
+        mime_type: {{00022-000:referenceName}}
+    })[]]
     /**
      * Use the Chrome Identity API to authenticate users: the getAuthToken for users logged into their Google Account and the launchWebAuthFlow for users logged into a non-Google account.
      */
@@ -330,13 +424,13 @@ export interface Extension {
     /**
      * Use the chrome.permissions API to request declared optional permissions at run time rather than install time, so users understand why the permissions are needed and grant only those that are necessary.
      */
-    optional_permissions: {{00024-000}}
+    optional_permissions: {{00024-000:referenceName}}
     /**
      * To allow users to customize the behavior of your extension, you may wish to provide an options page. If you do, a link to it will be provided from the extensions management page at chrome://extensions. Clicking the Options link opens a new tab pointing at your options page.
      * 
      * @default 'options.html'
      */
-    options_page: {{00016-000}}
+    options_page: {{00016-000:referenceName}}
     /**
      * To allow users to customize the behavior of your extension, you may wish to provide an options page. If you do, an Options link will be shown on the extensions management page at chrome://extensions which opens a dialogue containing your options page.
      */
@@ -361,7 +455,7 @@ export interface Extension {
     /**
      * Permissions help to limit damage if your extension or app is compromised by malware. Some permissions are also displayed to users before installation, as detailed in Permission Warnings.
      */
-    permissions: {{00024-000}}
+    permissions: {{00024-000:referenceName}}
     /**
      * Technologies required by the app or extension. Hosting sites such as the Chrome Web Store may use this list to dissuade users from installing apps or extensions that will not work on their computer.
      */
@@ -389,11 +483,11 @@ export interface Extension {
      * Defines an collection of app or extension pages that are to be served in a sandboxed unique origin, and optionally a Content Security Policy to use with them.
      */
     sandbox: {
-        pages: [{{00016-000}},  ...({{00016-000}})[]]
+        pages: [{{00016-000:referenceName}},  ...({{00016-000:referenceName}})[]]
         /**
          * @default 'sandbox allow-scripts allow-forms'
          */
-        content_security_policy: {{00019-000}}
+        content_security_policy: {{00019-000:referenceName}}
     }
     /**
      * The short name is typically used where there is insufficient space to display the full name.
@@ -402,7 +496,7 @@ export interface Extension {
     /**
      * If you publish using the Chrome Developer Dashboard, ignore this field. If you host your own extension or app: URL to an update manifest XML file.
      */
-    update_url: {{0001-000}}
+    update_url: {{0001-000:referenceName}}
     /**
      * Register itself as a speech engine.
      */
@@ -410,7 +504,7 @@ export interface Extension {
         /**
          * Voices the extension can synthesize.
          */
-        voices: [{{000127-000}},  ...({{000127-000}})[]]
+        voices: [{{000127-000:referenceName}},  ...({{000127-000:referenceName}})[]]
         /**
          * In addition to the version field, which is used for update purposes, version_name can be set to a descriptive version string and will be used for display purposes if present.
          */
@@ -418,7 +512,7 @@ export interface Extension {
         /**
          * An array of strings specifying the paths (relative to the package root) of packaged resources that are expected to be usable in the context of a web page.
          */
-        web_accessible_resources: [{{0001-000}},  ...({{0001-000}})[]]
+        web_accessible_resources: [{{0001-000:referenceName}},  ...({{0001-000:referenceName}})[]]
         chrome_settings_overrides: unknown
         content_pack: unknown
         current_locale: unknown
@@ -431,34 +525,32 @@ export interface Extension {
     }
 }
 
-export const Extension = {
-    validate: require('./schemas/extension.schema.js') as ValidateFunction<Extension>,
-    get schema() { return Extension.validate.schema},
+export const {{000143-000:symbolName}} = {
+    validate: require('./schemas/extension.schema.js') as ValidateFunction<{{000143-000:symbolName}}>,
+    get schema() { return {{000143-000:symbolName}}.validate.schema},
     source: \`\${__dirname}extension.schema\`,
     sourceSymbol: 'extension',
-    is: (o: unknown): o is Extension => Extension.validate(o) === true,
-    assert: (o: unknown): asserts o is Extension => {
-        if (!Extension.validate(o)) {
-            throw new AjvValidator.ValidationError(Extension.validate.errors ?? [])
+    is: (o: unknown): o is {{000143-000:symbolName}} => {{000143-000:symbolName}}.validate(o) === true,
+    assert: (o: unknown) => {
+        if (!{{000143-000:symbolName}}.validate(o)) {
+            throw new AjvValidator.ValidationError({{000143-000:symbolName}}.validate.errors ?? [])
         }
     },
 } as const
 
-type MatchPatternLocal = string
+type {{00021-000:symbolName}} = string
 
-type UriLocal = string
+type {{0001-000:symbolName}} = string
 
-type ScriptsLocal = [{{0001-000}},  ...({{0001-000}})[]]
+type {{00018-000:symbolName}} = [{{0001-000:referenceName}},  ...({{0001-000:referenceName}})[]]
 
-type GlobPatternLocal = string
+type {{00020-000:symbolName}} = string
 
-type MimeTypeLocal = string
+type {{00015-000:symbolName}} = string
 
-type VersionStringLocal = string
+type {{0002-000:symbolName}} = {{0001-000:referenceName}}
 
-type IconLocal = {{0001-000}}
-
-interface ActionLocal {
+interface {{00010-000:symbolName}} {
     /**
      * Tooltip for the main toolbar icon.
      */
@@ -466,16 +558,16 @@ interface ActionLocal {
     /**
      * The popup appears when the user clicks the icon.
      */
-    default_popup: {{0001-000}}
+    default_popup: {{0001-000:referenceName}}
     default_icon: string | {
-        '19': {{0002-000}}
-        '38': {{0002-000}}
+        '19': {{0002-000:referenceName}}
+        '38': {{0002-000:referenceName}}
     }
 }
 
-type PageLocal = {{0001-000}}
+type {{00016-000:symbolName}} = {{0001-000:referenceName}}
 
-interface CommandLocal {
+interface {{00014-000:symbolName}} {
     description: string
     suggested_key: {
         [k: string]: ( string ) | undefined
@@ -487,36 +579,129 @@ interface CommandLocal {
  * 
  * @default \`script-src 'self'; object-src 'self'\`
  */
-type ContentSecurityPolicyLocal = string
+type {{00019-000:symbolName}} = string
 
-type PermissionsLocal = (string)[]
+type {{00022-000:symbolName}} = string
+
+type {{00024-000:symbolName}} = (string)[]
+
 ",
     "type": "typescript",
   },
   Object {
     "data": Object {
-      "0001-000": "UriLocal",
-      "00010-000": "ActionLocal",
-      "000125-000": "ExtensionVoicesArrayEventTypesArray",
-      "000127-000": "ExtensionVoicesArray",
-      "00014-000": "CommandLocal",
-      "00015-000": "VersionStringLocal",
-      "00016-000": "PageLocal",
-      "00018-000": "ScriptsLocal",
-      "00019-000": "ContentSecurityPolicyLocal",
-      "0002-000": "IconLocal",
-      "00020-000": "GlobPatternLocal",
-      "00021-000": "MatchPatternLocal",
-      "00022-000": "MimeTypeLocal",
-      "00024-000": "PermissionsLocal",
-      "00061-000": "ExtensionContentScriptsArray",
-      "00075-000": "ExtensionFileBrowserHandlersArray",
-      "00086-000": "ExtensionInputComponentsArray",
-      "00092-000": "ExtensionNaclModulesArray",
+      "0001-000": Object {
+        "referenceName": "{{0001-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "Uri",
+        "uniqueSymbolName": "{{0001-000:symbolName}}6a83",
+      },
+      "00010-000": Object {
+        "referenceName": "{{00010-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "Action",
+        "uniqueSymbolName": "{{00010-000:symbolName}}6a83",
+      },
+      "000125-000": Object {
+        "referenceName": "{{000125-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "ExtensionVoicesArrayEventTypesArray",
+        "uniqueSymbolName": "{{000125-000:symbolName}}",
+      },
+      "000127-000": Object {
+        "referenceName": "{{000127-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "ExtensionVoicesArray",
+        "uniqueSymbolName": "{{000127-000:symbolName}}",
+      },
+      "00014-000": Object {
+        "referenceName": "{{00014-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "Command",
+        "uniqueSymbolName": "{{00014-000:symbolName}}6a83",
+      },
+      "000143-000": Object {
+        "referenceName": "{{000143-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "Extension",
+        "uniqueSymbolName": "{{000143-000:symbolName}}",
+      },
+      "00015-000": Object {
+        "referenceName": "{{00015-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "VersionString",
+        "uniqueSymbolName": "{{00015-000:symbolName}}6a83",
+      },
+      "00016-000": Object {
+        "referenceName": "{{00016-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "Page",
+        "uniqueSymbolName": "{{00016-000:symbolName}}6a83",
+      },
+      "00018-000": Object {
+        "referenceName": "{{00018-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "Scripts",
+        "uniqueSymbolName": "{{00018-000:symbolName}}6a83",
+      },
+      "00019-000": Object {
+        "referenceName": "{{00019-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "ContentSecurityPolicy",
+        "uniqueSymbolName": "{{00019-000:symbolName}}6a83",
+      },
+      "0002-000": Object {
+        "referenceName": "{{0002-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "Icon",
+        "uniqueSymbolName": "{{0002-000:symbolName}}6a83",
+      },
+      "00020-000": Object {
+        "referenceName": "{{00020-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "GlobPattern",
+        "uniqueSymbolName": "{{00020-000:symbolName}}6a83",
+      },
+      "00021-000": Object {
+        "referenceName": "{{00021-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "MatchPattern",
+        "uniqueSymbolName": "{{00021-000:symbolName}}6a83",
+      },
+      "00022-000": Object {
+        "referenceName": "{{00022-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "MimeType",
+        "uniqueSymbolName": "{{00022-000:symbolName}}6a83",
+      },
+      "00024-000": Object {
+        "referenceName": "{{00024-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "Permissions",
+        "uniqueSymbolName": "{{00024-000:symbolName}}6a83",
+      },
+      "00061-000": Object {
+        "referenceName": "{{00061-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "ExtensionContentScriptsArray",
+        "uniqueSymbolName": "{{00061-000:symbolName}}",
+      },
+      "00075-000": Object {
+        "referenceName": "{{00075-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "ExtensionFileBrowserHandlersArray",
+        "uniqueSymbolName": "{{00075-000:symbolName}}",
+      },
+      "00086-000": Object {
+        "referenceName": "{{00086-000:symbolName}}",
+        "srcPath": "examples/chrome/extension.schema.type.ts",
+        "symbolName": "ExtensionInputComponentsArray",
+        "uniqueSymbolName": "{{00086-000:symbolName}}",
+      },
     },
-    "file": "examples/chrome/schemas/extension.schema.json",
     "prettify": true,
     "relativeSource": "./extension.schema",
+    "targetPath": "examples/chrome/schemas/extension.schema.json",
     "template": "{
   \\"$schema\\": \\"http://json-schema.org/draft-07/schema#\\",
   \\"type\\": \\"object\\",
@@ -533,7 +718,7 @@ type PermissionsLocal = (string)[]
     },
     \\"version\\": {
       \\"description\\": \\"One to four dot-separated integers identifying the version of this extension.\\",
-      \\"$ref\\": \\"#/definitions/{{00015-000}}\\"
+      \\"$ref\\": \\"#/$defs/{{00015-000:uniqueSymbolName}}\\"
     },
     \\"default_locale\\": {
       \\"type\\": \\"string\\",
@@ -551,19 +736,19 @@ type PermissionsLocal = (string)[]
       \\"properties\\": {
         \\"16\\": {
           \\"description\\": \\"Used as the favicon for an extension's pages and infobar.\\",
-          \\"$ref\\": \\"#/definitions/{{0002-000}}\\"
+          \\"$ref\\": \\"#/$defs/{{0002-000:uniqueSymbolName}}\\"
         },
         \\"48\\": {
           \\"description\\": \\"Used on the extension management page (chrome://extensions).\\",
-          \\"$ref\\": \\"#/definitions/{{0002-000}}\\"
+          \\"$ref\\": \\"#/$defs/{{0002-000:uniqueSymbolName}}\\"
         },
         \\"128\\": {
           \\"description\\": \\"Used during installation and in the Chrome Web Store.\\",
-          \\"$ref\\": \\"#/definitions/{{0002-000}}\\"
+          \\"$ref\\": \\"#/$defs/{{0002-000:uniqueSymbolName}}\\"
         },
         \\"256\\": {
           \\"description\\": \\"Used during installation and in the Chrome Web Store.\\",
-          \\"$ref\\": \\"#/definitions/{{0002-000}}\\"
+          \\"$ref\\": \\"#/$defs/{{0002-000:uniqueSymbolName}}\\"
         }
       },
       \\"required\\": [
@@ -576,11 +761,11 @@ type PermissionsLocal = (string)[]
     },
     \\"browser_action\\": {
       \\"description\\": \\"Use browser actions to put icons in the main Google Chrome toolbar, to the right of the address bar. In addition to its icon, a browser action can also have a tooltip, a badge, and a popup.\\",
-      \\"$ref\\": \\"#/definitions/{{00010-000}}\\"
+      \\"$ref\\": \\"#/$defs/{{00010-000:uniqueSymbolName}}\\"
     },
     \\"page_action\\": {
       \\"description\\": \\"Use the chrome.pageAction API to put icons inside the address bar. Page actions represent actions that can be taken on the current page, but that aren't applicable to all pages.\\",
-      \\"$ref\\": \\"#/definitions/{{00010-000}}\\"
+      \\"$ref\\": \\"#/$defs/{{00010-000:uniqueSymbolName}}\\"
     },
     \\"background\\": {
       \\"type\\": \\"object\\",
@@ -594,14 +779,14 @@ type PermissionsLocal = (string)[]
         \\"page\\": {
           \\"description\\": \\"Specify the HTML of the background page.\\",
           \\"default\\": \\"background.html\\",
-          \\"$ref\\": \\"#/definitions/{{0001-000}}\\"
+          \\"$ref\\": \\"#/$defs/{{0001-000:uniqueSymbolName}}\\"
         },
         \\"scripts\\": {
           \\"description\\": \\"A background page will be generated by the extension system that includes each of the files listed in the scripts property.\\",
           \\"default\\": [
             \\"background.js\\"
           ],
-          \\"$ref\\": \\"#/definitions/{{00018-000}}\\"
+          \\"$ref\\": \\"#/$defs/{{00018-000:uniqueSymbolName}}\\"
         }
       },
       \\"required\\": [
@@ -618,17 +803,17 @@ type PermissionsLocal = (string)[]
         \\"bookmarks\\": {
           \\"description\\": \\"The page that appears when the user chooses the Bookmark Manager menu item from the Chrome menu or, on Mac, the Bookmark Manager item from the Bookmarks menu. You can also get to this page by entering the URL chrome://bookmarks.\\",
           \\"default\\": \\"bookmarks.html\\",
-          \\"$ref\\": \\"#/definitions/{{00016-000}}\\"
+          \\"$ref\\": \\"#/$defs/{{00016-000:uniqueSymbolName}}\\"
         },
         \\"history\\": {
           \\"description\\": \\"The page that appears when the user chooses the History menu item from the Chrome menu or, on Mac, the Show Full History item from the History menu. You can also get to this page by entering the URL chrome://history.\\",
           \\"default\\": \\"history.html\\",
-          \\"$ref\\": \\"#/definitions/{{00016-000}}\\"
+          \\"$ref\\": \\"#/$defs/{{00016-000:uniqueSymbolName}}\\"
         },
         \\"newtab\\": {
           \\"description\\": \\"The page that appears when the user creates a new tab or window. You can also get to this page by entering the URL chrome://newtab.\\",
           \\"default\\": \\"newtab.html\\",
-          \\"$ref\\": \\"#/definitions/{{00016-000}}\\"
+          \\"$ref\\": \\"#/$defs/{{00016-000:uniqueSymbolName}}\\"
         }
       },
       \\"required\\": [
@@ -642,7 +827,7 @@ type PermissionsLocal = (string)[]
       \\"type\\": \\"object\\",
       \\"description\\": \\"Use the commands API to add keyboard shortcuts that trigger actions in your extension, for example, an action to open the browser action or send a command to the extension.\\",
       \\"additionalProperties\\": {
-        \\"$ref\\": \\"#/definitions/{{00014-000}}\\"
+        \\"$ref\\": \\"#/$defs/{{00014-000:uniqueSymbolName}}\\"
       }
     },
     \\"content_scripts\\": {
@@ -655,7 +840,7 @@ type PermissionsLocal = (string)[]
             \\"type\\": \\"array\\",
             \\"description\\": \\"Specifies which pages this content script will be injected into.\\",
             \\"items\\": {
-              \\"$ref\\": \\"#/definitions/{{00021-000}}\\"
+              \\"$ref\\": \\"#/$defs/{{00021-000:uniqueSymbolName}}\\"
             },
             \\"minItems\\": 1,
             \\"uniqueItems\\": true
@@ -664,7 +849,7 @@ type PermissionsLocal = (string)[]
             \\"type\\": \\"array\\",
             \\"description\\": \\"Excludes pages that this content script would otherwise be injected into.\\",
             \\"items\\": {
-              \\"$ref\\": \\"#/definitions/{{00021-000}}\\"
+              \\"$ref\\": \\"#/$defs/{{00021-000:uniqueSymbolName}}\\"
             },
             \\"uniqueItems\\": true
           },
@@ -672,13 +857,13 @@ type PermissionsLocal = (string)[]
             \\"type\\": \\"array\\",
             \\"description\\": \\"The list of CSS files to be injected into matching pages. These are injected in the order they appear in this array, before any DOM is constructed or displayed for the page.\\",
             \\"items\\": {
-              \\"$ref\\": \\"#/definitions/{{0001-000}}\\"
+              \\"$ref\\": \\"#/$defs/{{0001-000:uniqueSymbolName}}\\"
             },
             \\"uniqueItems\\": true
           },
           \\"js\\": {
             \\"description\\": \\"The list of JavaScript files to be injected into matching pages. These are injected in the order they appear in this array.\\",
-            \\"$ref\\": \\"#/definitions/{{00018-000}}\\"
+            \\"$ref\\": \\"#/$defs/{{00018-000:uniqueSymbolName}}\\"
           },
           \\"run_at\\": {
             \\"description\\": \\"Controls when the files in js are injected.\\",
@@ -698,7 +883,7 @@ type PermissionsLocal = (string)[]
             \\"type\\": \\"array\\",
             \\"description\\": \\"Applied after matches to include only those URLs that also match this glob. Intended to emulate the @include Greasemonkey keyword.\\",
             \\"items\\": {
-              \\"$ref\\": \\"#/definitions/{{00020-000}}\\"
+              \\"$ref\\": \\"#/$defs/{{00020-000:uniqueSymbolName}}\\"
             },
             \\"uniqueItems\\": true
           },
@@ -706,7 +891,7 @@ type PermissionsLocal = (string)[]
             \\"type\\": \\"array\\",
             \\"description\\": \\"Applied after matches to exclude URLs that match this glob. Intended to emulate the @exclude Greasemonkey keyword.\\",
             \\"items\\": {
-              \\"$ref\\": \\"#/definitions/{{00020-000}}\\"
+              \\"$ref\\": \\"#/$defs/{{00020-000:uniqueSymbolName}}\\"
             },
             \\"uniqueItems\\": true
           },
@@ -733,11 +918,11 @@ type PermissionsLocal = (string)[]
       \\"uniqueItems\\": true
     },
     \\"content_security_policy\\": {
-      \\"$ref\\": \\"#/definitions/{{00019-000}}\\"
+      \\"$ref\\": \\"#/$defs/{{00019-000:uniqueSymbolName}}\\"
     },
     \\"devtools_page\\": {
       \\"description\\": \\"A DevTools extension adds functionality to the Chrome DevTools. It can add new UI panels and sidebars, interact with the inspected page, get information about network requests, and more.\\",
-      \\"$ref\\": \\"#/definitions/{{00016-000}}\\"
+      \\"$ref\\": \\"#/$defs/{{00016-000:uniqueSymbolName}}\\"
     },
     \\"externally_connectable\\": {
       \\"type\\": \\"object\\",
@@ -804,7 +989,7 @@ type PermissionsLocal = (string)[]
     },
     \\"homepage_url\\": {
       \\"description\\": \\"The URL of the homepage for this extension.\\",
-      \\"$ref\\": \\"#/definitions/{{0001-000}}\\"
+      \\"$ref\\": \\"#/$defs/{{0001-000:uniqueSymbolName}}\\"
     },
     \\"incognito\\": {
       \\"description\\": \\"Specify how this extension will behave if allowed to run in incognito mode.\\",
@@ -860,7 +1045,7 @@ type PermissionsLocal = (string)[]
     },
     \\"minimum_chrome_version\\": {
       \\"description\\": \\"The version of Chrome that your extension, app, or theme requires, if any.\\",
-      \\"$ref\\": \\"#/definitions/{{00015-000}}\\"
+      \\"$ref\\": \\"#/$defs/{{00015-000:uniqueSymbolName}}\\"
     },
     \\"nacl_modules\\": {
       \\"type\\": \\"array\\",
@@ -870,11 +1055,11 @@ type PermissionsLocal = (string)[]
         \\"properties\\": {
           \\"path\\": {
             \\"description\\": \\"The location of a Native Client manifest (a .nmf file) within the extension directory.\\",
-            \\"$ref\\": \\"#/definitions/{{0001-000}}\\"
+            \\"$ref\\": \\"#/$defs/{{0001-000:uniqueSymbolName}}\\"
           },
           \\"mime_type\\": {
             \\"description\\": \\"The MIME type for which the Native Client module will be registered as content handler.\\",
-            \\"$ref\\": \\"#/definitions/{{00022-000}}\\"
+            \\"$ref\\": \\"#/$defs/{{00022-000:uniqueSymbolName}}\\"
           }
         },
         \\"required\\": [
@@ -928,12 +1113,12 @@ type PermissionsLocal = (string)[]
     },
     \\"optional_permissions\\": {
       \\"description\\": \\"Use the chrome.permissions API to request declared optional permissions at run time rather than install time, so users understand why the permissions are needed and grant only those that are necessary.\\",
-      \\"$ref\\": \\"#/definitions/{{00024-000}}\\"
+      \\"$ref\\": \\"#/$defs/{{00024-000:uniqueSymbolName}}\\"
     },
     \\"options_page\\": {
       \\"description\\": \\"To allow users to customize the behavior of your extension, you may wish to provide an options page. If you do, a link to it will be provided from the extensions management page at chrome://extensions. Clicking the Options link opens a new tab pointing at your options page.\\",
       \\"default\\": \\"options.html\\",
-      \\"$ref\\": \\"#/definitions/{{00016-000}}\\"
+      \\"$ref\\": \\"#/$defs/{{00016-000:uniqueSymbolName}}\\"
     },
     \\"options_ui\\": {
       \\"type\\": \\"object\\",
@@ -961,7 +1146,7 @@ type PermissionsLocal = (string)[]
     },
     \\"permissions\\": {
       \\"description\\": \\"Permissions help to limit damage if your extension or app is compromised by malware. Some permissions are also displayed to users before installation, as detailed in Permission Warnings.\\",
-      \\"$ref\\": \\"#/definitions/{{00024-000}}\\"
+      \\"$ref\\": \\"#/$defs/{{00024-000:uniqueSymbolName}}\\"
     },
     \\"requirements\\": {
       \\"type\\": \\"object\\",
@@ -1014,14 +1199,14 @@ type PermissionsLocal = (string)[]
         \\"pages\\": {
           \\"type\\": \\"array\\",
           \\"items\\": {
-            \\"$ref\\": \\"#/definitions/{{00016-000}}\\"
+            \\"$ref\\": \\"#/$defs/{{00016-000:uniqueSymbolName}}\\"
           },
           \\"minItems\\": 1,
           \\"uniqueItems\\": true
         },
         \\"content_security_policy\\": {
           \\"default\\": \\"sandbox allow-scripts allow-forms\\",
-          \\"$ref\\": \\"#/definitions/{{00019-000}}\\"
+          \\"$ref\\": \\"#/$defs/{{00019-000:uniqueSymbolName}}\\"
         }
       },
       \\"required\\": [
@@ -1037,7 +1222,7 @@ type PermissionsLocal = (string)[]
     },
     \\"update_url\\": {
       \\"description\\": \\"If you publish using the Chrome Developer Dashboard, ignore this field. If you host your own extension or app: URL to an update manifest XML file.\\",
-      \\"$ref\\": \\"#/definitions/{{0001-000}}\\"
+      \\"$ref\\": \\"#/$defs/{{0001-000:uniqueSymbolName}}\\"
     },
     \\"tts_engine\\": {
       \\"type\\": \\"object\\",
@@ -1096,7 +1281,7 @@ type PermissionsLocal = (string)[]
           \\"type\\": \\"array\\",
           \\"description\\": \\"An array of strings specifying the paths (relative to the package root) of packaged resources that are expected to be usable in the context of a web page.\\",
           \\"items\\": {
-            \\"$ref\\": \\"#/definitions/{{0001-000}}\\"
+            \\"$ref\\": \\"#/$defs/{{0001-000:uniqueSymbolName}}\\"
           },
           \\"minItems\\": 1,
           \\"uniqueItems\\": true
@@ -1165,21 +1350,21 @@ type PermissionsLocal = (string)[]
     \\"tts_engine\\"
   ],
   \\"additionalProperties\\": false,
-  \\"definitions\\": {
-    \\"{{00015-000}}\\": {
+  \\"$defs\\": {
+    \\"{{00015-000:uniqueSymbolName}}\\": {
       \\"type\\": \\"string\\",
       \\"title\\": \\"versionString\\",
       \\"pattern\\": \\"^(?:\\\\\\\\d{1,5}\\\\\\\\.){0,3}\\\\\\\\d{1,5}$\\"
     },
-    \\"{{0002-000}}\\": {
+    \\"{{0002-000:uniqueSymbolName}}\\": {
       \\"title\\": \\"icon\\",
-      \\"$ref\\": \\"#/definitions/{{0001-000}}\\"
+      \\"$ref\\": \\"#/$defs/{{0001-000:uniqueSymbolName}}\\"
     },
-    \\"{{0001-000}}\\": {
+    \\"{{0001-000:uniqueSymbolName}}\\": {
       \\"type\\": \\"string\\",
       \\"title\\": \\"uri\\"
     },
-    \\"{{00010-000}}\\": {
+    \\"{{00010-000:uniqueSymbolName}}\\": {
       \\"type\\": \\"object\\",
       \\"title\\": \\"action\\",
       \\"properties\\": {
@@ -1189,7 +1374,7 @@ type PermissionsLocal = (string)[]
         },
         \\"default_popup\\": {
           \\"description\\": \\"The popup appears when the user clicks the icon.\\",
-          \\"$ref\\": \\"#/definitions/{{0001-000}}\\"
+          \\"$ref\\": \\"#/$defs/{{0001-000:uniqueSymbolName}}\\"
         },
         \\"default_icon\\": {
           \\"oneOf\\": [
@@ -1202,10 +1387,10 @@ type PermissionsLocal = (string)[]
               \\"description\\": \\"Icon for the main toolbar.\\",
               \\"properties\\": {
                 \\"19\\": {
-                  \\"$ref\\": \\"#/definitions/{{0002-000}}\\"
+                  \\"$ref\\": \\"#/$defs/{{0002-000:uniqueSymbolName}}\\"
                 },
                 \\"38\\": {
-                  \\"$ref\\": \\"#/definitions/{{0002-000}}\\"
+                  \\"$ref\\": \\"#/$defs/{{0002-000:uniqueSymbolName}}\\"
                 }
               },
               \\"required\\": [
@@ -1224,20 +1409,20 @@ type PermissionsLocal = (string)[]
       ],
       \\"additionalProperties\\": false
     },
-    \\"{{00018-000}}\\": {
+    \\"{{00018-000:uniqueSymbolName}}\\": {
       \\"type\\": \\"array\\",
       \\"title\\": \\"scripts\\",
       \\"items\\": {
-        \\"$ref\\": \\"#/definitions/{{0001-000}}\\"
+        \\"$ref\\": \\"#/$defs/{{0001-000:uniqueSymbolName}}\\"
       },
       \\"minItems\\": 1,
       \\"uniqueItems\\": true
     },
-    \\"{{00016-000}}\\": {
+    \\"{{00016-000:uniqueSymbolName}}\\": {
       \\"title\\": \\"page\\",
-      \\"$ref\\": \\"#/definitions/{{0001-000}}\\"
+      \\"$ref\\": \\"#/$defs/{{0001-000:uniqueSymbolName}}\\"
     },
-    \\"{{00014-000}}\\": {
+    \\"{{00014-000:uniqueSymbolName}}\\": {
       \\"type\\": \\"object\\",
       \\"title\\": \\"command\\",
       \\"properties\\": {
@@ -1257,26 +1442,26 @@ type PermissionsLocal = (string)[]
       ],
       \\"additionalProperties\\": false
     },
-    \\"{{00021-000}}\\": {
+    \\"{{00021-000:uniqueSymbolName}}\\": {
       \\"type\\": \\"string\\",
       \\"title\\": \\"match pattern\\"
     },
-    \\"{{00020-000}}\\": {
+    \\"{{00020-000:uniqueSymbolName}}\\": {
       \\"type\\": \\"string\\",
       \\"title\\": \\"glob pattern\\"
     },
-    \\"{{00019-000}}\\": {
+    \\"{{00019-000:uniqueSymbolName}}\\": {
       \\"type\\": \\"string\\",
       \\"title\\": \\"contentSecurityPolicy\\",
       \\"description\\": \\"This introduces some fairly strict policies that will make extensions more secure by default, and provides you with the ability to create and enforce rules governing the types of content that can be loaded and executed by your extensions and applications.\\",
       \\"default\\": \\"script-src 'self'; object-src 'self'\\"
     },
-    \\"{{00022-000}}\\": {
+    \\"{{00022-000:uniqueSymbolName}}\\": {
       \\"type\\": \\"string\\",
       \\"title\\": \\"mime_type\\",
       \\"pattern\\": \\"^(?:application|audio|image|message|model|multipart|text|video)\\\\\\\\/[-+.\\\\\\\\\\\\\\\\w]+$\\"
     },
-    \\"{{00024-000}}\\": {
+    \\"{{00024-000:uniqueSymbolName}}\\": {
       \\"type\\": \\"array\\",
       \\"title\\": \\"permissions\\",
       \\"items\\": {

@@ -1,7 +1,7 @@
 import type { ThereforeOutputType } from './types'
 
-import type { Maybe } from '@zefiros-software/axioms'
-import { Nothing } from '@zefiros-software/axioms'
+import type { Maybe } from '@skyleague/axioms'
+import { Nothing } from '@skyleague/axioms'
 
 export function maybeLoadPrettier() {
     // eslint-disable-next-line @typescript-eslint/consistent-type-imports

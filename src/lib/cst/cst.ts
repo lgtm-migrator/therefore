@@ -1,7 +1,8 @@
-import type { MetaDescription, SchemaMeta, SchemaOptions, TypeDiscriminator } from '../types/base'
-import { descriptionKeys } from '../types/base'
+import type { MetaDescription, SchemaMeta, SchemaOptions, TypeDiscriminator } from '../primitives/base'
+import { descriptionKeys } from '../primitives/base'
 
-import { omit, omitUndefined, pick } from '@zefiros-software/axioms'
+import type { RequireKeys } from '@skyleague/axioms'
+import { omit, omitUndefined, pick, isObject } from '@skyleague/axioms'
 import { v4 as uuid } from 'uuid'
 
 export type CstSubNode = CstNode | (() => CstNode)
@@ -36,4 +37,14 @@ export function cstNode<D extends TypeDiscriminator, O, T, C extends readonly un
         children,
         name: name ?? options.name,
     })
+}
+
+export function isNamedCstNodeArray<T extends CstNode>(
+    x: Omit<T, 'name'>[] | RequireKeys<T, 'name'>[]
+): x is RequireKeys<T, 'name'>[] {
+    return x.length > 0 && 'name' in x[0] && x[0] !== undefined
+}
+
+export function isCstNode(x: unknown): x is CstNode {
+    return isObject(x) && 'type' in x && 'uuid' in x && 'value' in x && 'description' in x
 }

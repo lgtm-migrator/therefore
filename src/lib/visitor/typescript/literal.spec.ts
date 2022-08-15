@@ -1,55 +1,63 @@
-import { toLiteral } from './literal'
+import { objectProperty, toLiteral } from './literal'
 
-import { forAll, json, equal, string, tuple } from '@zefiros-software/axioms'
+import { forAll, json, equal, string, tuple } from '@skyleague/axioms'
 
-test('object', () => {
-    expect(toLiteral({})).toMatchInlineSnapshot(`"{  }"`)
-    expect(toLiteral({ foo: 'bar', baz: { boo: 1 }, boo: [123] })).toMatchInlineSnapshot(
-        `"{ foo: 'bar', baz: { boo: 1 }, boo: [123] }"`
-    )
+describe('objectProperty', () => {
+    test('', () => {
+        expect(objectProperty('foo.bar')).toMatchInlineSnapshot(`"['foo.bar']"`)
+    })
 })
 
-test('array', () => {
-    expect(toLiteral([])).toMatchInlineSnapshot(`"[]"`)
-    expect(toLiteral([1, 2, 3])).toMatchInlineSnapshot(`"[1, 2, 3]"`)
-    expect(toLiteral([1, 'foo', { foo: 'bar' }])).toMatchInlineSnapshot(`"[1, 'foo', { foo: 'bar' }]"`)
-})
+describe('toLiteral', () => {
+    test('object', () => {
+        expect(toLiteral({})).toMatchInlineSnapshot(`"{  }"`)
+        expect(toLiteral({ foo: 'bar', baz: { boo: 1 }, boo: [123] })).toMatchInlineSnapshot(
+            `"{ foo: 'bar', baz: { boo: 1 }, boo: [123] }"`
+        )
+    })
 
-test('number', () => {
-    expect(toLiteral(1)).toMatchInlineSnapshot(`"1"`)
-    expect(toLiteral(3.14)).toMatchInlineSnapshot(`"3.14"`)
-})
+    test('array', () => {
+        expect(toLiteral([])).toMatchInlineSnapshot(`"[]"`)
+        expect(toLiteral([1, 2, 3])).toMatchInlineSnapshot(`"[1, 2, 3]"`)
+        expect(toLiteral([1, 'foo', { foo: 'bar' }])).toMatchInlineSnapshot(`"[1, 'foo', { foo: 'bar' }]"`)
+    })
 
-test('bigint', () => {
-    expect(toLiteral(1n)).toMatchInlineSnapshot(`"1"`)
-})
+    test('number', () => {
+        expect(toLiteral(1)).toMatchInlineSnapshot(`"1"`)
+        expect(toLiteral(3.14)).toMatchInlineSnapshot(`"3.14"`)
+    })
 
-test('string', () => {
-    expect(toLiteral('foo')).toMatchInlineSnapshot(`"'foo'"`)
-})
+    test('bigint', () => {
+        expect(toLiteral(1n)).toMatchInlineSnapshot(`"1"`)
+    })
 
-test('boolean', () => {
-    expect(toLiteral(true)).toMatchInlineSnapshot(`"true"`)
-    expect(toLiteral(false)).toMatchInlineSnapshot(`"false"`)
-})
+    test('string', () => {
+        expect(toLiteral('foo')).toMatchInlineSnapshot(`"'foo'"`)
+    })
 
-test('undefined', () => {
-    expect(toLiteral(undefined)).toMatchInlineSnapshot(`"null"`)
-})
+    test('boolean', () => {
+        expect(toLiteral(true)).toMatchInlineSnapshot(`"true"`)
+        expect(toLiteral(false)).toMatchInlineSnapshot(`"false"`)
+    })
 
-test('null', () => {
-    expect(toLiteral(null)).toMatchInlineSnapshot(`"null"`)
-})
+    test('undefined', () => {
+        expect(toLiteral(undefined)).toMatchInlineSnapshot(`"null"`)
+    })
 
-test('other', () => {
-    expect(() => toLiteral(Symbol())).toThrowErrorMatchingInlineSnapshot(`"not supported"`)
-    expect(() => toLiteral(() => 1)).toThrowErrorMatchingInlineSnapshot(`"not supported"`)
-})
+    test('null', () => {
+        expect(toLiteral(null)).toMatchInlineSnapshot(`"null"`)
+    })
 
-test('json literals', () => {
-    forAll(json(), (x) => equal(eval(`(${toLiteral(x)})`), x))
-})
+    test('other', () => {
+        expect(() => toLiteral(Symbol())).toThrowErrorMatchingInlineSnapshot(`"not supported"`)
+        expect(() => toLiteral(() => 1)).toThrowErrorMatchingInlineSnapshot(`"not supported"`)
+    })
 
-test('string literals', () => {
-    forAll(tuple(string(), string()), ([key, value]) => equal(eval(`(${toLiteral({ [key]: value })})`), { [key]: value }))
+    test('json literals', () => {
+        forAll(json(), (x) => equal(eval(`(${toLiteral(x)})`), x))
+    })
+
+    test('string literals', () => {
+        forAll(tuple(string(), string()), ([key, value]) => equal(eval(`(${toLiteral({ [key]: value })})`), { [key]: value }))
+    })
 })

@@ -1,4 +1,4 @@
-import { $number, $object, $union, $enum, $tuple, $ref, $boolean, $string, $array, $dict, $const } from '../../src'
+import { $number, $object, $union, $enum, $tuple, $ref, $boolean, $string, $array, $dict, $const, $validator } from '../../src'
 
 const nonNegative = $number({
     minimum: 0,
@@ -38,4 +38,4 @@ export const ship = $object({
 })
 
 export const fleet = $dict($ref(ship))
-export const spaceObject = $union([$ref(asteroid), $ref(planet), $ref(ship)])
+export const spaceObject = $validator($union([$ref(asteroid), $ref(planet), $ref(ship)]))

@@ -1,14 +1,14 @@
 import { toArbitrary } from './arbitrary/arbitrary'
-import { toJsonSchema } from './json-schema/json-schema'
+import { toJsonSchema } from './jsonschema/jsonschema'
 
-import { $array, $null, $object } from '../types'
-import { $boolean } from '../types/boolean'
-import { $integer } from '../types/integer'
-import { $number } from '../types/number'
-import { $string } from '../types/string'
-import { $unknown } from '../types/unknown'
+import { $array, $null, $object } from '../primitives'
+import { $boolean } from '../primitives/boolean'
+import { $integer } from '../primitives/integer'
+import { $number } from '../primitives/number'
+import { $string } from '../primitives/string'
+import { $unknown } from '../primitives/unknown'
 
-import { forAll } from '@zefiros-software/axioms'
+import { forAll } from '@skyleague/axioms'
 
 test('string', () => {
     const arb = $string()
@@ -46,7 +46,7 @@ test('unknown', () => {
     forAll(toArbitrary(arb), (x) => val.validator(x))
 })
 
-test.only('object', () => {
+test('object', () => {
     const arb = $object({ foo: $string() }, { indexSignature: $unknown() })
     const val = toJsonSchema(arb, true)
     forAll(toArbitrary(arb), (x) => val.validator(x))

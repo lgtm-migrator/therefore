@@ -1,4 +1,4 @@
 export * from './arbitrary'
-export * from './json-schema'
+export * from './jsonschema'
 export * from './prepass'
 export * from './typescript'
